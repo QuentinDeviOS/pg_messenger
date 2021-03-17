@@ -1,3 +1,4 @@
+import 'package:pg_messenger/Models/messages.dart';
 import 'package:pg_messenger/Models/webSocketManager.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -7,11 +8,16 @@ class WebSocketController {
   bool haveNewMessage;
 
   WebSocketController() {
-    channel = webSocketManager.connectToWS();
+    channel = webSocketManager.connectToWS("Bearer tn+N3o7j7cPrPguDIkIvuA==");
     haveNewMessage = webSocketManager.messageNotificationHasChanged;
+    sendText("get-all-messages");
   }
 
-  void newMessageNotification() {
-    webSocketManager.newMessageNotification(channel);
+  void sendMessage(Message message) {
+    webSocketManager.newMessageNotification(channel, message);
+  }
+
+  void sendText(String text) {
+    webSocketManager.sendText(channel, text);
   }
 }

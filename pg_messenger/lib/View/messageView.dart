@@ -9,8 +9,6 @@ class MessageView extends StatefulWidget {
 class _MessageViewState extends State<MessageView> {
   final webSocketController = WebSocketController();
 
-  void testSendMessage() {}
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
