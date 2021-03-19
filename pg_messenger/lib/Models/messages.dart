@@ -1,14 +1,18 @@
 import 'package:pg_messenger/Models/user.dart';
 
 class Message {
-  final String message;
-  final User owner;
-  Message(this.message, this.owner);
+  final String _message;
+  final User _owner;
+
+  String get message => _message;
+  User get owner => _owner;
+
+  Message(this._message, this._owner);
 
   Map<String, dynamic> toJson() =>
-      {'subject': message, 'owner': owner.toJSON()};
+      {'subject': message, 'owner': _owner.toJSON()};
 
   Message.fromJson(Map<String, dynamic> json)
-      : message = json["subject"],
-        owner = User(id: json["userID"], username: json["username"]);
+      : _message = json["subject"],
+        _owner = User(json["userID"], json["username"]);
 }
