@@ -4,17 +4,17 @@ import 'package:web_socket_channel/io.dart';
 
 class WebSocketController {
   final webSocketManager = WebSocketManager();
-  Future<IOWebSocketChannel> channel;
+  IOWebSocketChannel channel;
   bool haveNewMessage;
 
   WebSocketController() {
-    channel = webSocketManager.connectToWS("Bearer FR8PV3I7vH6D3ZrAtZTJwg==");
+    channel = webSocketManager.connectToWS("Bearer yPLn7G0ITjYe+Ec3s3j63g==");
     haveNewMessage = webSocketManager.messageNotificationHasChanged;
     sendText("get-all-messages");
   }
 
   void sendMessage(Message message) {
-    webSocketManager.newMessageNotification(channel, message);
+    webSocketManager.sendNewMessageJson(channel, message);
   }
 
   void sendText(String text) {
