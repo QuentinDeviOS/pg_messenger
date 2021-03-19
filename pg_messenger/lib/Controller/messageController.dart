@@ -25,7 +25,7 @@ class MessageController {
     final channel = await futureChannel;
     channel.stream.listen((message) {
       hasMessage(message);
-      print("receive data");
+      print("receive data"); //DEBUG
     });
   }
 
@@ -36,7 +36,7 @@ class MessageController {
       for (var messageJson in messageListJson) {
         if (Message.fromJson(messageJson) != null) {
           messageList.add(Message.fromJson(messageJson));
-          print("add message to messageList on controller");
+          print("add message to messageList on controller"); //DEBUG
         }
       }
     }

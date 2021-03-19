@@ -13,6 +13,7 @@ class MessageView extends StatefulWidget {
 class _MessageViewState extends State<MessageView> {
   final webSocketController = WebSocketController();
   final messageController = MessageController();
+  final _textController = TextEditingController();
 
   List<Message> get messageList {
     return messageController.messageList;
@@ -37,10 +38,35 @@ class _MessageViewState extends State<MessageView> {
                   );
                 }),
           ),
+          Form(
+            child: Row(
+              children: [
+                Expanded(
+                    child: TextFormField(
+                        controller: _textController,
+                        decoration: InputDecoration(
+                            labelText: "Envoyer un message",
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    width: 4.0, color: Colors.blue.shade400)),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    width: 4.0,
+                                    color: Colors.blue.shade100))))),
+                IconButton(
+                  icon: Icon(Icons.send),
+                  onPressed: sendMessage,
+                  color: Colors.blue.shade800,
+                )
+              ],
+            ),
+          )
         ],
       ),
     );
   }
+
+  void sendMessage() {}
 
   Widget _listBuilder(BuildContext context, int numberOfRow) {
     return Text(messageList[numberOfRow].message);
