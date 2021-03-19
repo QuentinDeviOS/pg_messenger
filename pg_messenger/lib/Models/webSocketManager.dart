@@ -7,7 +7,7 @@ import 'package:web_socket_channel/io.dart';
 class WebSocketManager {
   var messageNotificationHasChanged = false;
 
-  Future<IOWebSocketChannel> connectToWS(String token) async {
+  IOWebSocketChannel connectToWS(String token) {
     Map<String, dynamic> header = Map();
     header["Authorization"] = token /*token*/; //implementer le token user
     var channel =
@@ -15,14 +15,11 @@ class WebSocketManager {
     return channel;
   }
 
-  void newMessageNotification(
-      Future<IOWebSocketChannel> futureChannel, Message message) async {
-    final channel = await futureChannel;
-    channel.sink.add(message.toJson());
+  void sendNewMessageJson(IOWebSocketChannel channel, Message message) {
+    channel.sink.add(JsonEncoder().convert(message.toJson()));
   }
 
-  void sendText(Future<IOWebSocketChannel> futureChannel, text) async {
-    final channel = await futureChannel;
+  void sendText(IOWebSocketChannel channel, text) {
     channel.sink.add(text);
   }
 }
