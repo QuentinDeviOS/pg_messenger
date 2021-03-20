@@ -25,6 +25,7 @@ class MessageController {
   void messageStream(Future<IOWebSocketChannel> futureChannel) async {
     final channel = await futureChannel;
     channel.stream.listen((message) {
+      print("receive data");
       print(message.toString());
       hasMessage(message.toString());
       print("received data"); //DEBUG

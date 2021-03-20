@@ -83,6 +83,8 @@ class _MessageViewState extends State<MessageView> {
   }
 
   Widget _listBuilder(BuildContext context, int numberOfRow) {
-    return Text(messageList[numberOfRow].message);
+    return Text(messageList[numberOfRow].owner.username +
+        " : " +
+        messageList[numberOfRow].message);
   }
 }
