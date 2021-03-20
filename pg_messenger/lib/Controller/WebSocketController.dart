@@ -4,8 +4,8 @@ import 'package:web_socket_channel/io.dart';
 
 class WebSocketController {
   final webSocketManager = WebSocketManager();
-  IOWebSocketChannel channel;
-  bool haveNewMessage;
+  late IOWebSocketChannel channel;
+  late bool haveNewMessage;
 
   WebSocketController() {
     channel = webSocketManager.connectToWS("Bearer yPLn7G0ITjYe+Ec3s3j63g==");
