@@ -15,22 +15,18 @@ class MessageController {
 
   set messageList(List<Message> messageList) {
     _messageList = messageList;
-    //controller.add(messageList);
+    controller.add(messageList);
   }
 
   MessageController() {
-    //controller.add(messageList);
+    controller.add(messageList);
   }
 
-  void messageStream(IOWebSocketChannel channel) {
+  void messageStream(Future<IOWebSocketChannel> futureChannel) async {
+    final channel = await futureChannel;
     channel.stream.listen((message) {
-      print("listen");
-
-      // channel.sink.close();
-      // print("receive data");
-      // final messageJsonString = message.toString();
-      // hasMessage(messageJsonString);
-
+      print(message.toString());
+      hasMessage(message.toString());
       //DEBUG
     });
   }

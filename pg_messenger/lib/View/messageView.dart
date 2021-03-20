@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Controller/WebSocketController.dart';
 import 'package:pg_messenger/Controller/messageController.dart';
@@ -23,6 +26,7 @@ class _MessageViewState extends State<MessageView> {
     messageController.messageStream(webSocketController.channel);
     messageController.controller.stream.listen((event) {
       setState(() {
+        print(messageList.toString());
         messageList;
       });
     });
@@ -71,7 +75,7 @@ class _MessageViewState extends State<MessageView> {
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
       final user =
-          User("A3C72072-F9BB-4E2D-A394-CAA480001156", "nicolas");
+          User(id: "633A5398-62C6-4138-A53D-6570A3EAD783", username: "nicolas");
       final message = messageController.createNewMessageFromString(
           _textController.text, user);
       webSocketController.sendMessage(message);
