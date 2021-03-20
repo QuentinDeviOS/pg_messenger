@@ -13,7 +13,7 @@ class UserToken {
   final String token;
   final User user;
 
-  const UserToken(this.token, this.user);
+  UserToken(this.token, this.user);
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserTokenFromJson()` constructor.

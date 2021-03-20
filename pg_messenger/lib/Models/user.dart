@@ -12,7 +12,7 @@ class User {
   final String name;
   final String id;
 
-  const User(this.name, this.id);
+  User(this.name, this.id);
 
   /// A necessary factory constructor for creating a new User instance
   /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.

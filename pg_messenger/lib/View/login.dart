@@ -33,51 +33,21 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(10),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: "username",
-                contentPadding: EdgeInsets.all(10),
-                border: OutlineInputBorder(),
-              ),
-              autocorrect: false,
-              onSubmitted: _userLoginSubmitted,
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.all(10),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: "password",
-                contentPadding: EdgeInsets.all(10),
-                border: OutlineInputBorder(),
-              ),
-              autocorrect: false,
-              onSubmitted: _userLoginSubmitted,
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {},
-            child: Text("Log In"),
-          ),
-          Spacer(),
-          FutureBuilder<UserToken>(
-            future: _loginUser(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData && snapshot.data != null) {
-                return Text(snapshot.data!.token);
-              } else if (snapshot.hasError) {
-                return Text("Erreur de chargement");
-              } else {
-                return CircularProgressIndicator();
-              }
-            },
-          ),
-        ],
-      ),
+      body: Column(children: [
+        TextField(onSubmitted: _userLoginSubmitted),
+        FutureBuilder<UserToken>(
+          future: _loginUser(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.data != null) {
+              return Text(snapshot.data!.token);
+            } else if (snapshot.hasError) {
+              return Text("Erreur de chargement");
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
+        ),
+      ]),
     );
   }
 }
