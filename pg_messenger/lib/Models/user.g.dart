@@ -6,6 +6,8 @@ part of 'user.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+import 'package:pg_messenger/Models/user.dart';
+
 User _$UserFromJson(Map<String, dynamic> json) {
   return User(
     json['name'] as String,
@@ -14,6 +16,6 @@ User _$UserFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
-      'name': instance.name,
+      'name': instance.username,
       'id': instance.id,
     };
