@@ -15,10 +15,10 @@ class WebSocketManager {
     return channel;
   }
 
-  void newMessageNotification(
+  void sendNewMessageJson(
       Future<IOWebSocketChannel> futureChannel, Message message) async {
     final channel = await futureChannel;
-    channel.sink.add(message.toJson());
+    channel.sink.add(JsonEncoder().convert(message.toJson()));
   }
 
   void sendText(Future<IOWebSocketChannel> futureChannel, text) async {

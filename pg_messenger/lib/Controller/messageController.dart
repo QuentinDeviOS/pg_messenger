@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:pg_messenger/Models/messages.dart';
+import 'package:pg_messenger/Models/user.dart';
 import 'package:web_socket_channel/io.dart';
 
 class MessageController {
@@ -24,12 +25,17 @@ class MessageController {
   void messageStream(Future<IOWebSocketChannel> futureChannel) async {
     final channel = await futureChannel;
     channel.stream.listen((message) {
-      hasMessage(message);
-      print("receive data"); //DEBUG
+      print(message.toString());
+      hasMessage(message.toString());
+      //DEBUG
     });
   }
 
-  bool hasMessage(dynamic messageReceived) {
+  Message createNewMessageFromString(String messageString, User user) {
+    return Message(messageString, user);
+  }
+
+  bool hasMessage(String messageReceived) {
     final List<dynamic> messageListJson = jsonDecode(messageReceived);
     if (messageListJson.isNotEmpty) {
       messageList = [];

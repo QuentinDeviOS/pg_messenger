@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Controller/WebSocketController.dart';
 import 'package:pg_messenger/Controller/messageController.dart';
 import 'package:pg_messenger/Models/messages.dart';
+import 'package:pg_messenger/Models/user.dart';
 
 class MessageView extends StatefulWidget {
   @override
@@ -14,6 +16,7 @@ class _MessageViewState extends State<MessageView> {
   final webSocketController = WebSocketController();
   final messageController = MessageController();
   final _textController = TextEditingController();
+  final _scrollController = ScrollController();
 
   List<Message> get messageList {
     return messageController.messageList;
@@ -21,6 +24,12 @@ class _MessageViewState extends State<MessageView> {
 
   _MessageViewState() {
     messageController.messageStream(webSocketController.channel);
+    messageController.controller.stream.listen((event) {
+      setState(() {
+        print(messageList.toString());
+        messageList;
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
@@ -29,14 +38,11 @@ class _MessageViewState extends State<MessageView> {
       body: Column(
         children: [
           Expanded(
-            child: StreamBuilder(
-                stream: messageController.controller.stream,
-                builder: (context, snapshot) {
-                  return ListView.builder(
-                    itemBuilder: _listBuilder,
-                    itemCount: messageList.length,
-                  );
-                }),
+            child: ListView.builder(
+              controller: _scrollController,
+              itemBuilder: _listBuilder,
+              itemCount: messageList.length,
+            ),
           ),
           Form(
             child: Row(
@@ -66,7 +72,15 @@ class _MessageViewState extends State<MessageView> {
     );
   }
 
-  void sendMessage() {}
+  void sendMessage() {
+    if (_textController.text.isNotEmpty) {
+      final user =
+          User(id: "633A5398-62C6-4138-A53D-6570A3EAD783", username: "nicolas");
+      final message = messageController.createNewMessageFromString(
+          _textController.text, user);
+      webSocketController.sendMessage(message);
+    }
+  }
 
   Widget _listBuilder(BuildContext context, int numberOfRow) {
     return Text(messageList[numberOfRow].message);
