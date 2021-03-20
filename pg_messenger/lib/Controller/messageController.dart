@@ -27,7 +27,7 @@ class MessageController {
     channel.stream.listen((message) {
       print(message.toString());
       hasMessage(message.toString());
-      //DEBUG
+      print("receve data"); //DEBUG
     });
   }
 

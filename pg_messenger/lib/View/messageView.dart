@@ -74,8 +74,7 @@ class _MessageViewState extends State<MessageView> {
 
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
-      final user =
-          User(id: "633A5398-62C6-4138-A53D-6570A3EAD783", username: "nicolas");
+      final user = User("C28DEDF9-3F51-44B5-91F1-402EAFDFDC38", "MartinBis");
       final message = messageController.createNewMessageFromString(
           _textController.text, user);
       webSocketController.sendMessage(message);
