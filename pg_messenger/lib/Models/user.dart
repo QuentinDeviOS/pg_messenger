@@ -9,18 +9,16 @@ part 'user.g.dart';
 /// JSON serialization logic to be generated.
 @JsonSerializable()
 class User {
-  final String name;
-  final String id;
+  final String _username;
+  final String _id;
 
-  User(this.name, this.id);
+  String get username => _username;
+  String get id => _id;
 
-  /// A necessary factory constructor for creating a new User instance
-  /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.
-  /// The constructor is named after the source class, in this case, User.
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  User(this._username, this._id);
+  User.fromJson(Map<String, dynamic> json)
+      : this._username = json["name"],
+        this._id = json["id"];
 
-  /// `toJson` is the convention for a class to declare support for serialization
-  /// to JSON. The implementation simply calls the private, generated
-  /// helper method `_$UserToJson`.
-  Map<String, dynamic> toJson() => _$UserToJson(this);
+  Map<String, dynamic> toJSON() => {'username': username, 'id': id};
 }
