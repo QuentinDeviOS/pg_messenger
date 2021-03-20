@@ -7,7 +7,7 @@ class Message {
     String get message => _message;
     User get owner => _owner;
 
-    Message(this._message, this._owner);
+    const Message(this._message, this._owner);
 
   Map<String, dynamic> toJson() =>
       {'subject': message, 'owner': _owner.id};
