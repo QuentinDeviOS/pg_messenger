@@ -8,7 +8,7 @@ class WebSocketController {
   bool haveNewMessage;
 
   WebSocketController() {
-    channel = webSocketManager.connectToWS("Bearer oPIbqQKdMI5F91OZaPi0Qw==");
+    channel = webSocketManager.connectToWS("Bearer MBpI8DkkUqP+A26hiuIPjw==");
     haveNewMessage = webSocketManager.messageNotificationHasChanged;
     sendText("get-all-messages");
   }
