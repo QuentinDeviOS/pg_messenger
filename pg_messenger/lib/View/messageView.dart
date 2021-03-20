@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Controller/WebSocketController.dart';
 import 'package:pg_messenger/Controller/messageController.dart';
 import 'package:pg_messenger/Models/messages.dart';
@@ -34,7 +35,7 @@ class _MessageViewState extends State<MessageView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text("Messages")),
       body: Column(
         children: [
           Expanded(
@@ -74,8 +75,7 @@ class _MessageViewState extends State<MessageView> {
 
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
-      final user =
-          User(id: "633A5398-62C6-4138-A53D-6570A3EAD783", username: "nicolas");
+      final user = User(Constant.TEST_USER_USERNAME, Constant.TEST_USER_TOKEN);
       final message = messageController.createNewMessageFromString(
           _textController.text, user);
       webSocketController.sendMessage(message);

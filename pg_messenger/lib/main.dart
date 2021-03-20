@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pg_messenger/View/login.dart';
+import 'package:pg_messenger/View/home.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Login(),
+      home: Home(),
     );
   }
 }

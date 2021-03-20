@@ -1,3 +1,4 @@
+import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Models/messages.dart';
 import 'package:pg_messenger/Models/webSocketManager.dart';
 import 'package:web_socket_channel/io.dart';
@@ -8,7 +9,8 @@ class WebSocketController {
   late bool haveNewMessage;
 
   WebSocketController() {
-    channel = webSocketManager.connectToWS("Bearer oPIbqQKdMI5F91OZaPi0Qw==");
+    channel =
+        webSocketManager.connectToWS("Bearer ${Constant.TEST_USER_TOKEN}");
     haveNewMessage = webSocketManager.messageNotificationHasChanged;
     sendText("get-all-messages");
   }
