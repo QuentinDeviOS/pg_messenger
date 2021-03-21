@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Constants/constant.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:pg_messenger/Controller/WebSocketController.dart';
 import 'package:pg_messenger/Controller/messageController.dart';
 import 'package:pg_messenger/Models/messages.dart';
@@ -16,7 +17,8 @@ class _MessageViewState extends State<MessageView> {
   final webSocketController = WebSocketController();
   final messageController = MessageController();
   final _textController = TextEditingController();
-  final _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
+  double _oldPositionScrollMax = 0;
 
   List<Message> get messageList {
     return messageController.messageList;
@@ -26,31 +28,22 @@ class _MessageViewState extends State<MessageView> {
     messageController.messageStream(webSocketController.channel);
     messageController.controller.stream.listen((event) {
       setState(() {
-        print(messageList.toString());
         messageList;
       });
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Messages")),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                reverse: true,
-                child: ListView.builder(
-                  controller: _scrollController,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  //controller: _animateToLast,
-                  itemBuilder: _singleMessage,
-                  itemCount: 20,
-                  //itemCount: messageList.length,
-                ),
-              ),
+      appBar: AppBar(),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              itemBuilder: _listBuilder,
+              itemCount: messageList.length,
             ),
             Form(
               child: Row(
@@ -89,15 +82,6 @@ class _MessageViewState extends State<MessageView> {
     );
   }
 
-  _animateToLast() {
-    debugPrint('scroll down');
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      curve: Curves.easeOut,
-      duration: const Duration(milliseconds: 500),
-    );
-  }
-
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
       final user = User(Constant.TEST_USER_ID, Constant.TEST_USER_USERNAME);
@@ -107,6 +91,30 @@ class _MessageViewState extends State<MessageView> {
     }
   }
 
+  void goToEndList() {
+    if (_scrollController.position.pixels == _oldPositionScrollMax) {
+      print("go to endlist");
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 250),
+      );
+      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+    } else {
+      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+    }
+  }
+
+  Widget _listBuilder(BuildContext context, int numberOfRow) {
+    SchedulerBinding.instance.addPostFrameCallback((_) => goToEndList());
+    print(numberOfRow);
+    print(_scrollController.position.maxScrollExtent);
+    return Padding(
+      padding: EdgeInsets.all(20),
+      child: Text(messageList[numberOfRow].owner.username +
+          " : " +
+          messageList[numberOfRow].message),
+    );
   Widget _singleMessage(BuildContext context, int num) {
     return Card(
       child: Container(
