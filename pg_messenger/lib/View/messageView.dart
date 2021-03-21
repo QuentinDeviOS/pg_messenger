@@ -100,7 +100,7 @@ class _MessageViewState extends State<MessageView> {
 
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
-      final user = User(Constant.TEST_USER_USERNAME, Constant.TEST_USER_TOKEN);
+      final user = User(Constant.TEST_USER_ID, Constant.TEST_USER_USERNAME);
       final message = messageController.createNewMessageFromString(
           _textController.text, user);
       webSocketController.sendMessage(message);
@@ -117,14 +117,15 @@ class _MessageViewState extends State<MessageView> {
             Row(
               children: [
                 //Text(messageList[num].owner.username),
-                Text("username_${num+1}"),
+                Text("username_${num + 1}"),
                 Spacer(),
                 //Text(messageList[num].owner.username),
                 Text("12:34"),
               ],
             ),
             //Text(messageList[num].message),
-            Text("Un message ecrijnie ndcjiwedncijwn cijedncijene t par username_${num + 1}")
+            Text(
+                "Un message ecrijnie ndcjiwedncijwn cijedncijene t par username_${num + 1}")
           ],
         ),
       ),

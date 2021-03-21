@@ -42,7 +42,7 @@ class MessageController {
       messageList = [];
       for (var messageJson in messageListJson) {
         messageList.add(Message.fromJson(messageJson));
-        print("add message to messageList on controller"); 
+        print("add message to messageList on controller");
       }
     }
     return false;
