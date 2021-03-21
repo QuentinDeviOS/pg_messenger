@@ -15,46 +15,48 @@ class _HomeState extends State<Home> {
         appBar: AppBar(
           title: Text("Menu"),
         ),
-        body: Column(
-          children: [
-            Spacer(),
-            Center(
-              child: ElevatedButton(
-                child: Text('Login Page'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Login()),
-                  );
-                },
+        body: SafeArea(
+          child: Column(
+            children: [
+              Spacer(),
+              Center(
+                child: ElevatedButton(
+                  child: Text('Login Page'),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Login()),
+                    );
+                  },
+                ),
               ),
-            ),
-            Spacer(),
-            Center(
-              child: ElevatedButton(
-                child: Text('Registration Page'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Register()),
-                  );
-                },
+              Spacer(),
+              Center(
+                child: ElevatedButton(
+                  child: Text('Registration Page'),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Register()),
+                    );
+                  },
+                ),
               ),
-            ),
-            Spacer(),
-            Center(
-              child: ElevatedButton(
-                child: Text('Messages Page'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => MessageView()),
-                  );
-                },
+              Spacer(),
+              Center(
+                child: ElevatedButton(
+                  child: Text('Messages Page'),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MessageView()),
+                    );
+                  },
+                ),
               ),
-            ),
-            Spacer(),
-          ],
+              Spacer(),
+            ],
+          ),
         ));
   }
 }

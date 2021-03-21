@@ -41,10 +41,8 @@ class MessageController {
     if (messageListJson.isNotEmpty) {
       messageList = [];
       for (var messageJson in messageListJson) {
-        if (Message.fromJson(messageJson) != null) {
-          messageList.add(Message.fromJson(messageJson));
-          print("add message to messageList on controller"); //DEBUG
-        }
+        messageList.add(Message.fromJson(messageJson));
+        print("add message to messageList on controller"); 
       }
     }
     return false;
