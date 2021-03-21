@@ -30,10 +30,10 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  final String title;
-  final WebSocketChannel channel;
+  final String? title;
+  final WebSocketChannel? channel;
 
-  MyHomePage({Key key, @required this.title, @required this.channel})
+  MyHomePage({Key? key, @required this.title, @required this.channel})
       : super(key: key);
 
   @override
@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.title ?? ""),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             StreamBuilder(
-              stream: widget.channel.stream,
+              stream: widget.channel?.stream,
               builder: (context, snapshot) {
                 //snapshot correspond à un envoie de donnée depuis le serveur peut importe ce qu'il envoie, c'est recu ici
                 return Padding(
@@ -84,21 +84,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {
-      final user = User(
-          id: "BD43343F-C0D5-4B40-A02C-03900045C770",
-          username: "nicolas"); //on récupére l'utilisateur en cours
+      final user = User("BD43343F-C0D5-4B40-A02C-03900045C770",
+          "nicolas"); //on récupére l'utilisateur en cours
       final message = Message(_controller.text,
           user); //on crée un Objet message depuis l'utilisateur en cours et le message récupérer
       final messageJson =
           JsonEncoder().convert(message.toJson()); //on converti le tous en json
-      widget.channel.sink
+      widget.channel?.sink
           .add(messageJson); //et on envoie ca au serveur par le WebSocket
     }
   }
 
   @override
   void dispose() {
-    widget.channel.sink.close();
+    widget.channel?.sink.close();
     super.dispose();
   }
 }

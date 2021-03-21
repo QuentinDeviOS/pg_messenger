@@ -25,4 +25,7 @@ class WebSocketManager {
     final channel = await futureChannel;
     channel.sink.add(text);
   }
+
+  void newMessageNotification(
+      Future<IOWebSocketChannel> channel, Message message) {}
 }
