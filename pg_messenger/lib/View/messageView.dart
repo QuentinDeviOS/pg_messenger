@@ -19,7 +19,7 @@ class _MessageViewState extends State<MessageView> {
   final messageController = MessageController();
   final _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  double _positionScrollMax = 0;
+  double _oldPositionScrollMax = 0;
 
   List<Message> get messageList {
     return messageController.messageList;
@@ -86,14 +86,16 @@ class _MessageViewState extends State<MessageView> {
   }
 
   void goToEndList() {
-    if (_positionScrollMax != _scrollController.position.maxScrollExtent) {
+    if (_scrollController.position.pixels == _oldPositionScrollMax) {
       print("go to endlist");
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
         curve: Curves.easeOut,
         duration: const Duration(milliseconds: 250),
       );
-      _positionScrollMax = _scrollController.position.maxScrollExtent;
+      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+    } else {
+      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
     }
   }
 
