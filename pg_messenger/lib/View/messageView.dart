@@ -36,14 +36,18 @@ class _MessageViewState extends State<MessageView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              itemBuilder: _listBuilder,
-              itemCount: messageList.length,
+      appBar: AppBar(
+        title: Text("Messages"),
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
+                itemBuilder: _singleMessage,
+                itemCount: messageList.length,
+              ),
             ),
             Form(
               child: Row(
@@ -75,7 +79,7 @@ class _MessageViewState extends State<MessageView> {
                   )
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -105,17 +109,10 @@ class _MessageViewState extends State<MessageView> {
     }
   }
 
-  Widget _listBuilder(BuildContext context, int numberOfRow) {
-    SchedulerBinding.instance.addPostFrameCallback((_) => goToEndList());
-    print(numberOfRow);
-    print(_scrollController.position.maxScrollExtent);
-    return Padding(
-      padding: EdgeInsets.all(20),
-      child: Text(messageList[numberOfRow].owner.username +
-          " : " +
-          messageList[numberOfRow].message),
-    );
   Widget _singleMessage(BuildContext context, int num) {
+    SchedulerBinding.instance?.addPostFrameCallback((_) => goToEndList());
+    print(num);
+    print(_scrollController.position.maxScrollExtent);
     return Card(
       child: Container(
         padding: EdgeInsets.all(20),
@@ -124,16 +121,12 @@ class _MessageViewState extends State<MessageView> {
           children: [
             Row(
               children: [
-                //Text(messageList[num].owner.username),
-                Text("username_${num + 1}"),
+                Text(messageList[num].owner.username),
                 Spacer(),
-                //Text(messageList[num].owner.username),
                 Text("12:34"),
               ],
             ),
-            //Text(messageList[num].message),
-            Text(
-                "Un message ecrijnie ndcjiwedncijwn cijedncijene t par username_${num + 1}")
+            Text(messageList[num].message)
           ],
         ),
       ),
