@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:pg_messenger/Controller/WebSocketController.dart';
 import 'package:pg_messenger/Controller/messageController.dart';
 import 'package:pg_messenger/Models/messages.dart';
@@ -16,7 +18,8 @@ class _MessageViewState extends State<MessageView> {
   final webSocketController = WebSocketController();
   final messageController = MessageController();
   final _textController = TextEditingController();
-  final _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
+  double _positionScrollMax = 0;
 
   List<Message> get messageList {
     return messageController.messageList;
@@ -26,11 +29,11 @@ class _MessageViewState extends State<MessageView> {
     messageController.messageStream(webSocketController.channel);
     messageController.controller.stream.listen((event) {
       setState(() {
-        print(messageList.toString());
         messageList;
       });
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,9 +85,27 @@ class _MessageViewState extends State<MessageView> {
     }
   }
 
+  void goToEndList() {
+    if (_positionScrollMax != _scrollController.position.maxScrollExtent) {
+      print("go to endlist");
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 250),
+      );
+      _positionScrollMax = _scrollController.position.maxScrollExtent;
+    }
+  }
+
   Widget _listBuilder(BuildContext context, int numberOfRow) {
-    return Text(messageList[numberOfRow].owner.username +
-        " : " +
-        messageList[numberOfRow].message);
+    SchedulerBinding.instance.addPostFrameCallback((_) => goToEndList());
+    print(numberOfRow);
+    print(_scrollController.position.maxScrollExtent);
+    return Padding(
+      padding: EdgeInsets.all(20),
+      child: Text(messageList[numberOfRow].owner.username +
+          " : " +
+          messageList[numberOfRow].message),
+    );
   }
 }
