@@ -26,12 +26,11 @@ class MessageController {
     final channel = await futureChannel;
     channel.stream.listen((message) {
       hasMessage(message.toString());
-      print("received data"); //DEBUG
     });
   }
 
   Message createNewMessageFromString(String messageString, User user) {
-    return Message(messageString, user, null);
+    return Message(messageString, user);
   }
 
   bool hasMessage(String messageReceived) {
@@ -40,7 +39,6 @@ class MessageController {
       messageList = [];
       for (var messageJson in messageListJson) {
         messageList.add(Message.fromJson(messageJson));
-        print("add message to messageList on controller");
       }
     }
     return false;

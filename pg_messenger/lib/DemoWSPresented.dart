@@ -86,8 +86,8 @@ class _MyHomePageState extends State<MyHomePage> {
     if (_controller.text.isNotEmpty) {
       final user = User("BD43343F-C0D5-4B40-A02C-03900045C770",
           "nicolas"); //on récupére l'utilisateur en cours
-      final message = Message(_controller.text, user,
-          null); //on crée un Objet message depuis l'utilisateur en cours et le message récupérer
+      final message = Message(_controller.text,
+          user); //on crée un Objet message depuis l'utilisateur en cours et le message récupérer
       final messageJson =
           JsonEncoder().convert(message.toJson()); //on converti le tous en json
       widget.channel?.sink

@@ -1,62 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:pg_messenger/View/login.dart';
+import 'package:pg_messenger/Models/user_token.dart';
+import 'package:pg_messenger/View/connection.dart';
 import 'package:pg_messenger/View/messageView.dart';
-import 'package:pg_messenger/View/register.dart';
+import 'package:provider/provider.dart';
 
-class Home extends StatefulWidget {
-  @override
-  _HomeState createState() => _HomeState();
-}
+class Home extends StatelessWidget {
+  const Home({Key? key}) : super(key: key);
 
-class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Menu"),
-        ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              Spacer(),
-              Center(
-                child: ElevatedButton(
-                  child: Text('Login Page'),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Login()),
-                    );
-                  },
-                ),
-              ),
-              Spacer(),
-              Center(
-                child: ElevatedButton(
-                  child: Text('Registration Page'),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Register()),
-                    );
-                  },
-                ),
-              ),
-              Spacer(),
-              Center(
-                child: ElevatedButton(
-                  child: Text('Messages Page'),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MessageView()),
-                    );
-                  },
-                ),
-              ),
-              Spacer(),
-            ],
-          ),
-        ));
+    return Consumer<UserToken>(builder: (context, userToken, _) {
+      return Container(
+        child: (userToken.toString() != "") ? Connection() : MessageView(),
+      );
+    });
   }
 }
