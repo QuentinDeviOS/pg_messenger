@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pg_messenger/Models/user.dart';
-import 'package:pg_messenger/Models/user_token.dart';
+import 'package:pg_messenger/Models/token.dart';
 import 'package:pg_messenger/View/home.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +18,7 @@ class MyApp extends StatelessWidget {
         }
       },
       child: ChangeNotifierProvider(
-        create: (context) => UserToken("", User("", "")),
+        create: (context) => Token(),
         child: MaterialApp(
           title: 'Flutter Demo',
           theme: ThemeData(

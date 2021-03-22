@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pg_messenger/Models/user.dart';
@@ -23,14 +25,4 @@ class UserToken extends ChangeNotifier {
       _$UserTokenFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserTokenToJson(this);
-
-  void setToken(String token, String id, String username) {
-    UserToken(token, User(id, username));
-    notifyListeners();
-  }
-
-  void removeToken() {
-    UserToken("", User("", ""));
-    notifyListeners();
-  }
 }

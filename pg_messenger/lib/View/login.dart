@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http_auth/http_auth.dart' as http_auth;
 import 'package:pg_messenger/Constants/constant.dart';
+import 'package:pg_messenger/Models/token.dart';
 import 'package:pg_messenger/Models/user_token.dart';
 import 'package:provider/provider.dart';
 
@@ -52,11 +53,7 @@ class Login extends StatelessWidget {
               child: ElevatedButton(
                 child: Text('Override Log In (testing)'),
                 onPressed: () {
-                  context.read<UserToken>().setToken(
-                    Constant.TEST_USER_TOKEN,
-                    Constant.TEST_USER_ID,
-                    Constant.TEST_USER_USERNAME,
-                  );
+                  context.read<Token>().login(Constant.TEST_USER_TOKEN);
                 },
               ),
             ),

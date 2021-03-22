@@ -5,7 +5,7 @@ import 'package:pg_messenger/Controller/WebSocketController.dart';
 import 'package:pg_messenger/Controller/messageController.dart';
 import 'package:pg_messenger/Models/messages.dart';
 import 'package:pg_messenger/Models/user.dart';
-import 'package:pg_messenger/Models/user_token.dart';
+import 'package:pg_messenger/Models/token.dart';
 import 'package:provider/provider.dart';
 
 class MessageView extends StatefulWidget {
@@ -67,7 +67,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             icon: const Icon(Icons.logout),
             tooltip: 'Log Out',
             onPressed: () {
-              Provider.of<UserToken>(context, listen: false).removeToken();
+              Provider.of<Token>(context, listen: false).logout();
             },
           ),
         ],
