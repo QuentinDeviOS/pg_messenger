@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pg_messenger/Models/user.dart';
+import 'package:pg_messenger/Models/user_token.dart';
 import 'package:pg_messenger/View/home.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -8,12 +11,23 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: purpleGiraffe,
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: ChangeNotifierProvider(
+        create: (context) => UserToken("", User("", "")),
+        child: MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            primarySwatch: purpleGiraffe,
+          ),
+          home: Home(),
+        ),
       ),
-      home: Home(),
     );
   }
 }

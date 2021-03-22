@@ -1,56 +1,85 @@
-import 'dart:async';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Constants/constant.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:pg_messenger/Controller/WebSocketController.dart';
 import 'package:pg_messenger/Controller/messageController.dart';
 import 'package:pg_messenger/Models/messages.dart';
 import 'package:pg_messenger/Models/user.dart';
+import 'package:pg_messenger/Models/user_token.dart';
+import 'package:provider/provider.dart';
 
 class MessageView extends StatefulWidget {
   @override
   _MessageViewState createState() => _MessageViewState();
 }
 
-class _MessageViewState extends State<MessageView> {
+class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   final webSocketController = WebSocketController();
   final messageController = MessageController();
   final _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  double _oldPositionScrollMax = 0;
+  double? _oldPositionScrollMax;
+  FocusNode? inputFieldNode;
 
   List<Message> get messageList {
     return messageController.messageList;
   }
 
-  _MessageViewState() {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addObserver(this);
+    //inputFieldNode = FocusNode();
     messageController.messageStream(webSocketController.channel);
     messageController.controller.stream.listen((event) {
       setState(() {
         messageList;
       });
     });
+    _oldPositionScrollMax = 0;
+  }
+
+  @override
+  void didChangeMetrics() {
+    final value = MediaQuery.of(context).viewInsets.bottom;
+    if (value > 0) {
+      _scrollController.position
+          .jumpTo(_scrollController.position.maxScrollExtent);
+      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+    }
+    super.didChangeMetrics();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    inputFieldNode?.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Messages")),
+      appBar: AppBar(
+        title: Text("Messages"),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Log Out',
+            onPressed: () {
+              Provider.of<UserToken>(context, listen: false).removeToken();
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
             Expanded(
-              child: SingleChildScrollView(
-                reverse: true,
-                child: ListView.builder(
-                  controller: _scrollController,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  //controller: _animateToLast,
-                  itemBuilder: _singleMessage,
-                  itemCount: 20,
-                  //itemCount: messageList.length,
-                ),
+              child: ListView.builder(
+                controller: _scrollController,
+                itemBuilder: _singleMessage,
+                itemCount: messageList.length,
               ),
             ),
             Form(
@@ -59,8 +88,15 @@ class _MessageViewState extends State<MessageView> {
                   Expanded(
                     child: TextFormField(
                       controller: _textController,
+//                      focusNode: inputFieldNode,
+                      onFieldSubmitted: (_) {
+                        sendMessage();
+                        _textController.text = "";
+//                        FocusScope.of(context).requestFocus(inputFieldNode);
+                      },
+                      onTap: () => goToEndList(),
                       decoration: InputDecoration(
-                        labelText: "Envoyer un message",
+                        labelText: "Send message",
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             width: 4.0,
@@ -83,19 +119,10 @@ class _MessageViewState extends State<MessageView> {
                   )
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
-    );
-  }
-
-  _animateToLast() {
-    debugPrint('scroll down');
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      curve: Curves.easeOut,
-      duration: const Duration(milliseconds: 500),
     );
   }
 
@@ -105,28 +132,43 @@ class _MessageViewState extends State<MessageView> {
       final message = messageController.createNewMessageFromString(
           _textController.text, user);
       webSocketController.sendMessage(message);
+      goToEndList();
     }
+    _textController.text = "";
+  }
+
+  void goToEndList() {
+    if (_scrollController.position.pixels == _oldPositionScrollMax) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 250),
+      );
+    }
+    _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
   }
 
   Widget _singleMessage(BuildContext context, int num) {
+    SchedulerBinding.instance?.addPostFrameCallback((_) => goToEndList());
     return Card(
       child: Container(
         padding: EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                //Text(messageList[num].owner.username),
-                Text("username_${num + 1}"),
-                Spacer(),
-                //Text(messageList[num].owner.username),
-                Text("12:34"),
-              ],
+            Container(
+              padding: EdgeInsets.only(bottom: 10.0),
+              child: Row(
+                children: [
+                  Text(
+                    messageList[num].owner.username,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Spacer(),
+                ],
+              ),
             ),
-            //Text(messageList[num].message),
-            Text(
-                "Un message ecrijnie ndcjiwedncijwn cijedncijene t par username_${num + 1}")
+            Text(messageList[num].message)
           ],
         ),
       ),

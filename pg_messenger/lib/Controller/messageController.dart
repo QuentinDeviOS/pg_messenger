@@ -25,10 +25,7 @@ class MessageController {
   void messageStream(Future<IOWebSocketChannel> futureChannel) async {
     final channel = await futureChannel;
     channel.stream.listen((message) {
-      print("receive data");
-      print(message.toString());
       hasMessage(message.toString());
-      print("received data"); //DEBUG
     });
   }
 
@@ -42,7 +39,6 @@ class MessageController {
       messageList = [];
       for (var messageJson in messageListJson) {
         messageList.add(Message.fromJson(messageJson));
-        print("add message to messageList on controller");
       }
     }
     return false;

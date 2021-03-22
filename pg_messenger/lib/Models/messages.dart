@@ -16,3 +16,4 @@ class Message {
       : _message = json["subject"],
         _owner = User(json["userID"], json["username"]);
 }
+
