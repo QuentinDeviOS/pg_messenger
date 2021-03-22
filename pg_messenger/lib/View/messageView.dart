@@ -9,6 +9,10 @@ import 'package:pg_messenger/Models/user_token.dart';
 import 'package:provider/provider.dart';
 
 class MessageView extends StatefulWidget {
+  final UserToken userToken;
+
+  const MessageView({Key? key, required this.userToken}) : super(key: key);
+
   @override
   _MessageViewState createState() => _MessageViewState();
 }

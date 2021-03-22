@@ -6,15 +6,15 @@ class Constant {
   //static const TEST_USER_TOKEN = "oPIbqQKdMI5F91OZaPi0Qw==";
 
   /// CEDRIC
-  //static const URL_WEB_SERVER =
-      "ws://localhost:8080/messages/message-web-socket";
+  //static const URL_WEB_SERVER = "ws://localhost:8080/messages/message-web-socket";
   //static const TEST_USER_USERNAME = "qwerty";
   //static const TEST_USER_ID = "0050608F-68BD-47FB-8049-C05716540BCF";
   //static const TEST_USER_TOKEN = "6pGhq3y1KVweB+SOSW0aMw==";
 
   /// LIVE
-  static const URL_WEB_SERVER = "wss://skyisthelimit.net:443/messages/message-web-socket";
-  static const TEST_USER_USERNAME = "qwerty";
-  static const TEST_USER_ID = "E8E80012-0D3F-4914-8685-4132A4B2BFA4";
-  static const TEST_USER_TOKEN = "woe5f0zuvQKQgxrFerh19Q==";
+  static const URL_WEB_SERVER =
+      "wss://skyisthelimit.net:443/messages/message-web-socket";
+  static const TEST_USER_USERNAME = "Quentin";
+  static const TEST_USER_ID = "27980E51-644B-49B9-9028-B1DB3C43C481";
+  static const TEST_USER_TOKEN = "D8uxhx2QisHW2RRnwtBLWQ==";
 }
