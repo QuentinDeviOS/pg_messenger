@@ -148,7 +148,6 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   }
 
   goToEndList() async {
-    print("before");
     if (_scrollController.position.pixels == _oldPositionScrollMax) {
       _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
       await animatedToEndList();
@@ -163,7 +162,6 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   Widget _singleMessage(BuildContext context, int num) {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      print(num);
       goToEndList();
     });
     return Card(
