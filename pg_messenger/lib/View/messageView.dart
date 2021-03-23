@@ -139,7 +139,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     _textController.text = "";
   }
 
-  void animatedToEndList() async {
+  Future<void> animatedToEndList() async {
     return await _scrollController.animateTo(
       _scrollController.position.maxScrollExtent,
       curve: Curves.easeOut,
@@ -147,19 +147,25 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     );
   }
 
-  goToEndList() {
+  goToEndList() async {
+    print("before");
     if (_scrollController.position.pixels == _oldPositionScrollMax) {
       _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-      animatedToEndList();
+      await animatedToEndList();
     }
+    if (_scrollController.position.pixels !=
+            _scrollController.position.maxScrollExtent &&
+        _scrollController.position.pixels == _oldPositionScrollMax) {
+      await goToEndList();
+    }
+    return;
   }
 
   Widget _singleMessage(BuildContext context, int num) {
-    SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       print(num);
       goToEndList();
     });
-
     return Card(
       child: Container(
         padding: EdgeInsets.all(20),
