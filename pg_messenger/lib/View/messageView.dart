@@ -129,9 +129,6 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         curve: Curves.easeOut,
         duration: const Duration(milliseconds: 250),
       );
-      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-    } else {
-      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
     }
     if (_scrollController.position.pixels != _scrollController.position.maxScrollExtent && _scrollController.position.pixels == _oldPositionScrollMax) {
       await goToEndList();

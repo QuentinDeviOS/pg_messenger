@@ -21,9 +21,7 @@ class MyApp extends StatelessWidget {
       home: MyHomePage(
         title: title,
         //On se connecter au WebSocket
-        channel: IOWebSocketChannel.connect(
-            'ws://10.0.2.2:888/messages/message-web-socket',
-            headers: header),
+        channel: IOWebSocketChannel.connect('ws://10.0.2.2:888/messages/message-web-socket', headers: header),
       ),
     );
   }
@@ -33,8 +31,7 @@ class MyHomePage extends StatefulWidget {
   final String? title;
   final WebSocketChannel? channel;
 
-  MyHomePage({Key? key, @required this.title, @required this.channel})
-      : super(key: key);
+  MyHomePage({Key? key, @required this.title, @required this.channel}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -65,9 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 //snapshot correspond à un envoie de donnée depuis le serveur peut importe ce qu'il envoie, c'est recu ici
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 24.0),
-                  child: Text(snapshot.hasData
-                      ? '${snapshot.data.toString()}'
-                      : ''), //Et du coup on l'affiche ici
+                  child: Text(snapshot.hasData ? '${snapshot.data.toString()}' : ''), //Et du coup on l'affiche ici
                 );
               },
             )
@@ -84,14 +79,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {
-      final user = User("BD43343F-C0D5-4B40-A02C-03900045C770",
-          "nicolas"); //on récupére l'utilisateur en cours
-      final message = Message(_controller.text, user,
-          null); //on crée un Objet message depuis l'utilisateur en cours et le message récupérer
-      final messageJson =
-          JsonEncoder().convert(message.toJson()); //on converti le tous en json
-      widget.channel?.sink
-          .add(messageJson); //et on envoie ca au serveur par le WebSocket
+      final user = User("BD43343F-C0D5-4B40-A02C-03900045C770", "nicolas"); //on récupére l'utilisateur en cours
+      final message = Message(_controller.text, user); //on crée un Objet message depuis l'utilisateur en cours et le message récupérer
+      final messageJson = JsonEncoder().convert(message.toJson()); //on converti le tous en json
+      widget.channel?.sink.add(messageJson); //et on envoie ca au serveur par le WebSocket
     }
   }
 
