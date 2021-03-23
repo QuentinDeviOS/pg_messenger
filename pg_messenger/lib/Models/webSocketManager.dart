@@ -12,6 +12,7 @@ class WebSocketManager {
     header["Authorization"] = token /*token*/; //implementer le token user
     var channel =
         IOWebSocketChannel.connect(Constant.URL_WEB_SERVER, headers: header);
+    _onPing(channel);
     return channel;
   }
 
@@ -26,6 +27,11 @@ class WebSocketManager {
     channel.sink.add(text);
   }
 
-  void newMessageNotification(
-      Future<IOWebSocketChannel> channel, Message message) {}
+  _onPing(IOWebSocketChannel channel) {
+    channel.stream.listen((event) {
+      if (event.toString() == "Ping") {
+        channel.sink.add("Pong");
+      }
+    });
+  }
 }
