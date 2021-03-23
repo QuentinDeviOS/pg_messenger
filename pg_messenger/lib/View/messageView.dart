@@ -3,8 +3,6 @@ import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Controller/messageController.dart';
 import 'package:pg_messenger/Models/messages.dart';
 import 'package:pg_messenger/Models/user.dart';
-import 'package:pg_messenger/Models/user_token.dart';
-import 'package:provider/provider.dart';
 
 class MessageView extends StatefulWidget {
   @override
@@ -37,10 +35,12 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   @override
   void didChangeMetrics() {
     final value = MediaQuery.of(context).viewInsets.bottom;
+    print("Value: $value");
     if (value > 0) {
       _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
       _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
     }
+
     super.didChangeMetrics();
   }
 
@@ -56,15 +56,6 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     return Scaffold(
       appBar: AppBar(
         title: Text("Messages"),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Log Out',
-            onPressed: () {
-              Provider.of<UserToken>(context, listen: false).removeToken();
-            },
-          ),
-        ],
       ),
       body: SafeArea(
         child: Column(
@@ -82,15 +73,16 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                   Expanded(
                     child: TextFormField(
                       controller: _textController,
-//                      focusNode: inputFieldNode,
+                      focusNode: _inputFieldNode,
                       onFieldSubmitted: (_) {
+                        print("submited");
                         sendMessage();
                         _textController.text = "";
-//                        FocusScope.of(context).requestFocus(inputFieldNode);
+                        FocusScope.of(context).requestFocus(_inputFieldNode);
                       },
-                      onTap: () => goToEndList(),
+                      onTap: () {},
                       decoration: InputDecoration(
-                        labelText: "Send message",
+                        labelText: "Envoyer un message",
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             width: 4.0,
@@ -137,6 +129,9 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         curve: Curves.easeOut,
         duration: const Duration(milliseconds: 250),
       );
+      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+    } else {
+      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
     }
     if (_scrollController.position.pixels != _scrollController.position.maxScrollExtent && _scrollController.position.pixels == _oldPositionScrollMax) {
       await goToEndList();
@@ -154,17 +149,12 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: EdgeInsets.only(bottom: 10.0),
-              child: Row(
-                children: [
-                  Text(
-                    _messageList[num].owner.username,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Spacer(),
-                ],
-              ),
+            Row(
+              children: [
+                Text(_messageList[num].owner.username),
+                Spacer(),
+                Text(_messageList[num].timestamp.toString()),
+              ],
             ),
             Text(_messageList[num].message)
           ],

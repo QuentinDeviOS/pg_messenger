@@ -3,7 +3,7 @@ import 'package:pg_messenger/Models/user.dart';
 class Message {
   final String _message;
   final User _owner;
-  final double? _timestamp;
+  double? _timestamp;
 
   String get message => _message;
   User get owner => _owner;

@@ -16,7 +16,6 @@ class User {
   String get id => _id;
 
   User(this._id, this._username);
-
   User.fromJson(Map<String, dynamic> json)
       : this._username = json["name"],
         this._id = json["id"];
