@@ -53,10 +53,10 @@ class Login extends StatelessWidget {
                 child: Text('Override Log In (testing)'),
                 onPressed: () {
                   context.read<UserToken>().setToken(
-                    Constant.TEST_USER_TOKEN,
-                    Constant.TEST_USER_ID,
-                    Constant.TEST_USER_USERNAME,
-                  );
+                        Constant.TEST_USER_TOKEN,
+                        Constant.TEST_USER_ID,
+                        Constant.TEST_USER_USERNAME,
+                      );
                 },
               ),
             ),
@@ -75,6 +75,7 @@ class Login extends StatelessWidget {
     final client = http_auth.BasicAuthClient(username, password);
     final response = await client.post(uri);
     if (response.statusCode == 200) {
+      print(UserToken.fromJson(jsonDecode(response.body)));
       return UserToken.fromJson(jsonDecode(response.body));
     } else {
       throw Exception("Error when loading data");

@@ -11,7 +11,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<UserToken>(builder: (context, userToken, _) {
       return Container(
-        child: (userToken.toString() != "") ? Connection() : MessageView(),
+        child: (userToken.toString() == "") ? Connection() : MessageView(),
       );
     });
   }

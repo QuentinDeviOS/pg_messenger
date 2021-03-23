@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Constants/constant.dart';
 import 'package:flutter/scheduler.dart';
@@ -20,22 +22,22 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   final ScrollController _scrollController = ScrollController();
   double? _oldPositionScrollMax;
   FocusNode? inputFieldNode;
-
-  List<Message> get messageList {
-    return messageController.messageList;
-  }
+  List<Message> _messageList = [];
+  bool onFirstLoad = true;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addObserver(this);
     //inputFieldNode = FocusNode();
-    messageController.messageStream(webSocketController.channel);
-    messageController.controller.stream.listen((event) {
-      setState(() {
-        messageList;
-      });
-    });
+    messageController.messageStream(
+      webSocketController.channel,
+      onMessageListLoaded: (messageList) {
+        setState(() {
+          this._messageList = messageList;
+        });
+      },
+    );
     _oldPositionScrollMax = 0;
   }
 
@@ -79,7 +81,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
               child: ListView.builder(
                 controller: _scrollController,
                 itemBuilder: _singleMessage,
-                itemCount: messageList.length,
+                itemCount: _messageList.length,
               ),
             ),
             Form(
@@ -137,19 +139,27 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     _textController.text = "";
   }
 
-  void goToEndList() {
+  void animatedToEndList() async {
+    return await _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      curve: Curves.easeOut,
+      duration: const Duration(milliseconds: 250),
+    );
+  }
+
+  goToEndList() {
     if (_scrollController.position.pixels == _oldPositionScrollMax) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        curve: Curves.easeOut,
-        duration: const Duration(milliseconds: 250),
-      );
+      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+      animatedToEndList();
     }
-    _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
   }
 
   Widget _singleMessage(BuildContext context, int num) {
-    SchedulerBinding.instance?.addPostFrameCallback((_) => goToEndList());
+    SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
+      print(num);
+      goToEndList();
+    });
+
     return Card(
       child: Container(
         padding: EdgeInsets.all(20),
@@ -161,14 +171,14 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
               child: Row(
                 children: [
                   Text(
-                    messageList[num].owner.username,
+                    _messageList[num].owner.username,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Spacer(),
                 ],
               ),
             ),
-            Text(messageList[num].message)
+            Text(_messageList[num].message)
           ],
         ),
       ),

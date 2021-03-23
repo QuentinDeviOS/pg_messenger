@@ -6,40 +6,32 @@ import 'package:pg_messenger/Models/user.dart';
 import 'package:web_socket_channel/io.dart';
 
 class MessageController {
-  StreamController<List<Message>> controller =
-      StreamController<List<Message>>();
   List<Message> _messageList = [];
-  List<Message> get messageList {
-    return _messageList;
+
+  Message createNewMessageFromString(String messageString, User user) {
+    return Message(messageString, user, null);
   }
 
-  set messageList(List<Message> messageList) {
-    _messageList = messageList;
-    controller.add(messageList);
-  }
-
-  MessageController() {
-    controller.add(messageList);
-  }
-
-  void messageStream(Future<IOWebSocketChannel> futureChannel) async {
+  void messageStream(Future<IOWebSocketChannel> futureChannel,
+      {required Function(List<Message> messageList)
+          onMessageListLoaded}) async {
     final channel = await futureChannel;
-    channel.stream.listen((message) {
-      hasMessage(message.toString());
+    channel.stream.listen((dataReceived) {
+      if (hasMessages(dataReceived)) {
+        onMessageListLoaded(_messageList);
+      }
     });
   }
 
-  Message createNewMessageFromString(String messageString, User user) {
-    return Message(messageString, user);
-  }
-
-  bool hasMessage(String messageReceived) {
-    final List<dynamic> messageListJson = jsonDecode(messageReceived);
+  bool hasMessages(dynamic messageReceived) {
+    final List<dynamic> messageListJson =
+        jsonDecode(messageReceived.toString());
     if (messageListJson.isNotEmpty) {
-      messageList = [];
+      _messageList = [];
       for (var messageJson in messageListJson) {
-        messageList.add(Message.fromJson(messageJson));
+        _messageList.add(Message.fromJson(messageJson));
       }
+      return true;
     }
     return false;
   }
