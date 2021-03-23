@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Constants/constant.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:pg_messenger/Controller/WebSocketController.dart';
 import 'package:pg_messenger/Controller/messageController.dart';
 import 'package:pg_messenger/Models/messages.dart';
@@ -16,22 +15,19 @@ class MessageView extends StatefulWidget {
 }
 
 class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
-  final webSocketController = WebSocketController();
-  final messageController = MessageController();
+  final _messageController = MessageController();
   final _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   double? _oldPositionScrollMax;
-  FocusNode? inputFieldNode;
+  FocusNode? _inputFieldNode;
   List<Message> _messageList = [];
-  bool onFirstLoad = true;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addObserver(this);
     //inputFieldNode = FocusNode();
-    messageController.messageStream(
-      webSocketController.channel,
+    _messageController.messageStream(
       onMessageListLoaded: (messageList) {
         setState(() {
           this._messageList = messageList;
@@ -45,8 +41,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void didChangeMetrics() {
     final value = MediaQuery.of(context).viewInsets.bottom;
     if (value > 0) {
-      _scrollController.position
-          .jumpTo(_scrollController.position.maxScrollExtent);
+      _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
       _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
     }
     super.didChangeMetrics();
@@ -55,7 +50,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance?.removeObserver(this);
-    inputFieldNode?.dispose();
+    _inputFieldNode?.dispose();
     super.dispose();
   }
 
@@ -131,30 +126,22 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
       final user = User(Constant.TEST_USER_ID, Constant.TEST_USER_USERNAME);
-      final message = messageController.createNewMessageFromString(
-          _textController.text, user);
-      webSocketController.sendMessage(message);
-      goToEndList();
+      final message = _messageController.createNewMessageFromString(_textController.text, user);
+      _messageController.sendMessage(message);
     }
     _textController.text = "";
-  }
-
-  Future<void> animatedToEndList() async {
-    return await _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      curve: Curves.easeOut,
-      duration: const Duration(milliseconds: 250),
-    );
   }
 
   goToEndList() async {
     if (_scrollController.position.pixels == _oldPositionScrollMax) {
       _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-      await animatedToEndList();
+      await _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 250),
+      );
     }
-    if (_scrollController.position.pixels !=
-            _scrollController.position.maxScrollExtent &&
-        _scrollController.position.pixels == _oldPositionScrollMax) {
+    if (_scrollController.position.pixels != _scrollController.position.maxScrollExtent && _scrollController.position.pixels == _oldPositionScrollMax) {
       await goToEndList();
     }
     return;

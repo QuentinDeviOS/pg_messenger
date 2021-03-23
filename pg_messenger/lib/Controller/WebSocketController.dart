@@ -9,8 +9,7 @@ class WebSocketController {
   late bool haveNewMessage;
 
   WebSocketController() {
-    channel =
-        webSocketManager.connectToWS("Bearer ${Constant.TEST_USER_TOKEN}");
+    channel = webSocketManager.connectToWS("Bearer ${Constant.TEST_USER_TOKEN}");
     haveNewMessage = webSocketManager.messageNotificationHasChanged;
     sendText("get-all-messages");
   }
@@ -21,5 +20,12 @@ class WebSocketController {
 
   void sendText(String text) {
     webSocketManager.sendText(channel, text);
+  }
+
+  onReceive({required Function(dynamic data) onReceiveData}) {
+    webSocketManager.launchStream(
+      channel,
+      onReceive: (data) => onReceiveData(data),
+    );
   }
 }
