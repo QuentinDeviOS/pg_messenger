@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:pg_messenger/Constants/constant.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:pg_messenger/Controller/WebSocketController.dart';
-import 'package:pg_messenger/Controller/messageController.dart';
-import 'package:pg_messenger/Models/messages.dart';
+import 'package:pg_messenger/Controller/web_socket_controller.dart';
+import 'package:pg_messenger/Controller/message_controller.dart';
+import 'package:pg_messenger/Models/message.dart';
+import 'package:pg_messenger/Models/owner.dart';
+import 'package:pg_messenger/Models/global_storage.dart';
 import 'package:pg_messenger/Models/user.dart';
-import 'package:pg_messenger/Models/token.dart';
 import 'package:provider/provider.dart';
 
 class MessageView extends StatefulWidget {
@@ -14,7 +14,7 @@ class MessageView extends StatefulWidget {
 }
 
 class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
-  final webSocketController = WebSocketController();
+  final webSocketController = WebSocketController("");
   final messageController = MessageController();
   final _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -67,7 +67,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             icon: const Icon(Icons.logout),
             tooltip: 'Log Out',
             onPressed: () {
-              Provider.of<Token>(context, listen: false).logout();
+              Provider.of<GlobalStorage>(context, listen: false).logout();
             },
           ),
         ],
@@ -128,9 +128,12 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
-      final user = User(Constant.TEST_USER_ID, Constant.TEST_USER_USERNAME);
+      final owner = Owner(
+        Provider.of<GlobalStorage>(context, listen: false).id,
+        Provider.of<GlobalStorage>(context, listen: false).username,
+      );
       final message = messageController.createNewMessageFromString(
-          _textController.text, user);
+          _textController.text, owner);
       webSocketController.sendMessage(message);
       goToEndList();
     }
@@ -161,7 +164,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
               child: Row(
                 children: [
                   Text(
-                    messageList[num].owner.username,
+                    messageList[num].ownerId.name.toString(),
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Spacer(),

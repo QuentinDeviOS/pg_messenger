@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:pg_messenger/Models/messages.dart';
-import 'package:pg_messenger/Models/user.dart';
+import 'package:pg_messenger/Models/message.dart';
+import 'package:pg_messenger/Models/owner.dart';
 import 'package:web_socket_channel/io.dart';
 
 class MessageController {
@@ -29,8 +28,8 @@ class MessageController {
     });
   }
 
-  Message createNewMessageFromString(String messageString, User user) {
-    return Message(messageString, user);
+  Message createNewMessageFromString(String messageString, Owner owner) {
+    return Message(messageString, owner, null, "");
   }
 
   bool hasMessage(String messageReceived) {

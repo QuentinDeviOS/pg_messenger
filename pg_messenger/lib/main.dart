@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pg_messenger/Models/token.dart';
-import 'package:pg_messenger/View/home.dart';
+import 'package:pg_messenger/Models/global_storage.dart';
+import 'package:pg_messenger/Models/user.dart';
+import 'package:pg_messenger/View/home_view.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -18,13 +19,13 @@ class MyApp extends StatelessWidget {
         }
       },
       child: ChangeNotifierProvider(
-        create: (context) => Token(),
+        create: (context) => GlobalStorage(User("","", DateTime.now())),
         child: MaterialApp(
-          title: 'Flutter Demo',
+          title: 'Purple Giraffe Messenger',
           theme: ThemeData(
             primarySwatch: purpleGiraffe,
           ),
-          home: Home(),
+          home: HomeView(),
         ),
       ),
     );

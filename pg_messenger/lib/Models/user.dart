@@ -1,25 +1,22 @@
-import 'package:json_annotation/json_annotation.dart';
-
-/// This allows the `User` class to access private members in
-/// the generated file. The value for this is *.g.dart, where
-/// the star denotes the source file name.
-part 'user.g.dart';
-
-/// An annotation for the code generator to know that this class needs the
-/// JSON serialization logic to be generated.
-@JsonSerializable()
 class User {
   final String _username;
   final String _id;
+  final DateTime? _createdAt;
 
   String get username => _username;
   String get id => _id;
+  DateTime? get createdAt => _createdAt;
 
-  User(this._id, this._username);
+  const User(this._id, this._username, this._createdAt);
 
   User.fromJson(Map<String, dynamic> json)
       : this._username = json["name"],
-        this._id = json["id"];
+        this._id = json["id"],
+        this._createdAt = json["createdAt"];
 
-  Map<String, dynamic> toJSON() => {'username': username, 'id': id};
+  Map<String, dynamic> toJSON() => {
+        'name': username,
+        'id': id,
+        'createdAt': createdAt,
+      };
 }
