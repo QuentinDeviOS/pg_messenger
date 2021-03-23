@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pg_messenger/Models/global_storage.dart';
-import 'package:pg_messenger/Models/user.dart';
-import 'package:pg_messenger/View/home_view.dart';
-import 'package:provider/provider.dart';
+import 'package:pg_messenger/View/home.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,23 +8,12 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScopeNode currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
-        }
-      },
-      child: ChangeNotifierProvider(
-        create: (context) => GlobalStorage(User("","", DateTime.now())),
-        child: MaterialApp(
-          title: 'Purple Giraffe Messenger',
-          theme: ThemeData(
-            primarySwatch: purpleGiraffe,
-          ),
-          home: HomeView(),
-        ),
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: purpleGiraffe,
       ),
+      home: Home(),
     );
   }
 }
