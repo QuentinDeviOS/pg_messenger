@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class Register extends StatefulWidget {
+class RegisterView extends StatefulWidget {
   @override
-  _RegisterState createState() => _RegisterState();
+  _RegisterViewState createState() => _RegisterViewState();
 }
 
-class _RegisterState extends State<Register> {
+class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

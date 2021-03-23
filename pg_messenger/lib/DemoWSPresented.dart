@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:pg_messenger/Models/message.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-
-import 'Models/Messages.dart';
 import 'Models/user.dart';
 
 void main() => runApp(MyApp());
@@ -83,16 +81,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _sendMessage() {
-    if (_controller.text.isNotEmpty) {
-      final user = User("BD43343F-C0D5-4B40-A02C-03900045C770",
-          "nicolas"); //on récupére l'utilisateur en cours
-      final message = Message(_controller.text, user,
-          null); //on crée un Objet message depuis l'utilisateur en cours et le message récupérer
-      final messageJson =
-          JsonEncoder().convert(message.toJson()); //on converti le tous en json
-      widget.channel?.sink
-          .add(messageJson); //et on envoie ca au serveur par le WebSocket
-    }
+    // if (_controller.text.isNotEmpty) {
+    //   final user = User("BD43343F-C0D5-4B40-A02C-03900045C770",
+    //       "nicolas", DateTime.now()); //on récupére l'utilisateur en cours
+    //   final message = Message(_controller.text, owner); //on crée un Objet message depuis l'utilisateur en cours et le message récupérer
+    //   final messageJson =
+    //       JsonEncoder().convert(message.toJson()); //on converti le tous en json
+    //   widget.channel?.sink
+    //       .add(messageJson); //et on envoie ca au serveur par le WebSocket
+    // }
   }
 
   @override
