@@ -8,6 +8,7 @@ class WebSocketController {
   late bool haveNewMessage;
 
   WebSocketController(String token) {
+    
     channel = webSocketManager.connectToWS("Bearer $token");
     haveNewMessage = webSocketManager.messageNotificationHasChanged;
     sendText("get-all-messages");

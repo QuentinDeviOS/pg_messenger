@@ -29,6 +29,7 @@ dependencies:
   http: ^0.13.1
   web_socket_channel: ^2.0.0
   provider: ^5.0.0
+  shared_preferences: ^2.0.5
   cupertino_icons: ^1.0.2
   http_auth: ^1.0.0
 
