@@ -1,10 +1,11 @@
 class Constant {
   // NICO
-  static const URL_WEB_SERVER = "wss://skyisthelimit.net:443/messages/message-web-socket";
-  static const TEST_USER_USERNAME = "nicolas";
-  static const TEST_USER_LOGIN_PASSWORD = "nicolas";
-  static const TEST_USER_ID = "9D8DC999-76E7-4D75-84A4-06B455D674AE";
-  static const TEST_USER_TOKEN = "LAcRTyT4vc44xtaguFJw1Q==";
+  static const URL_WEB_SERVER =
+      "wss://skyisthelimit.net:443/messages/message-web-socket";
+  static const TEST_USER_USERNAME = "MartinBis";
+  static const TEST_USER_LOGIN_PASSWORD = "monsieur";
+  static const TEST_USER_ID = "C28DEDF9-3F51-44B5-91F1-402EAFDFDC38";
+  static const TEST_USER_TOKEN = "e+y88Ag3wOOgrvmxugxJzg==";
 
   /// CEDRIC
   // static const URL_WEB_SERVER =

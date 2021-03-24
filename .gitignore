@@ -1,3 +1,4 @@
 
 *.lock
 constant.dart
+pg_messenger/lib/Constants/constant.dart
