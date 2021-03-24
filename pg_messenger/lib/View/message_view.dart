@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:pg_messenger/Controller/web_socket_controller.dart';
-import 'package:pg_messenger/Controller/message_controller.dart';
-import 'package:pg_messenger/Models/message.dart';
-import 'package:pg_messenger/Models/owner.dart';
-import 'package:pg_messenger/Models/global_storage.dart';
+import 'package:pg_messenger/Constants/constant.dart';
+import 'package:pg_messenger/Controller/messageController.dart';
+import 'package:pg_messenger/Models/messages.dart';
 import 'package:pg_messenger/Models/user.dart';
-import 'package:provider/provider.dart';
 
 class MessageView extends StatefulWidget {
   @override
@@ -14,46 +10,44 @@ class MessageView extends StatefulWidget {
 }
 
 class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
-  final webSocketController = WebSocketController("");
-  final messageController = MessageController();
+  final _messageController = MessageController();
   final _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   double? _oldPositionScrollMax;
-  FocusNode? inputFieldNode;
-
-  List<Message> get messageList {
-    return messageController.messageList;
-  }
+  FocusNode? _inputFieldNode;
+  List<Message> _messageList = [];
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addObserver(this);
     //inputFieldNode = FocusNode();
-    messageController.messageStream(webSocketController.channel);
-    messageController.controller.stream.listen((event) {
-      setState(() {
-        messageList;
-      });
-    });
+    _messageController.messageStream(
+      onMessageListLoaded: (messageList) {
+        setState(() {
+          this._messageList = messageList;
+        });
+      },
+    );
     _oldPositionScrollMax = 0;
   }
 
   @override
   void didChangeMetrics() {
     final value = MediaQuery.of(context).viewInsets.bottom;
+    print("Value: $value");
     if (value > 0) {
-      _scrollController.position
-          .jumpTo(_scrollController.position.maxScrollExtent);
+      _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
       _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
     }
+
     super.didChangeMetrics();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance?.removeObserver(this);
-    inputFieldNode?.dispose();
+    _inputFieldNode?.dispose();
     super.dispose();
   }
 
@@ -62,15 +56,6 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     return Scaffold(
       appBar: AppBar(
         title: Text("Messages"),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Log Out',
-            onPressed: () {
-              Provider.of<GlobalStorage>(context, listen: false).logout();
-            },
-          ),
-        ],
       ),
       body: SafeArea(
         child: Column(
@@ -79,7 +64,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
               child: ListView.builder(
                 controller: _scrollController,
                 itemBuilder: _singleMessage,
-                itemCount: messageList.length,
+                itemCount: _messageList.length,
               ),
             ),
             Form(
@@ -88,15 +73,16 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                   Expanded(
                     child: TextFormField(
                       controller: _textController,
-//                      focusNode: inputFieldNode,
+                      focusNode: _inputFieldNode,
                       onFieldSubmitted: (_) {
+                        print("submited");
                         sendMessage();
                         _textController.text = "";
-//                        FocusScope.of(context).requestFocus(inputFieldNode);
+                        FocusScope.of(context).requestFocus(_inputFieldNode);
                       },
-                      onTap: () => goToEndList(),
+                      onTap: () {},
                       decoration: InputDecoration(
-                        labelText: "Send message",
+                        labelText: "Envoyer un message",
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             width: 4.0,
@@ -128,50 +114,46 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
-      final owner = Owner(
-        Provider.of<GlobalStorage>(context, listen: false).id,
-        Provider.of<GlobalStorage>(context, listen: false).username,
-      );
-      final message = messageController.createNewMessageFromString(
-          _textController.text, owner);
-      webSocketController.sendMessage(message);
-      goToEndList();
+      final user = User(Constant.TEST_USER_ID, Constant.TEST_USER_USERNAME);
+      final message = _messageController.createNewMessageFromString(_textController.text, user);
+      _messageController.sendMessage(message);
     }
     _textController.text = "";
   }
 
-  void goToEndList() {
+  goToEndList() async {
     if (_scrollController.position.pixels == _oldPositionScrollMax) {
-      _scrollController.animateTo(
+      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+      await _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
         curve: Curves.easeOut,
         duration: const Duration(milliseconds: 250),
       );
     }
-    _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+    if (_scrollController.position.pixels != _scrollController.position.maxScrollExtent && _scrollController.position.pixels == _oldPositionScrollMax) {
+      await goToEndList();
+    }
+    return;
   }
 
   Widget _singleMessage(BuildContext context, int num) {
-    SchedulerBinding.instance?.addPostFrameCallback((_) => goToEndList());
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      goToEndList();
+    });
     return Card(
       child: Container(
         padding: EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: EdgeInsets.only(bottom: 10.0),
-              child: Row(
-                children: [
-                  Text(
-                    messageList[num].ownerId.name.toString(),
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Spacer(),
-                ],
-              ),
+            Row(
+              children: [
+                Text(_messageList[num].owner.username),
+                Spacer(),
+                Text(_messageList[num].timestamp.toString()),
+              ],
             ),
-            Text(messageList[num].message)
+            Text(_messageList[num].message)
           ],
         ),
       ),
