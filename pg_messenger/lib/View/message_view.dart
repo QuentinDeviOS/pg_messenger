@@ -127,7 +127,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
-      final user = Owner(Constant.TEST_USER_USERNAME, Constant.TEST_USER_ID);
+      final user =
+          User(Constant.TEST_USER_ID, Constant.TEST_USER_USERNAME, null);
       final message = _messageController.createNewMessageFromString(
           _textController.text, user);
       _messageController.sendMessage(message);
@@ -166,11 +167,9 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
               padding: EdgeInsets.only(bottom: 10.0),
               child: Row(
                 children: [
-                  Text(
-                    _messageList[num].ownerId.name.toString(),
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  Text(_messageList[num].owner.username),
                   Spacer(),
+                  Text(_messageList[num].timestamp.toString()),
                 ],
               ),
             ),

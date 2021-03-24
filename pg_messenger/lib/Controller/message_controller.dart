@@ -9,8 +9,8 @@ class MessageController {
   List<Message> _messageList = [];
   final WebSocketController _webSocketController = WebSocketController();
 
-  Message createNewMessageFromString(String messageString, Owner owner) {
-    return Message(messageString, owner, null, ""); //manque id ?
+  Message createNewMessageFromString(String messageString, User user) {
+    return Message(messageString, user, null); //manque id ?
   }
 
   void messageStream(

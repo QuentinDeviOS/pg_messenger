@@ -1,31 +1,21 @@
-import 'package:pg_messenger/Models/owner.dart';
+import 'package:pg_messenger/Models/user.dart';
 
 class Message {
   final String _message;
-  final Owner _owner;
-  final DateTime? _timestamp;
-  final String _id;
+  final User _owner;
+  double? _timestamp;
 
   String get message => _message;
-  Owner get ownerId => _owner;
-  DateTime? get timestamp => _timestamp;
-  String get id => _id;
+  User get owner => _owner;
+  double? get timestamp => _timestamp;
 
-  const Message(this._message, this._owner, this._timestamp, this._id);
+  Message(this._message, this._owner, this._timestamp);
 
-  Map<String, dynamic> toJson() => {
-        'subject': message,
-        'owner': _owner.toJson(),
-        'timestamp': timestamp,
-        'id': id,
-      };
+  Map<String, dynamic> toJson() =>
+      {'subject': message, 'owner': _owner.toJSON()};
 
   Message.fromJson(Map<String, dynamic> json)
       : _message = json["subject"],
-        _owner = Owner(
-          json["owner"]["id"],
-          null,
-        ),
-        _timestamp = DateTime.parse(json["createdAt"]),
-        _id = json["id"];
+        _owner = User(json["userID"], json["username"], null),
+        _timestamp = json["timestamp"];
 }
