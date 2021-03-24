@@ -6,8 +6,8 @@ import 'package:pg_messenger/Models/message.dart';
 // import 'package:pg_messenger/Models/owner.dart';
 import 'package:pg_messenger/Models/global_storage.dart';
 import 'package:pg_messenger/Constants/constant.dart';
-import 'package:pg_messenger/Models/owner.dart';
-// import 'package:pg_messenger/Models/user.dart';
+//import 'package:pg_messenger/Models/owner.dart';
+import 'package:pg_messenger/Models/user.dart';
 import 'package:provider/provider.dart';
 
 class MessageView extends StatefulWidget {
