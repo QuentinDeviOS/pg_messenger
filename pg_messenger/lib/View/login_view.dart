@@ -6,6 +6,8 @@ import 'package:pg_messenger/Models/global_storage.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:provider/provider.dart';
 
+import 'message_view.dart';
+
 class LoginView extends StatelessWidget {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -64,7 +66,7 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  Future<UserToken> _loginUser(context) async {
+  Future<User?> _loginUser(context) async {
     String username = _usernameController.text;
     String password = _passwordController.text;
 
@@ -74,20 +76,14 @@ class LoginView extends StatelessWidget {
       final response = await client.post(uri);
       if (response.statusCode == 200) {
         print(jsonDecode(response.body));
-        UserToken userToken = UserToken.fromJson(jsonDecode(response.body));
-        Provider.of<GlobalStorage>(context, listen: false).login(userToken.token);
-        return UserToken(
-            userToken.token,
-            User(
-              userToken.user.id,
-              userToken.user.id,
-              userToken.user.createdAt,
-            ));
+        User user = User.fromJsonResponseLogin(jsonDecode(response.body));
+        print(user.token);
+        await Navigator.push(context, MaterialPageRoute(builder: (context) => MessageView(user)));
       } else {
         _wrongLogin(context);
       }
     }
-    return UserToken("", User("", "", DateTime.now()));
+    return null;
   }
 
   _wrongLogin(BuildContext context) {

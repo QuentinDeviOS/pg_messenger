@@ -18,15 +18,12 @@ class MyApp extends StatelessWidget {
           currentFocus.unfocus();
         }
       },
-      child: ChangeNotifierProvider(
-        create: (context) => GlobalStorage(User("","", DateTime.now())),
-        child: MaterialApp(
-          title: 'Purple Giraffe Messenger',
-          theme: ThemeData(
-            primarySwatch: purpleGiraffe,
-          ),
-          home: HomeView(),
+      child: MaterialApp(
+        title: 'Purple Giraffe Messenger',
+        theme: ThemeData(
+          primarySwatch: purpleGiraffe,
         ),
+        home: HomeView(),
       ),
     );
   }

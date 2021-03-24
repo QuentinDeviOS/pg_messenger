@@ -11,11 +11,15 @@ import 'package:pg_messenger/Models/user.dart';
 import 'package:provider/provider.dart';
 
 class MessageView extends StatefulWidget {
+  final User _currentUser;
+
+  const MessageView(this._currentUser, {Key? key}) : super(key: key);
   @override
-  _MessageViewState createState() => _MessageViewState();
+  _MessageViewState createState() => _MessageViewState(_currentUser);
 }
 
 class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
+  final _currentUser;
   final _messageController = MessageController();
   final _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -23,10 +27,11 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   FocusNode? _inputFieldNode;
   List<Message> _messageList = [];
 
+  _MessageViewState(this._currentUser);
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addObserver(this);
     _inputFieldNode = FocusNode();
     _messageController.messageStream(
       onMessageListLoaded: (messageList) {
@@ -36,14 +41,14 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
       },
     );
     _oldPositionScrollMax = 0;
+    print(_currentUser.id);
   }
 
   @override
   void didChangeMetrics() {
     final value = MediaQuery.of(context).viewInsets.bottom;
     if (value > 0) {
-      _scrollController.position
-          .jumpTo(_scrollController.position.maxScrollExtent);
+      _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
       _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
     }
     super.didChangeMetrics();
@@ -51,7 +56,6 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
     _inputFieldNode?.dispose();
     super.dispose();
   }
@@ -127,10 +131,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
-      final user =
-          User(Constant.TEST_USER_ID, Constant.TEST_USER_USERNAME, null);
-      final message = _messageController.createNewMessageFromString(
-          _textController.text, user);
+      final message = _messageController.createNewMessageFromString(_textController.text, _currentUser);
       _messageController.sendMessage(message);
     }
     _textController.text = "";
@@ -145,9 +146,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         duration: const Duration(milliseconds: 250),
       );
     }
-    if (_scrollController.position.pixels !=
-            _scrollController.position.maxScrollExtent &&
-        _scrollController.position.pixels == _oldPositionScrollMax) {
+    if (_scrollController.position.pixels != _scrollController.position.maxScrollExtent && _scrollController.position.pixels == _oldPositionScrollMax) {
       await goToEndList();
     }
     return;

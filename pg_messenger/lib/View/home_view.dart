@@ -9,10 +9,6 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<GlobalStorage>(builder: (context, store, _) {
-      return Container(
-        child: (store.isLoggedIn) ? MessageView() : ConnectionView(),
-      );
-    });
+    return ConnectionView();
   }
 }

@@ -13,7 +13,7 @@ class Message {
 
   Message(this._message, this._owner, this._timestamp);
 
-  Map<String, dynamic> toJson() => {'subject': message, 'owner': _owner.toJSON()};
+  Map<String, dynamic> toJson() => {'subject': message, 'owner': _owner.toJsonForSendMessage()};
 
   Message.fromJson(Map<String, dynamic> json)
       : _message = json["subject"],
