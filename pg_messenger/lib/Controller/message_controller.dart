@@ -10,12 +10,10 @@ class MessageController {
   final WebSocketController _webSocketController = WebSocketController();
 
   Message createNewMessageFromString(String messageString, User user) {
-    return Message(messageString, user, null); //manque id ?
+    return Message("", messageString, "", null, ""); //manque id ?
   }
 
-  void messageStream(
-      {required Function(List<Message> messageList)
-          onMessageListLoaded}) async {
+  void messageStream({required Function(List<Message> messageList) onMessageListLoaded}) async {
     _webSocketController.onReceive(onReceiveData: (data) {
       if (hasMessages(data)) {
         onMessageListLoaded(_messageList);
@@ -35,7 +33,7 @@ class MessageController {
     return false;
   }
 
-  sendMessage(Message message) {
-    _webSocketController.sendMessage(message);
+  sendMessage(Message message, String userID) {
+    _webSocketController.sendMessage(message, userID);
   }
 }

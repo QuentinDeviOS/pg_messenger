@@ -9,13 +9,12 @@ class WebSocketController {
   late bool haveNewMessage;
 
   WebSocketController() {
-    channel =
-        webSocketManager.connectToWS("Bearer ${Constant.TEST_USER_TOKEN}");
+    channel = webSocketManager.connectToWS("Bearer ${Constant.TEST_USER_TOKEN}");
     haveNewMessage = webSocketManager.messageNotificationHasChanged;
     sendText("get-all-messages");
   }
 
-  void sendMessage(Message message) {
+  void sendMessage(Message message, String userID) {
     webSocketManager.sendNewMessageJson(channel, message);
   }
 

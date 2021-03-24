@@ -75,10 +75,8 @@ class LoginView extends StatelessWidget {
       final client = http_auth.BasicAuthClient(username, password);
       final response = await client.post(uri);
       if (response.statusCode == 200) {
-        print(jsonDecode(response.body));
         User user = User.fromJsonResponseLogin(jsonDecode(response.body));
-        print(user.token);
-        await Navigator.push(context, MaterialPageRoute(builder: (context) => MessageView(user)));
+        await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MessageView(user)));
       } else {
         _wrongLogin(context);
       }

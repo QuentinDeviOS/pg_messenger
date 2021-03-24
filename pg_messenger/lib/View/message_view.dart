@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-// import 'package:pg_messenger/Controller/web_socket_controller.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Models/message.dart';
-// import 'package:pg_messenger/Models/owner.dart';
 import 'package:pg_messenger/Models/global_storage.dart';
-import 'package:pg_messenger/Constants/constant.dart';
-//import 'package:pg_messenger/Models/owner.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:provider/provider.dart';
 
@@ -41,7 +36,6 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
       },
     );
     _oldPositionScrollMax = 0;
-    print(_currentUser.id);
   }
 
   @override
@@ -132,7 +126,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
       final message = _messageController.createNewMessageFromString(_textController.text, _currentUser);
-      _messageController.sendMessage(message);
+      _messageController.sendMessage(message, _currentUser.id);
     }
     _textController.text = "";
   }
@@ -153,7 +147,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   }
 
   Widget _singleMessage(BuildContext context, int num) {
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
       goToEndList();
     });
     return Card(
@@ -166,7 +160,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
               padding: EdgeInsets.only(bottom: 10.0),
               child: Row(
                 children: [
-                  Text(_messageList[num].owner.username),
+                  Text(_messageList[num].username),
                   Spacer(),
                   Text(_messageList[num].timestamp.toString()),
                 ],
