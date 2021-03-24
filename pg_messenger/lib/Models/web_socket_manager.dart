@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Models/message.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -9,11 +8,14 @@ class WebSocketManager {
   Future<IOWebSocketChannel> connectToWS(String token) async {
     Map<String, dynamic> header = Map();
     header["Authorization"] = token;
-    var channel = IOWebSocketChannel.connect(Constant.URL_WEB_SERVER, headers: header);
+    var channel = IOWebSocketChannel.connect(
+        "wss://skyisthelimit.net:443/messages/message-web-socket",
+        headers: header);
     return channel;
   }
 
-  void sendNewMessageJson(Future<IOWebSocketChannel> futureChannel, Message message) async {
+  void sendNewMessageJson(
+      Future<IOWebSocketChannel> futureChannel, Message message) async {
     final channel = await futureChannel;
     channel.sink.add(JsonEncoder().convert(message.toJson()));
   }
@@ -23,7 +25,8 @@ class WebSocketManager {
     channel.sink.add(text);
   }
 
-  launchStream(Future<IOWebSocketChannel> futureChannel, {required Function(dynamic data) onReceive}) async {
+  launchStream(Future<IOWebSocketChannel> futureChannel,
+      {required Function(dynamic data) onReceive}) async {
     final channel = await futureChannel;
     channel.stream.listen((data) {
       onReceive(data);

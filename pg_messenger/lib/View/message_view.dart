@@ -14,7 +14,7 @@ class MessageView extends StatefulWidget {
 
 class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   final _currentUser;
-  final _messageController = MessageController();
+  late MessageController _messageController;
   final _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _isCurrentView = false;
@@ -22,7 +22,9 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   FocusNode? _inputFieldNode;
   List<Message> _messageList = [];
 
-  _MessageViewState(this._currentUser);
+  _MessageViewState(this._currentUser) {
+    _messageController = MessageController(_currentUser.token);
+  }
 
   @override
   void initState() {
@@ -45,7 +47,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void didChangeMetrics() {
     final value = MediaQuery.of(context).viewInsets.bottom;
     if (value > 0) {
-      _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
+      _scrollController.position
+          .jumpTo(_scrollController.position.maxScrollExtent);
       _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
     }
     super.didChangeMetrics();
@@ -68,7 +71,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             icon: const Icon(Icons.logout),
             tooltip: 'Log Out',
             onPressed: () {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConnectionView()));
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => ConnectionView()));
             },
           ),
         ],
@@ -129,7 +133,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
-      final message = _messageController.createNewMessageFromString(_textController.text, _currentUser);
+      final message = _messageController.createNewMessageFromString(
+          _textController.text, _currentUser);
       _messageController.sendMessage(message, _currentUser.id);
     }
     _textController.text = "";
@@ -144,7 +149,9 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         duration: const Duration(milliseconds: 250),
       );
     }
-    if (_scrollController.position.pixels != _scrollController.position.maxScrollExtent && _scrollController.position.pixels == _oldPositionScrollMax) {
+    if (_scrollController.position.pixels !=
+            _scrollController.position.maxScrollExtent &&
+        _scrollController.position.pixels == _oldPositionScrollMax) {
       await goToEndList();
     }
     return;

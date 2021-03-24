@@ -7,14 +7,21 @@ import 'package:pg_messenger/Models/user.dart';
 
 class MessageController {
   List<Message> _messageList = [];
-  final WebSocketController _webSocketController = WebSocketController();
+  final String _userToken;
+  WebSocketController? _webSocketController;
+
+  MessageController(this._userToken) {
+    _webSocketController = WebSocketController(_userToken);
+  }
 
   Message createNewMessageFromString(String messageString, User user) {
     return Message("", messageString, "", null, ""); //manque id ?
   }
 
-  void messageStream({required Function(List<Message> messageList) onMessageListLoaded}) async {
-    _webSocketController.onReceive(onReceiveData: (data) {
+  void messageStream(
+      {required Function(List<Message> messageList)
+          onMessageListLoaded}) async {
+    _webSocketController?.onReceive(onReceiveData: (data) {
       if (hasMessages(data)) {
         onMessageListLoaded(_messageList);
       }
@@ -34,6 +41,6 @@ class MessageController {
   }
 
   sendMessage(Message message, String userID) {
-    _webSocketController.sendMessage(message, userID);
+    _webSocketController?.sendMessage(message, userID);
   }
 }
