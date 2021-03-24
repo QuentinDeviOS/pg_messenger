@@ -51,14 +51,6 @@ class LoginView extends StatelessWidget {
                 onPressed: () => _loginUser(context),
               ),
             ),
-            Center(
-              child: ElevatedButton(
-                child: Text('Override Log In (testing)'),
-                onPressed: () {
-                  context.read<GlobalStorage>().login(Constant.TEST_USER_TOKEN);
-                },
-              ),
-            ),
             Spacer(),
           ],
         ),

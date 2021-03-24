@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Models/message.dart';
-import 'package:pg_messenger/Models/global_storage.dart';
 import 'package:pg_messenger/Models/user.dart';
-import 'package:provider/provider.dart';
+import 'package:pg_messenger/View/connection_view.dart';
 
 class MessageView extends StatefulWidget {
   final User _currentUser;
@@ -18,6 +17,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   final _messageController = MessageController();
   final _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  bool _isCurrentView = false;
   double? _oldPositionScrollMax;
   FocusNode? _inputFieldNode;
   List<Message> _messageList = [];
@@ -27,12 +27,15 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    _isCurrentView = true;
     _inputFieldNode = FocusNode();
     _messageController.messageStream(
       onMessageListLoaded: (messageList) {
-        setState(() {
-          this._messageList = messageList;
-        });
+        if (_isCurrentView) {
+          setState(() {
+            this._messageList = messageList;
+          });
+        }
       },
     );
     _oldPositionScrollMax = 0;
@@ -50,6 +53,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _isCurrentView = false;
     _inputFieldNode?.dispose();
     super.dispose();
   }
@@ -64,7 +68,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             icon: const Icon(Icons.logout),
             tooltip: 'Log Out',
             onPressed: () {
-              Provider.of<GlobalStorage>(context, listen: false).logout();
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConnectionView()));
             },
           ),
         ],
