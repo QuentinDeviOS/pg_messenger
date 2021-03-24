@@ -7,7 +7,7 @@ import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Models/global_storage.dart';
 import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Models/owner.dart';
-import 'package:pg_messenger/Models/user.dart';
+// import 'package:pg_messenger/Models/user.dart';
 import 'package:provider/provider.dart';
 
 class MessageView extends StatefulWidget {
@@ -27,7 +27,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addObserver(this);
-    //inputFieldNode = FocusNode();
+    _inputFieldNode = FocusNode();
     _messageController.messageStream(
       onMessageListLoaded: (messageList) {
         setState(() {
