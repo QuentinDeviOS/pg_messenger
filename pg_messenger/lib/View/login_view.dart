@@ -1,10 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http_auth/http_auth.dart' as http_auth;
-import 'package:pg_messenger/Constants/constant.dart';
-import 'package:pg_messenger/Models/global_storage.dart';
 import 'package:pg_messenger/Models/user.dart';
-import 'package:provider/provider.dart';
 
 import 'message_view.dart';
 
@@ -77,10 +74,7 @@ class LoginView extends StatelessWidget {
   }
 
   _wrongLogin(BuildContext context) {
-    Widget okButton = TextButton(
-      child: Text("OK"),
-      onPressed: () => Navigator.of(context).pop(),
-    );
+    Widget okButton = TextButton(child: Text("OK"), onPressed: () => Navigator.of(context).pop());
 
     AlertDialog alert = AlertDialog(
       title: Text("Are you sure about your credentials?"),
