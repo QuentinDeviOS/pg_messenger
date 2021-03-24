@@ -27,6 +27,22 @@ class WebSocketManager {
     channel.sink.add(text);
   }
 
+  launchStream(Future<IOWebSocketChannel> futureChannel,
+      {required Function(dynamic data) onReceive}) async {
+    final channel = await futureChannel;
+    channel.stream.listen((data) {
+      onReceive(data);
+      _onPing(futureChannel, data);
+    });
+  }
+
+  _onPing(Future<IOWebSocketChannel> futureChannel, dynamic data) async {
+    final channel = await futureChannel;
+    if (data.toString() == "Ping") {
+      channel.sink.add("pong");
+    }
+  }
+
   void newMessageNotification(
       Future<IOWebSocketChannel> channel, Message message) {}
 }

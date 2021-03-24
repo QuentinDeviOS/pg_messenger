@@ -1,24 +1,32 @@
+import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Models/web_socket_manager.dart';
 import 'package:web_socket_channel/io.dart';
 
 class WebSocketController {
-  final webSocketManager = WebSocketManager();
+  final _webSocketManager = WebSocketManager();
   late Future<IOWebSocketChannel> channel;
   late bool haveNewMessage;
 
-  WebSocketController(String token) {
-    
-    channel = webSocketManager.connectToWS("Bearer $token");
-    haveNewMessage = webSocketManager.messageNotificationHasChanged;
+  WebSocketController() {
+    channel =
+        _webSocketManager.connectToWS("Bearer ${Constant.TEST_USER_TOKEN}");
+    haveNewMessage = _webSocketManager.messageNotificationHasChanged;
     sendText("get-all-messages");
   }
 
   void sendMessage(Message message) {
-    webSocketManager.sendNewMessageJson(channel, message);
+    _webSocketManager.sendNewMessageJson(channel, message);
   }
 
   void sendText(String text) {
-    webSocketManager.sendText(channel, text);
+    _webSocketManager.sendText(channel, text);
+  }
+
+  onReceive({required Function(dynamic data) onReceiveData}) {
+    _webSocketManager.launchStream(
+      channel,
+      onReceive: (data) => onReceiveData(data),
+    );
   }
 }
