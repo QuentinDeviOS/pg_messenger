@@ -4,7 +4,6 @@ import 'package:http_auth/http_auth.dart' as http_auth;
 import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Models/global_storage.dart';
 import 'package:pg_messenger/Models/user.dart';
-import 'package:pg_messenger/Models/user_token.dart';
 import 'package:provider/provider.dart';
 
 class LoginView extends StatelessWidget {
@@ -76,8 +75,7 @@ class LoginView extends StatelessWidget {
       if (response.statusCode == 200) {
         print(jsonDecode(response.body));
         UserToken userToken = UserToken.fromJson(jsonDecode(response.body));
-        Provider.of<GlobalStorage>(context, listen: false)
-            .login(userToken.token);
+        Provider.of<GlobalStorage>(context, listen: false).login(userToken.token);
         return UserToken(
             userToken.token,
             User(

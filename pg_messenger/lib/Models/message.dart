@@ -17,6 +17,6 @@ class Message {
 
   Message.fromJson(Map<String, dynamic> json)
       : _message = json["subject"],
-        _owner = User(json["userID"], json["username"], null),
+        _owner = json['owner']["id"],
         _timestamp = json['timestamp'];
 }
