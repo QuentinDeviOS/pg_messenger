@@ -165,7 +165,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                 children: [
                   Text(_messageList[num].username),
                   Spacer(),
-                  Text(_messageList[num].timestamp.toString()),
+                  Text(_formatedTimestamp(_messageList[num].timestamp)),
                 ],
               ),
             ),
@@ -174,5 +174,26 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         ),
       ),
     );
+  }
+
+  String _formatedTimestamp(DateTime? timestamp) {
+    if (timestamp != null) {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final difference = today.compareTo(timestamp);
+      final DateFormat formatDay = DateFormat('dd/mm');
+      final DateFormat formatTime = DateFormat('dd/mm');
+      if (difference == 1) {
+        return DateFormat("d MMM").format(timestamp).toString();
+      } else if (difference == 0) {
+        return "Just now";
+      } else if (difference == -1) {
+        return DateFormat("Hm").format(timestamp).toString();
+      } else {
+        return "";
+      }
+    } else {
+      return "";
+    }
   }
 }
