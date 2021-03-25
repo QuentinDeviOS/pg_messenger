@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:http_auth/http_auth.dart' as http_auth;
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/message_view.dart';
@@ -96,52 +96,48 @@ class RegisterView extends StatelessWidget {
       print("Must be a valid email address");
       return null;
     } else if (username.isNotEmpty && password.isNotEmpty) {
-      final uri = Uri.parse("https://skyisthelimit.net/users/signup");
-      
-Future<http.Response> createAlbum(String title) {
-  return http.post(
-    Uri.https('jsonplaceholder.typicode.com', 'albums'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, String>{
-      'title': title,
-    }),
-  );
-}
-
-
-
-    headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          'title': title,
-        }),
-
-
-      final client = http_auth.BasicAuthClient(username, password);
-      final response = await client.post(uri);
+      final response = await createUser(username, email, password);
       if (response.statusCode == 200) {
         User user = User.fromJsonResponseLogin(jsonDecode(response.body));
         await Navigator.push(context,
             MaterialPageRoute(builder: (context) => MessageView(user)));
       } else {
+        _wrongRegistration(context, response.body);
         print("Status is not 200");
       }
     }
     return null;
   }
 
-  Future<http.Response> createAlbum(String title) {
-  return http.post(
-    Uri.https('jsonplaceholder.typicode.com', 'albums'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, String>{
-      'title': title,
-    }),
-  );
-}
+  Future<http.Response> createUser(
+    String username,
+    String email,
+    String password,
+  ) {
+    return http.post(
+      Uri.https('skyisthelimit.net', 'users/signup'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'name': username,
+        'email': email,
+        'password': password,
+      }),
+    );
+  }
+
+  _wrongRegistration(BuildContext context, String responseBodyError) {
+    Map<String, dynamic> json = jsonDecode(responseBodyError);
+    Widget okButton = TextButton(
+      child: Text("OK"),
+      onPressed: () => Navigator.of(context).pop(),
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text("Are you sure about your credentials?"),
+      content: Text(json["reason"]),
+      actions: [okButton],
+    );
+  }
 }

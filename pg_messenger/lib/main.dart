@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pg_messenger/Models/global_storage.dart';
-import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/home_view.dart';
-import 'package:provider/provider.dart';
 
 void main() {
   runApp(MyApp());

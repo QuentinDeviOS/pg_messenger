@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http_auth/http_auth.dart' as http_auth;
 import 'package:pg_messenger/Models/user.dart';
-
 import 'message_view.dart';
 
 class LoginView extends StatelessWidget {

@@ -17,5 +17,7 @@ class User {
         this._createdAt = DateTime.parse(json["user"]["createdAt"]),
         this._token = json["token"];
 
+  User.fromJsonResponseMessage(Map<String, dynamic> json, this._username, this._createdAt, this._token) : this._id = json['id'];
+
   Map<String, dynamic> toJsonForSendMessage() => {'id': _id};
 }
