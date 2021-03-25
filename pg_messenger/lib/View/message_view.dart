@@ -3,6 +3,7 @@ import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/connection_view.dart';
+import 'package:intl/intl.dart';
 
 class MessageView extends StatefulWidget {
   final User _currentUser;
