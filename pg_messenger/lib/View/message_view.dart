@@ -1,9 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/connection_view.dart';
 import 'package:intl/intl.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class MessageView extends StatefulWidget {
   final User _currentUser;
@@ -14,10 +16,11 @@ class MessageView extends StatefulWidget {
 }
 
 class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
+  final itemPositionLisner = ItemPositionsListener.create();
   final _currentUser;
   late MessageController _messageController;
   final _textController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
+  final ItemScrollController _scrollController = ItemScrollController();
   bool _isCurrentView = false;
   double? _oldPositionScrollMax;
   FocusNode? _inputFieldNode;
@@ -49,7 +52,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void didChangeMetrics() {
     final value = MediaQuery.of(context).viewInsets.bottom;
     if (value > 0) {
-      _scrollController.position.jumpTo(_oldPositionScrollMax ?? _scrollController.position.maxScrollExtent);
+      _scrollController.jumpTo(index: _messageList.length, alignment: 0);
     }
     super.didChangeMetrics();
   }
@@ -80,8 +83,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
+              child: ScrollablePositionedList.builder(
+                itemScrollController: _scrollController,
                 itemBuilder: _singleMessage,
                 itemCount: _messageList.length,
               ),
@@ -139,7 +142,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   }
 
   goToEndList() async {
-    _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+    _oldPositionScrollMax = _scrollController.;
     if (_scrollController.position.pixels == _oldPositionScrollMax || _oldPositionScrollMax == 0) {
       do {
         _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
