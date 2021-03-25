@@ -183,8 +183,6 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
       final difference = today.compareTo(timestamp);
-      final DateFormat formatDay = DateFormat('dd/mm');
-      final DateFormat formatTime = DateFormat('dd/mm');
       if (difference == 1) {
         return DateFormat("d MMM").format(timestamp).toString();
       } else if (difference == 0) {
