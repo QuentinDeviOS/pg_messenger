@@ -133,7 +133,7 @@ class RegisterView extends StatelessWidget {
       child: Text("OK"),
       onPressed: () => Navigator.of(context).pop(),
     );
-
+    
     AlertDialog alert = AlertDialog(
       title: Text("Are you sure about your credentials?"),
       content: Text(json["reason"]),
