@@ -47,16 +47,6 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
-  /// `Purple Giraffe Messenger`
-  String get app_title {
-    return Intl.message(
-      'Purple Giraffe Messenger',
-      name: 'app_title',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Register`
   String get register_title {
     return Intl.message(

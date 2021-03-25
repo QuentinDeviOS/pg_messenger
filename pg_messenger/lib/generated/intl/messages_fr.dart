@@ -21,7 +21,6 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
-    "app_title" : MessageLookupByLibrary.simpleMessage("Purple Giraffe Messenger"),
     "login_alert_OK_button" : MessageLookupByLibrary.simpleMessage("OK"),
     "login_error_text" : MessageLookupByLibrary.simpleMessage("Le mot de passe et l\'identifiant ne concordent pas"),
     "login_error_title" : MessageLookupByLibrary.simpleMessage("Impossible de se connecter"),

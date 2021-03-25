@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "S.of(context).app_title",
+      title: "Purple Giraffe Messenger",
       theme: ThemeData(
         primarySwatch: purpleGiraffe,
       ),
