@@ -90,10 +90,10 @@ class RegisterView extends StatelessWidget {
     String passwordVerification = _passwordVerificationController.text;
 
     if (password != passwordVerification) {
-      print("Both password must match");
+      _wrongImput(context, "Both password must match");
       return null;
     } else if (!email.contains('@')) {
-      print("Must be a valid email address");
+      _wrongImput(context, "Must be a valid email address");
       return null;
     } else if (username.isNotEmpty && password.isNotEmpty) {
       final response = await createUser(username, email, password);
@@ -103,7 +103,6 @@ class RegisterView extends StatelessWidget {
             MaterialPageRoute(builder: (context) => MessageView(user)));
       } else {
         _wrongRegistration(context, response.body);
-        print("Status is not 200");
       }
     }
     return null;
@@ -127,17 +126,40 @@ class RegisterView extends StatelessWidget {
     );
   }
 
+  _wrongImput(BuildContext context, String error) {
+    Widget okButton = TextButton(
+      child: Text("OK"),
+      onPressed: () => Navigator.of(context).pop(),
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text("Error"),
+      content: Text(error),
+      actions: [okButton],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => alert,
+    );
+  }
+
   _wrongRegistration(BuildContext context, String responseBodyError) {
     Map<String, dynamic> json = jsonDecode(responseBodyError);
     Widget okButton = TextButton(
       child: Text("OK"),
       onPressed: () => Navigator.of(context).pop(),
     );
-    
+
     AlertDialog alert = AlertDialog(
-      title: Text("Are you sure about your credentials?"),
+      title: Text("Error"),
       content: Text(json["reason"]),
       actions: [okButton],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => alert,
     );
   }
 }
