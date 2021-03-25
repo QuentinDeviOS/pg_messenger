@@ -15,7 +15,7 @@ class MessageController {
   }
 
   Message createNewMessageFromString(String messageString, User user) {
-    return Message("", messageString, "", null, ""); //manque id ?
+    return Message("", messageString, user.id, null, ""); //manque id ?
   }
 
   void messageStream(
@@ -40,7 +40,7 @@ class MessageController {
     return false;
   }
 
-  sendMessage(Message message, String userID) {
-    _webSocketController?.sendMessage(message, userID);
+  sendMessage(Message message) {
+    _webSocketController?.sendMessage(message);
   }
 }

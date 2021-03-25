@@ -135,7 +135,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     if (_textController.text.isNotEmpty) {
       final message = _messageController.createNewMessageFromString(
           _textController.text, _currentUser);
-      _messageController.sendMessage(message, _currentUser.id);
+      _messageController.sendMessage(message);
     }
     _textController.text = "";
   }

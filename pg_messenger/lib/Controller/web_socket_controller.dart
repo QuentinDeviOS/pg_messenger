@@ -13,7 +13,7 @@ class WebSocketController {
     sendText("get-all-messages");
   }
 
-  void sendMessage(Message message, String userID) {
+  void sendMessage(Message message) {
     webSocketManager.sendNewMessageJson(channel, message);
   }
 
