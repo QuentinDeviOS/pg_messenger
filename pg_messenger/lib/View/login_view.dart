@@ -66,7 +66,8 @@ class LoginView extends StatelessWidget {
       final response = await client.post(uri);
       if (response.statusCode == 200) {
         User user = User.fromJsonResponseLogin(jsonDecode(response.body));
-        await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MessageView(user)));
+        await Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => MessageView(user)));
       } else {
         _wrongLogin(context);
       }
@@ -75,7 +76,10 @@ class LoginView extends StatelessWidget {
   }
 
   _wrongLogin(BuildContext context) {
-    Widget okButton = TextButton(child: Text("OK"), onPressed: () => Navigator.of(context).pop());
+    Widget okButton = TextButton(
+      child: Text("OK"),
+      onPressed: () => Navigator.of(context).pop(),
+    );
 
     AlertDialog alert = AlertDialog(
       title: Text("Are you sure about your credentials?"),
