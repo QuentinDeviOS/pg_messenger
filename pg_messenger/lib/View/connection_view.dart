@@ -25,13 +25,11 @@ class _ConnectionViewState extends State<ConnectionView> {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.lock),
-            //label: "",
             label: S.of(context).login_title,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_add),
-            label:  S.of(context).register_title,
-            //label: "",
+            label: S.of(context).register_title,
           ),
         ],
         selectedItemColor: Theme.of(context).bottomAppBarTheme.color,

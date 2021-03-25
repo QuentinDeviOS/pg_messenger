@@ -25,78 +25,85 @@ class RegisterView extends StatelessWidget {
         appBar: AppBar(title: Text(S.of(context).register_title)),
         resizeToAvoidBottomInset: true,
         body: SafeArea(
-          child: Column(children: [
-            Container(
-              padding: EdgeInsets.all(20),
-              child: TextFormField(
-                controller: _usernameController,
-                enableSuggestions: false,
-                autocorrect: false,
-                textInputAction: TextInputAction.next,
-                onEditingComplete: () => node.nextFocus(),
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.person),
-                  hintText: S.of(context).register_username,
-                  border: OutlineInputBorder(),
+          child: SingleChildScrollView(
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                Container(
+                  padding: EdgeInsets.all(20),
+                  child: TextFormField(
+                    controller: _usernameController,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    textInputAction: TextInputAction.next,
+                    onEditingComplete: () => node.nextFocus(),
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.person),
+                      hintText: S.of(context).register_username,
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.all(20),
-              child: TextFormField(
-                controller: _emailController,
-                enableSuggestions: false,
-                autocorrect: false,
-                textInputAction: TextInputAction.next,
-                onEditingComplete: () => node.nextFocus(),
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.email),
-                  hintText: S.of(context).register_email,
-                  border: OutlineInputBorder(),
+                Container(
+                  padding: EdgeInsets.all(20),
+                  child: TextFormField(
+                    controller: _emailController,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    textInputAction: TextInputAction.next,
+                    onEditingComplete: () => node.nextFocus(),
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.email),
+                      hintText: S.of(context).register_email,
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.all(20),
-              child: TextFormField(
-                controller: _passwordController,
-                obscureText: true,
-                enableSuggestions: false,
-                autocorrect: false,
-                textInputAction: TextInputAction.next,
-                onEditingComplete: () => node.nextFocus(),
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.lock),
-                  hintText: S.of(context).register_password,
-                  border: OutlineInputBorder(),
+                Container(
+                  padding: EdgeInsets.all(20),
+                  child: TextFormField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    textInputAction: TextInputAction.next,
+                    onEditingComplete: () => node.nextFocus(),
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.lock),
+                      hintText: S.of(context).register_password,
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.all(20),
-              child: TextFormField(
-                controller: _passwordVerificationController,
-                obscureText: true,
-                enableSuggestions: false,
-                autocorrect: false,
-                textInputAction: TextInputAction.next,
-                onEditingComplete: () => node.nextFocus(),
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.lock),
-                  hintText: S.of(context).register_password_verification,
-                  border: OutlineInputBorder(),
+                Container(
+                  padding: EdgeInsets.all(20),
+                  child: TextFormField(
+                    controller: _passwordVerificationController,
+                    obscureText: true,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    textInputAction: TextInputAction.next,
+                    onEditingComplete: () => node.nextFocus(),
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.lock),
+                      hintText: S.of(context).register_password_verification,
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
                 ),
-              ),
+                Container(
+                  padding: EdgeInsets.all(20),
+                  child: ElevatedButton(
+                    child: Text(S.of(context).register_send_button),
+                    onPressed: () => _registerUser(context),
+                  ),
+                ),
+                Spacer(),
+              ]),
             ),
-            Container(
-              padding: EdgeInsets.all(20),
-              child: ElevatedButton(
-                child: Text(S.of(context).register_send_button),
-                onPressed: () => _registerUser(context),
-              ),
-            ),
-            Spacer(),
-          ]),
+          ),
         ),
       ),
     );
