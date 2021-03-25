@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http_auth/http_auth.dart' as http_auth;
 import 'package:pg_messenger/Models/user.dart';
+import 'package:pg_messenger/generated/l10n.dart';
 import 'message_view.dart';
 
 class LoginView extends StatelessWidget {
@@ -19,7 +20,7 @@ class LoginView extends StatelessWidget {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text("Login")),
+        appBar: AppBar(title: Text(S.of(context).login_title)),
         resizeToAvoidBottomInset: true,
         body: SafeArea(
           child: Column(
@@ -34,7 +35,7 @@ class LoginView extends StatelessWidget {
                   onEditingComplete: () => node.nextFocus(),
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.person),
-                    hintText: "username",
+                    hintText: S.of(context).login_username,
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -50,7 +51,7 @@ class LoginView extends StatelessWidget {
                   onEditingComplete: () => node.nextFocus(),
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.lock),
-                    hintText: "password",
+                    hintText: S.of(context).login_password,
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -58,7 +59,7 @@ class LoginView extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(20),
                 child: ElevatedButton(
-                  child: Text('Log In'),
+                  child: Text(S.of(context).login_send_button),
                   onPressed: () => _loginUser(context),
                 ),
               ),
@@ -91,13 +92,13 @@ class LoginView extends StatelessWidget {
 
   _wrongLogin(BuildContext context) {
     Widget okButton = TextButton(
-      child: Text("OK"),
+      child: Text(S.of(context).register_alert_OK_button),
       onPressed: () => Navigator.of(context).pop(),
     );
 
     AlertDialog alert = AlertDialog(
-      title: Text("Are you sure about your credentials?"),
-      content: Text("Username and/or password do not match."),
+      title: Text(S.of(context).login_error_title),
+      content: Text(S.of(context).login_error_text),
       actions: [okButton],
     );
 

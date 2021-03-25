@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/message_view.dart';
+import 'package:pg_messenger/generated/l10n.dart';
 
 class RegisterView extends StatelessWidget {
   final _usernameController = TextEditingController();
@@ -21,7 +22,7 @@ class RegisterView extends StatelessWidget {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text("Login")),
+        appBar: AppBar(title: Text(S.of(context).register_title)),
         resizeToAvoidBottomInset: true,
         body: SafeArea(
           child: Column(children: [
@@ -35,7 +36,7 @@ class RegisterView extends StatelessWidget {
                 onEditingComplete: () => node.nextFocus(),
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.person),
-                  hintText: "username",
+                  hintText: S.of(context).register_username,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -50,7 +51,7 @@ class RegisterView extends StatelessWidget {
                 onEditingComplete: () => node.nextFocus(),
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.email),
-                  hintText: "email",
+                  hintText: S.of(context).register_email,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -66,7 +67,7 @@ class RegisterView extends StatelessWidget {
                 onEditingComplete: () => node.nextFocus(),
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.lock),
-                  hintText: "password",
+                  hintText: S.of(context).register_password,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -82,7 +83,7 @@ class RegisterView extends StatelessWidget {
                 onEditingComplete: () => node.nextFocus(),
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.lock),
-                  hintText: "password verification",
+                  hintText: S.of(context).register_password_verification,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -90,7 +91,7 @@ class RegisterView extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(20),
               child: ElevatedButton(
-                child: Text('Register'),
+                child: Text(S.of(context).register_send_button),
                 onPressed: () => _registerUser(context),
               ),
             ),
@@ -108,10 +109,10 @@ class RegisterView extends StatelessWidget {
     String passwordVerification = _passwordVerificationController.text;
 
     if (password != passwordVerification) {
-      _wrongImput(context, "Both password must match");
+      _wrongImput(context, S.of(context).register_error_password);
       return null;
     } else if (!email.contains('@')) {
-      _wrongImput(context, "Must be a valid email address");
+      _wrongImput(context, S.of(context).register_error_email);
       return null;
     } else if (username.isNotEmpty && password.isNotEmpty) {
       final response = await createUser(username, email, password);
@@ -145,12 +146,12 @@ class RegisterView extends StatelessWidget {
 
   _wrongImput(BuildContext context, String error) {
     Widget okButton = TextButton(
-      child: Text("OK"),
+      child: Text(S.of(context).register_alert_OK_button),
       onPressed: () => Navigator.of(context).pop(),
     );
 
     AlertDialog alert = AlertDialog(
-      title: Text("Error"),
+      title: Text(S.of(context).register_alert_title),
       content: Text(error),
       actions: [okButton],
     );
@@ -164,12 +165,12 @@ class RegisterView extends StatelessWidget {
   _wrongRegistration(BuildContext context, String responseBodyError) {
     Map<String, dynamic> json = jsonDecode(responseBodyError);
     Widget okButton = TextButton(
-      child: Text("OK"),
+      child: Text(S.of(context).register_alert_OK_button),
       onPressed: () => Navigator.of(context).pop(),
     );
 
     AlertDialog alert = AlertDialog(
-      title: Text("Error"),
+      title: Text(S.of(context).register_alert_title),
       content: Text(json["reason"]),
       actions: [okButton],
     );

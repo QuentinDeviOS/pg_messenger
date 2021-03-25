@@ -4,6 +4,7 @@ import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/connection_view.dart';
 import 'package:intl/intl.dart';
+import 'package:pg_messenger/generated/l10n.dart';
 
 class MessageView extends StatefulWidget {
   final User _currentUser;
@@ -65,11 +66,11 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Messages"),
+        title: Text(S.of(context).message_title),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.logout),
-            tooltip: 'Log Out',
+            tooltip: S.of(context).message_logout,
             onPressed: () {
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConnectionView()));
             },
@@ -100,7 +101,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                       },
                       onTap: () => goToEndList(),
                       decoration: InputDecoration(
-                        labelText: "Send message",
+                        labelText: S.of(context).message_send_button,
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             width: 4.0,
@@ -186,7 +187,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
       if (difference == 1) {
         return DateFormat("d MMM").format(timestamp).toString();
       } else if (difference == 0) {
-        return "Just now";
+        return S.of(context).message_just_now;
       } else if (difference == -1) {
         return DateFormat("Hm").format(timestamp).toString();
       } else {
