@@ -20,6 +20,8 @@ class LoginView extends StatelessWidget {
               padding: EdgeInsets.all(20),
               child: TextFormField(
                 controller: _usernameController,
+                enableSuggestions: false,
+                autocorrect: false,
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.person),
                   hintText: "username",

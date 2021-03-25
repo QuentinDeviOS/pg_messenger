@@ -2,3 +2,5 @@
 *.lock
 constant.dart
 pg_messenger/lib/Constants/constant.dart
+pg_messenger/ios/Flutter/Debug.xcconfig
+pg_messenger/ios/Flutter/Release.xcconfig
