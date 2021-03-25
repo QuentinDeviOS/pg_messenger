@@ -20,6 +20,7 @@ class LoginView extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(title: Text("Login")),
+        resizeToAvoidBottomInset: true,
         body: SafeArea(
           child: Column(
             children: [
