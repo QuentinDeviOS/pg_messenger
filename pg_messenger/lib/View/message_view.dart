@@ -30,6 +30,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance?.addObserver(this);
     _isCurrentView = true;
     _inputFieldNode = FocusNode();
     _messageController.messageStream(

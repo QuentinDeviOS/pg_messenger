@@ -12,73 +12,81 @@ class RegisterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Login")),
-      body: SafeArea(
-        child: Column(children: [
-          Container(
-            padding: EdgeInsets.all(20),
-            child: TextFormField(
-              controller: _usernameController,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.person),
-                hintText: "username",
-                border: OutlineInputBorder(),
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.focusedChild?.unfocus();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(title: Text("Login")),
+        body: SafeArea(
+          child: Column(children: [
+            Container(
+              padding: EdgeInsets.all(20),
+              child: TextFormField(
+                controller: _usernameController,
+                enableSuggestions: false,
+                autocorrect: false,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.person),
+                  hintText: "username",
+                  border: OutlineInputBorder(),
+                ),
               ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.all(20),
-            child: TextFormField(
-              controller: _emailController,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.email),
-                hintText: "email",
-                border: OutlineInputBorder(),
+            Container(
+              padding: EdgeInsets.all(20),
+              child: TextFormField(
+                controller: _emailController,
+                enableSuggestions: false,
+                autocorrect: false,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.email),
+                  hintText: "email",
+                  border: OutlineInputBorder(),
+                ),
               ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.all(20),
-            child: TextFormField(
-              controller: _passwordController,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.lock),
-                hintText: "password",
-                border: OutlineInputBorder(),
+            Container(
+              padding: EdgeInsets.all(20),
+              child: TextFormField(
+                controller: _passwordController,
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.lock),
+                  hintText: "password",
+                  border: OutlineInputBorder(),
+                ),
               ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.all(20),
-            child: TextFormField(
-              controller: _passwordVerificationController,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.lock),
-                hintText: "password verification",
-                border: OutlineInputBorder(),
+            Container(
+              padding: EdgeInsets.all(20),
+              child: TextFormField(
+                controller: _passwordVerificationController,
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.lock),
+                  hintText: "password verification",
+                  border: OutlineInputBorder(),
+                ),
               ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.all(20),
-            child: ElevatedButton(
-              child: Text('Register'),
-              onPressed: () => _registerUser(context),
+            Container(
+              padding: EdgeInsets.all(20),
+              child: ElevatedButton(
+                child: Text('Register'),
+                onPressed: () => _registerUser(context),
+              ),
             ),
-          ),
-          Spacer(),
-        ]),
+            Spacer(),
+          ]),
+        ),
       ),
     );
   }
@@ -99,8 +107,7 @@ class RegisterView extends StatelessWidget {
       final response = await createUser(username, email, password);
       if (response.statusCode == 200) {
         User user = User.fromJsonResponseLogin(jsonDecode(response.body));
-        await Navigator.push(context,
-            MaterialPageRoute(builder: (context) => MessageView(user)));
+        await Navigator.push(context, MaterialPageRoute(builder: (context) => MessageView(user)));
       } else {
         _wrongRegistration(context, response.body);
       }

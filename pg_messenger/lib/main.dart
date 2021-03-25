@@ -8,20 +8,12 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScopeNode currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
-        }
-      },
-      child: MaterialApp(
-        title: 'Purple Giraffe Messenger',
-        theme: ThemeData(
-          primarySwatch: purpleGiraffe,
-        ),
-        home: ConnectionView(),
+    return MaterialApp(
+      title: 'Purple Giraffe Messenger',
+      theme: ThemeData(
+        primarySwatch: purpleGiraffe,
       ),
+      home: ConnectionView(),
     );
   }
 }
