@@ -30,7 +30,6 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addObserver(this);
     _isCurrentView = true;
     _inputFieldNode = FocusNode();
     _messageController.messageStream(
@@ -139,26 +138,22 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   }
 
   goToEndList() async {
-    if (_scrollController.position.pixels == _oldPositionScrollMax) {
-      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-      await _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        curve: Curves.easeOut,
-        duration: const Duration(milliseconds: 250),
-      );
-    }
-    if (_scrollController.position.pixels != _scrollController.position.maxScrollExtent && _scrollController.position.pixels == _oldPositionScrollMax) {
-      await goToEndList();
-    } else {
-      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+    _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+    if (_scrollController.position.pixels == _oldPositionScrollMax || _oldPositionScrollMax == 0) {
+      do {
+        _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+        await _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          curve: Curves.easeOut,
+          duration: const Duration(milliseconds: 250),
+        );
+      } while (_oldPositionScrollMax != _scrollController.position.maxScrollExtent);
     }
     return;
   }
 
   Widget _singleMessage(BuildContext context, int num) {
-    SchedulerBinding.instance?.addPostFrameCallback((_) {
-      goToEndList();
-    });
+    goToEndList();
     return Card(
       child: Container(
         padding: EdgeInsets.all(20),
