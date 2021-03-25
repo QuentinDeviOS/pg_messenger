@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:intl/intl.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Models/user.dart';
@@ -49,7 +50,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void didChangeMetrics() {
     final value = MediaQuery.of(context).viewInsets.bottom;
     if (value > 0) {
-      _scrollController.position.jumpTo(_oldPositionScrollMax ?? _scrollController.position.maxScrollExtent);
+      _scrollController.position.jumpTo(
+          _oldPositionScrollMax ?? _scrollController.position.maxScrollExtent);
     }
     super.didChangeMetrics();
   }
@@ -71,7 +73,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             icon: const Icon(Icons.logout),
             tooltip: 'Log Out',
             onPressed: () {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConnectionView()));
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => ConnectionView()));
             },
           ),
         ],
@@ -132,7 +135,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
-      final message = _messageController.createNewMessageFromString(_textController.text, _currentUser);
+      final message = _messageController.createNewMessageFromString(
+          _textController.text, _currentUser);
       _messageController.sendMessage(message);
     }
     _textController.text = "";
@@ -147,7 +151,9 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         duration: const Duration(milliseconds: 250),
       );
     }
-    if (_scrollController.position.pixels != _scrollController.position.maxScrollExtent && _scrollController.position.pixels == _oldPositionScrollMax) {
+    if (_scrollController.position.pixels !=
+            _scrollController.position.maxScrollExtent &&
+        _scrollController.position.pixels == _oldPositionScrollMax) {
       await goToEndList();
     } else {
       _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
@@ -171,7 +177,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                 children: [
                   Text(_messageList[num].username),
                   Spacer(),
-                  Text(_messageList[num].timestamp.toString()),
+                  Text(_formatedTimestamp(_messageList[num].timestamp)),
                 ],
               ),
             ),
@@ -180,5 +186,26 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         ),
       ),
     );
+  }
+
+  String _formatedTimestamp(DateTime? timestamp) {
+    if (timestamp != null) {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final difference = today.compareTo(timestamp);
+      final DateFormat formatDay = DateFormat('dd/mm');
+      final DateFormat formatTime = DateFormat('dd/mm');
+      if (difference == 1) {
+        return DateFormat("d MMM").format(timestamp).toString();
+      } else if (difference == 0) {
+        return "Just now";
+      } else if (difference == -1) {
+        return DateFormat("Hm").format(timestamp).toString();
+      } else {
+        return "";
+      }
+    } else {
+      return "";
+    }
   }
 }
