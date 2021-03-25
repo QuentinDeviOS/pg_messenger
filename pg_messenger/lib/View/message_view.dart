@@ -4,6 +4,7 @@ import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/connection_view.dart';
 import 'package:intl/intl.dart';
+import 'package:pg_messenger/generated/l10n.dart';
 
 class MessageView extends StatefulWidget {
   final User _currentUser;
@@ -49,7 +50,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void didChangeMetrics() {
     final value = MediaQuery.of(context).viewInsets.bottom;
     if (value > 0) {
-      _scrollController.position.jumpTo(_oldPositionScrollMax ?? _scrollController.position.maxScrollExtent);
+      _scrollController.position.jumpTo(
+          _oldPositionScrollMax ?? _scrollController.position.maxScrollExtent);
     }
     super.didChangeMetrics();
   }
@@ -65,13 +67,14 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Messages"),
+        title: Text(S.of(context).message_title),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.logout),
-            tooltip: 'Log Out',
+            tooltip: S.of(context).message_logout,
             onPressed: () {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConnectionView()));
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => ConnectionView()));
             },
           ),
         ],
@@ -100,7 +103,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                       },
                       onTap: () => goToEndList(),
                       decoration: InputDecoration(
-                        labelText: "Send message",
+                        labelText: S.of(context).message_send_button,
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             width: 4.0,
@@ -132,7 +135,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
-      final message = _messageController.createNewMessageFromString(_textController.text, _currentUser);
+      final message = _messageController.createNewMessageFromString(
+          _textController.text, _currentUser);
       _messageController.sendMessage(message);
     }
     _textController.text = "";
@@ -140,7 +144,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   goToEndList() async {
     _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-    if (_scrollController.position.pixels == _oldPositionScrollMax || _oldPositionScrollMax == 0) {
+    if (_scrollController.position.pixels == _oldPositionScrollMax ||
+        _oldPositionScrollMax == 0) {
       do {
         _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
         await _scrollController.animateTo(
@@ -148,7 +153,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
           curve: Curves.easeOut,
           duration: const Duration(milliseconds: 250),
         );
-      } while (_oldPositionScrollMax != _scrollController.position.maxScrollExtent);
+      } while (
+          _oldPositionScrollMax != _scrollController.position.maxScrollExtent);
     }
     return;
   }
@@ -186,7 +192,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
       if (difference == 1) {
         return DateFormat("d MMM").format(timestamp).toString();
       } else if (difference == 0) {
-        return "Just now";
+        return S.of(context).message_just_now;
       } else if (difference == -1) {
         return DateFormat("Hm").format(timestamp).toString();
       } else {

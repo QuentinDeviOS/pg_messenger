@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/View/login_view.dart';
 import 'package:pg_messenger/View/register_view.dart';
+import 'package:pg_messenger/generated/l10n.dart';
 
 class ConnectionView extends StatefulWidget {
   ConnectionView({Key? key}) : super(key: key);
@@ -21,14 +22,14 @@ class _ConnectionViewState extends State<ConnectionView> {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.lock),
-            label: 'Login',
+            label: S.of(context).login_title,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_add),
-            label: 'Register',
+            label: S.of(context).register_title,
           ),
         ],
         selectedItemColor: Theme.of(context).bottomAppBarTheme.color,

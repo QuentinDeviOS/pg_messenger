@@ -1,5 +1,3 @@
-import 'package:pg_messenger/Models/user.dart';
-
 class Message {
   final String _username;
   final String _message;

@@ -21,6 +21,26 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
-
+    "login_alert_OK_button" : MessageLookupByLibrary.simpleMessage("OK"),
+    "login_error_text" : MessageLookupByLibrary.simpleMessage("Username and/or password do not match."),
+    "login_error_title" : MessageLookupByLibrary.simpleMessage("Are you sure about your credentials?"),
+    "login_password" : MessageLookupByLibrary.simpleMessage("password"),
+    "login_send_button" : MessageLookupByLibrary.simpleMessage("Log In"),
+    "login_title" : MessageLookupByLibrary.simpleMessage("Login"),
+    "login_username" : MessageLookupByLibrary.simpleMessage("username"),
+    "message_just_now" : MessageLookupByLibrary.simpleMessage("Just now"),
+    "message_logout" : MessageLookupByLibrary.simpleMessage("Log Out"),
+    "message_send_button" : MessageLookupByLibrary.simpleMessage("Send message"),
+    "message_title" : MessageLookupByLibrary.simpleMessage("Messages"),
+    "register_alert_OK_button" : MessageLookupByLibrary.simpleMessage("OK"),
+    "register_alert_title" : MessageLookupByLibrary.simpleMessage("Error"),
+    "register_email" : MessageLookupByLibrary.simpleMessage("email"),
+    "register_error_email" : MessageLookupByLibrary.simpleMessage("Must be a valid email address"),
+    "register_error_password" : MessageLookupByLibrary.simpleMessage("Both password must match"),
+    "register_password" : MessageLookupByLibrary.simpleMessage("password"),
+    "register_password_verification" : MessageLookupByLibrary.simpleMessage("password verification"),
+    "register_send_button" : MessageLookupByLibrary.simpleMessage("Register"),
+    "register_title" : MessageLookupByLibrary.simpleMessage("Register"),
+    "register_username" : MessageLookupByLibrary.simpleMessage("username")
   };
 }
