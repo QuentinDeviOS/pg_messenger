@@ -10,6 +10,7 @@ class LoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final node = FocusScope.of(context);
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -28,6 +29,8 @@ class LoginView extends StatelessWidget {
                   controller: _usernameController,
                   enableSuggestions: false,
                   autocorrect: false,
+                  textInputAction: TextInputAction.next,
+                  onEditingComplete: () => node.nextFocus(),
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.person),
                     hintText: "username",
@@ -42,6 +45,8 @@ class LoginView extends StatelessWidget {
                   obscureText: true,
                   enableSuggestions: false,
                   autocorrect: false,
+                  textInputAction: TextInputAction.next,
+                  onEditingComplete: () => node.nextFocus(),
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.lock),
                     hintText: "password",
@@ -74,7 +79,8 @@ class LoginView extends StatelessWidget {
       final response = await client.post(uri);
       if (response.statusCode == 200) {
         User user = User.fromJsonResponseLogin(jsonDecode(response.body));
-        await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MessageView(user)));
+        await Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => MessageView(user)));
       } else {
         _wrongLogin(context);
       }

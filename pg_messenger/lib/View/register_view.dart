@@ -12,6 +12,7 @@ class RegisterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final node = FocusScope.of(context);
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -29,6 +30,8 @@ class RegisterView extends StatelessWidget {
                 controller: _usernameController,
                 enableSuggestions: false,
                 autocorrect: false,
+                textInputAction: TextInputAction.next,
+                onEditingComplete: () => node.nextFocus(),
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.person),
                   hintText: "username",
@@ -42,6 +45,8 @@ class RegisterView extends StatelessWidget {
                 controller: _emailController,
                 enableSuggestions: false,
                 autocorrect: false,
+                textInputAction: TextInputAction.next,
+                onEditingComplete: () => node.nextFocus(),
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.email),
                   hintText: "email",
@@ -56,6 +61,8 @@ class RegisterView extends StatelessWidget {
                 obscureText: true,
                 enableSuggestions: false,
                 autocorrect: false,
+                textInputAction: TextInputAction.next,
+                onEditingComplete: () => node.nextFocus(),
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.lock),
                   hintText: "password",
@@ -70,6 +77,8 @@ class RegisterView extends StatelessWidget {
                 obscureText: true,
                 enableSuggestions: false,
                 autocorrect: false,
+                textInputAction: TextInputAction.next,
+                onEditingComplete: () => node.nextFocus(),
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.lock),
                   hintText: "password verification",
