@@ -50,7 +50,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void didChangeMetrics() {
     final value = MediaQuery.of(context).viewInsets.bottom;
     if (value > 0) {
-      _scrollController.position.jumpTo(_oldPositionScrollMax ?? _scrollController.position.maxScrollExtent);
+      _scrollController.position.jumpTo(
+          _oldPositionScrollMax ?? _scrollController.position.maxScrollExtent);
     }
     super.didChangeMetrics();
   }
@@ -72,7 +73,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             icon: const Icon(Icons.logout),
             tooltip: S.of(context).message_logout,
             onPressed: () {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConnectionView()));
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => ConnectionView()));
             },
           ),
         ],
@@ -133,7 +135,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
-      final message = _messageController.createNewMessageFromString(_textController.text, _currentUser);
+      final message = _messageController.createNewMessageFromString(
+          _textController.text, _currentUser);
       _messageController.sendMessage(message);
     }
     _textController.text = "";
@@ -141,7 +144,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   goToEndList() async {
     _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-    if (_scrollController.position.pixels == _oldPositionScrollMax || _oldPositionScrollMax == 0) {
+    if (_scrollController.position.pixels == _oldPositionScrollMax ||
+        _oldPositionScrollMax == 0) {
       do {
         _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
         await _scrollController.animateTo(
@@ -149,7 +153,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
           curve: Curves.easeOut,
           duration: const Duration(milliseconds: 250),
         );
-      } while (_oldPositionScrollMax != _scrollController.position.maxScrollExtent);
+      } while (
+          _oldPositionScrollMax != _scrollController.position.maxScrollExtent);
     }
     return;
   }

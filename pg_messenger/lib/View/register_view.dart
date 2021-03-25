@@ -118,7 +118,8 @@ class RegisterView extends StatelessWidget {
       final response = await createUser(username, email, password);
       if (response.statusCode == 200) {
         User user = User.fromJsonResponseLogin(jsonDecode(response.body));
-        await Navigator.push(context, MaterialPageRoute(builder: (context) => MessageView(user)));
+        await Navigator.push(context,
+            MaterialPageRoute(builder: (context) => MessageView(user)));
       } else {
         _wrongRegistration(context, response.body);
       }

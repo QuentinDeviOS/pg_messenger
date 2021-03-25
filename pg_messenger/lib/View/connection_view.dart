@@ -22,14 +22,16 @@ class _ConnectionViewState extends State<ConnectionView> {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        items: <BottomNavigationBarItem>[
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.lock),
-            label: S.of(context).login_title,
+            label: "",
+            //label: "S.of(context).login_title",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_add),
-            label: S.of(context).register_title
+            //label: register_title,
+            label: "",
           ),
         ],
         selectedItemColor: Theme.of(context).bottomAppBarTheme.color,
