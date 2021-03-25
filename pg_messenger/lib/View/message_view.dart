@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Models/user.dart';
@@ -29,6 +30,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance?.addObserver(this);
     _isCurrentView = true;
     _inputFieldNode = FocusNode();
     _messageController.messageStream(
@@ -47,9 +49,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void didChangeMetrics() {
     final value = MediaQuery.of(context).viewInsets.bottom;
     if (value > 0) {
-      _scrollController.position
-          .jumpTo(_scrollController.position.maxScrollExtent);
-      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+      _scrollController.position.jumpTo(_oldPositionScrollMax ?? _scrollController.position.maxScrollExtent);
     }
     super.didChangeMetrics();
   }
@@ -71,8 +71,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             icon: const Icon(Icons.logout),
             tooltip: 'Log Out',
             onPressed: () {
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => ConnectionView()));
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConnectionView()));
             },
           ),
         ],
@@ -133,8 +132,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
-      final message = _messageController.createNewMessageFromString(
-          _textController.text, _currentUser);
+      final message = _messageController.createNewMessageFromString(_textController.text, _currentUser);
       _messageController.sendMessage(message);
     }
     _textController.text = "";
@@ -149,16 +147,16 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         duration: const Duration(milliseconds: 250),
       );
     }
-    if (_scrollController.position.pixels !=
-            _scrollController.position.maxScrollExtent &&
-        _scrollController.position.pixels == _oldPositionScrollMax) {
+    if (_scrollController.position.pixels != _scrollController.position.maxScrollExtent && _scrollController.position.pixels == _oldPositionScrollMax) {
       await goToEndList();
+    } else {
+      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
     }
     return;
   }
 
   Widget _singleMessage(BuildContext context, int num) {
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    SchedulerBinding.instance?.addPostFrameCallback((_) {
       goToEndList();
     });
     return Card(
