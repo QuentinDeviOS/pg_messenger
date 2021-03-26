@@ -17,13 +17,13 @@ class MessageView extends StatefulWidget {
 }
 
 class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
-  final itemPositionLisner = ItemPositionsListener.create();
+  final _itemPositionLisner = ItemPositionsListener.create();
   final _currentUser;
   late MessageController _messageController;
   final _textController = TextEditingController();
   final ItemScrollController _scrollController = ItemScrollController();
   bool _isCurrentView = false;
-  double? _oldPositionScrollMax;
+  int? _oldIndexScrollMax;
   FocusNode? _inputFieldNode;
   List<Message> _messageList = [];
 
@@ -46,20 +46,21 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         }
       },
     );
-    _oldPositionScrollMax = 0;
+    _oldIndexScrollMax = 0;
   }
 
   @override
   void didChangeMetrics() {
     final value = MediaQuery.of(context).viewInsets.bottom;
     if (value > 0) {
-      _scrollController.jumpTo(index: _messageList.length, alignment: 0);
+      _scrollController.jumpTo(index: _messageList.length - 1, alignment: 0);
     }
     super.didChangeMetrics();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
     _isCurrentView = false;
     _inputFieldNode?.dispose();
     super.dispose();
@@ -88,7 +89,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                 itemScrollController: _scrollController,
                 itemBuilder: _singleMessage,
                 itemCount: _messageList.length,
-                itemPositionsListener: itemPositionLisner,
+                itemPositionsListener: _itemPositionLisner,
               ),
             ),
             Form(
@@ -144,17 +145,20 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   }
 
   goToEndList() async {
-    if (itemPositionLisner.itemPositions.value.last.index == (_messageList.length - 1)) {
-      await _scrollController.scrollTo(index: (_messageList.length - 1), duration: Duration(milliseconds: 250));
+    if (_itemPositionLisner.itemPositions.value.last.index == _messageList.length - 1 && _oldIndexScrollMax != _messageList.length - 1) {
+      _scrollController.scrollTo(index: (_messageList.length - 1), duration: Duration(milliseconds: 500));
+      _oldIndexScrollMax = _messageList.length - 1;
+    } else if (_oldIndexScrollMax == 0) {
+      _scrollController.jumpTo(index: _messageList.length - 1);
+      _oldIndexScrollMax = _messageList.length - 1;
     }
     return;
   }
 
   Widget _singleMessage(BuildContext context, int num) {
-    SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       goToEndList();
     });
-
     return Card(
       child: Container(
         padding: EdgeInsets.all(20),
