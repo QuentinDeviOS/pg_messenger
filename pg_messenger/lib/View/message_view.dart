@@ -169,13 +169,25 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
               padding: EdgeInsets.only(bottom: 10.0),
               child: Row(
                 children: [
-                  Text(_messageList[num].username),
+                  Text(_messageList[num].username, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black54)),
                   Spacer(),
                   Text(_formatedTimestamp(_messageList[num].timestamp)),
                 ],
               ),
             ),
-            Text(_messageList[num].message)
+            Text(_messageList[num].message),
+            Row(
+              children: [
+                Spacer(),
+                TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      "report abuse",
+                      style: TextStyle(fontSize: 10.0),
+                      textAlign: TextAlign.right,
+                    )),
+              ],
+            ),
           ],
         ),
       ),
