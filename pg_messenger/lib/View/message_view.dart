@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Models/message.dart';
@@ -5,6 +6,7 @@ import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/connection_view.dart';
 import 'package:intl/intl.dart';
 import 'package:pg_messenger/generated/l10n.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class MessageView extends StatefulWidget {
   final User _currentUser;
@@ -15,12 +17,13 @@ class MessageView extends StatefulWidget {
 }
 
 class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
+  final _itemPositionLisner = ItemPositionsListener.create();
   final _currentUser;
   late MessageController _messageController;
   final _textController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
+  final ItemScrollController _scrollController = ItemScrollController();
   bool _isCurrentView = false;
-  double? _oldPositionScrollMax;
+  int? _oldIndexScrollMax;
   FocusNode? _inputFieldNode;
   List<Message> _messageList = [];
 
@@ -43,21 +46,21 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         }
       },
     );
-    _oldPositionScrollMax = 0;
+    _oldIndexScrollMax = 0;
   }
 
   @override
   void didChangeMetrics() {
     final value = MediaQuery.of(context).viewInsets.bottom;
     if (value > 0) {
-      _scrollController.position.jumpTo(
-          _oldPositionScrollMax ?? _scrollController.position.maxScrollExtent);
+      _scrollController.jumpTo(index: _messageList.length - 1, alignment: 0);
     }
     super.didChangeMetrics();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
     _isCurrentView = false;
     _inputFieldNode?.dispose();
     super.dispose();
@@ -73,8 +76,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             icon: const Icon(Icons.logout),
             tooltip: S.of(context).message_logout,
             onPressed: () {
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => ConnectionView()));
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConnectionView()));
             },
           ),
         ],
@@ -83,10 +85,11 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
+              child: ScrollablePositionedList.builder(
+                itemScrollController: _scrollController,
                 itemBuilder: _singleMessage,
                 itemCount: _messageList.length,
+                itemPositionsListener: _itemPositionLisner,
               ),
             ),
             Form(
@@ -135,32 +138,27 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
-      final message = _messageController.createNewMessageFromString(
-          _textController.text, _currentUser);
+      final message = _messageController.createNewMessageFromString(_textController.text, _currentUser);
       _messageController.sendMessage(message);
     }
     _textController.text = "";
   }
 
   goToEndList() async {
-    _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-    if (_scrollController.position.pixels == _oldPositionScrollMax ||
-        _oldPositionScrollMax == 0) {
-      do {
-        _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-        await _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          curve: Curves.easeOut,
-          duration: const Duration(milliseconds: 250),
-        );
-      } while (
-          _oldPositionScrollMax != _scrollController.position.maxScrollExtent);
+    if (_itemPositionLisner.itemPositions.value.last.index == _messageList.length - 1 && _oldIndexScrollMax != _messageList.length - 1) {
+      _scrollController.scrollTo(index: (_messageList.length - 1), duration: Duration(milliseconds: 500));
+      _oldIndexScrollMax = _messageList.length - 1;
+    } else if (_oldIndexScrollMax == 0) {
+      _scrollController.jumpTo(index: _messageList.length - 1);
+      _oldIndexScrollMax = _messageList.length - 1;
     }
     return;
   }
 
   Widget _singleMessage(BuildContext context, int num) {
-    goToEndList();
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      goToEndList();
+    });
     return Card(
       child: Container(
         padding: EdgeInsets.all(20),
