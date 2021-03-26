@@ -161,7 +161,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     });
     return Card(
       child: Container(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -175,6 +175,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                 ],
               ),
             ),
+            Padding(padding: EdgeInsets.only(bottom: 8)),
             Text(_messageList[num].message),
             Row(
               children: [
