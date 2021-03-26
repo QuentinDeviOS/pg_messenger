@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Models/user.dart';
@@ -87,6 +88,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                 itemScrollController: _scrollController,
                 itemBuilder: _singleMessage,
                 itemCount: _messageList.length,
+                itemPositionsListener: itemPositionLisner,
               ),
             ),
             Form(
@@ -142,22 +144,17 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   }
 
   goToEndList() async {
-    _oldPositionScrollMax = _scrollController.;
-    if (_scrollController.position.pixels == _oldPositionScrollMax || _oldPositionScrollMax == 0) {
-      do {
-        _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-        await _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          curve: Curves.easeOut,
-          duration: const Duration(milliseconds: 250),
-        );
-      } while (_oldPositionScrollMax != _scrollController.position.maxScrollExtent);
+    if (itemPositionLisner.itemPositions.value.last.index == (_messageList.length - 1)) {
+      await _scrollController.scrollTo(index: (_messageList.length - 1), duration: Duration(milliseconds: 250));
     }
     return;
   }
 
   Widget _singleMessage(BuildContext context, int num) {
-    goToEndList();
+    SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
+      goToEndList();
+    });
+
     return Card(
       child: Container(
         padding: EdgeInsets.all(20),
