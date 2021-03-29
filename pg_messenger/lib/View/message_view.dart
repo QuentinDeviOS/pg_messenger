@@ -7,6 +7,7 @@ import 'package:pg_messenger/View/connection_view.dart';
 import 'package:intl/intl.dart';
 import 'package:pg_messenger/generated/l10n.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MessageView extends StatefulWidget {
   final User _currentUser;
@@ -76,6 +77,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             icon: const Icon(Icons.logout),
             tooltip: S.of(context).message_logout,
             onPressed: () {
+              logOut();
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConnectionView()));
             },
           ),
@@ -199,5 +201,10 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     } else {
       return "";
     }
+  }
+
+  void logOut() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("token", "");
   }
 }
