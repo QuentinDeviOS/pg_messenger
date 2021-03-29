@@ -6,7 +6,6 @@ import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/connection_view.dart';
 import 'package:intl/intl.dart';
 import 'package:pg_messenger/generated/l10n.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MessageView extends StatefulWidget {
@@ -18,13 +17,12 @@ class MessageView extends StatefulWidget {
 }
 
 class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
-  final _itemPositionLisner = ItemPositionsListener.create();
   final _currentUser;
   late MessageController _messageController;
   final _textController = TextEditingController();
-  final ItemScrollController _scrollController = ItemScrollController();
+  final ScrollController _scrollController = ScrollController();
   bool _isCurrentView = false;
-  int? _oldIndexScrollMax;
+  double? _oldPositionScrollMax;
   FocusNode? _inputFieldNode;
   List<Message> _messageList = [];
 
@@ -47,14 +45,14 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         }
       },
     );
-    _oldIndexScrollMax = 0;
+    _oldPositionScrollMax = 0;
   }
 
   @override
   void didChangeMetrics() {
     final value = MediaQuery.of(context).viewInsets.bottom;
     if (value > 0) {
-      _scrollController.jumpTo(index: _messageList.length - 1, alignment: 0);
+      _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
     }
     super.didChangeMetrics();
   }
@@ -87,12 +85,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         child: Column(
           children: [
             Expanded(
-              child: ScrollablePositionedList.builder(
-                itemScrollController: _scrollController,
-                itemBuilder: _singleMessage,
-                itemCount: _messageList.length,
-                itemPositionsListener: _itemPositionLisner,
-              ),
+              child: ListView.builder(controller: _scrollController, itemBuilder: _singleMessage, itemCount: _messageList.length),
             ),
             Form(
               child: Row(
@@ -147,18 +140,23 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   }
 
   goToEndList() async {
-    if (_itemPositionLisner.itemPositions.value.last.index == _messageList.length - 1 && _oldIndexScrollMax != _messageList.length - 1) {
-      _scrollController.scrollTo(index: (_messageList.length - 1), duration: Duration(milliseconds: 500));
-      _oldIndexScrollMax = _messageList.length - 1;
-    } else if (_oldIndexScrollMax == 0) {
-      _scrollController.jumpTo(index: _messageList.length - 1);
-      _oldIndexScrollMax = _messageList.length - 1;
+    if (_scrollController.position.pixels == _oldPositionScrollMax && _oldPositionScrollMax != _scrollController.position.maxScrollExtent && _oldPositionScrollMax != 0) {
+      do {
+        _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+        await _scrollController.position.moveTo(_scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 500));
+      } while (_scrollController.position.pixels != _scrollController.position.maxScrollExtent);
+    } else if (_oldPositionScrollMax == 0) {
+      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+      print(_scrollController.position.maxScrollExtent);
+      _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
+      print(_scrollController.position.maxScrollExtent);
     }
+    _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
     return;
   }
 
   Widget _singleMessage(BuildContext context, int num) {
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
       goToEndList();
     });
     return Card(

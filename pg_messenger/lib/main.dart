@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pg_messenger/View/connection_view.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pg_messenger/View/loadingView.dart';
 import 'package:pg_messenger/generated/l10n.dart';

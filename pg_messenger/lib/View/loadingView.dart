@@ -30,11 +30,9 @@ class LoadingView extends StatelessWidget {
       final loginByToken = await http.get(Uri.parse("https://skyisthelimit.net/users/me"), headers: header);
       if (loginByToken.statusCode == 200) {
         Map<String, dynamic> json = jsonDecode(loginByToken.body);
-        User? user = User.fromLogin(json["id"], json["name"], DateTime.parse(json["createdAt"]), token);
-        if (user != null) {
-          await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MessageView(user)));
-          return;
-        }
+        User user = User.fromLogin(json["id"], json["name"], DateTime.parse(json["createdAt"]), token);
+        await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MessageView(user)));
+        return;
       }
     }
     await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConnectionView()));
