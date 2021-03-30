@@ -1,3 +1,5 @@
+import 'package:pg_messenger/Constants/constant.dart';
+
 class Message {
   final String _username;
   final String _message;
@@ -21,9 +23,9 @@ class Message {
       };
 
   Message.fromJson(Map<String, dynamic> json)
-      : _message = json["subject"],
-        _ownerID = json["userID"],
-        _username = json["username"],
-        _timestamp = json['timestamp'],
-        _messageID = json["id"];
+      : _message = json[Constant.JSONKEY_MESSAGE_MESSAGE],
+        _ownerID = json[Constant.JSONKEY_MESSAGE_USERID],
+        _username = json[Constant.JSONKEY_MESSAGE_USERNAME],
+        _timestamp = json[Constant.JSONKEY_MESSAGE_TIMESTAMP],
+        _messageID = json[Constant.JSONKEY_MESSAGE_ID];
 }

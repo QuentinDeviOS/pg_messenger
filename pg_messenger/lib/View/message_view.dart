@@ -5,7 +5,6 @@ import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/connection_view.dart';
 import 'package:intl/intl.dart';
-import 'package:pg_messenger/View/loadingView.dart';
 import 'package:pg_messenger/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,7 +26,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   FocusNode? _inputFieldNode;
   List<Message> _messageList = [];
 
-  _MessageViewState(this._currentUser) {
+  _MessageViewState(User this._currentUser) {
     _messageController = MessageController(_currentUser.token);
   }
 
@@ -60,10 +59,9 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // TODO: implement didChangeAppLifecycleState
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoadingView()));
+      _messageController = MessageController(_currentUser.token);
     }
   }
 
