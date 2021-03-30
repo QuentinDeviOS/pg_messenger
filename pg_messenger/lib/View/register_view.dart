@@ -100,13 +100,12 @@ class RegisterView extends StatelessWidget {
                       if (await canLaunch(link.url)) {
                         await launch(link.url);
                       } else {
-                        throw 'Could not launch $link';
+                        throw S.of(context).register_EULA_launching_error(link);
                       }
                     },
-                    text:
-                        "En vous incrivant, vous accepter  https://www.cedric06nice.com/app-tc-and-privacypolicy/",
-                    style: TextStyle(color: Colors.purple),
-                    linkStyle: TextStyle(color: Colors.red),
+                    text: S.of(context).register_EULA_message,
+                    style: TextStyle(color: Colors.red),
+                    linkStyle: TextStyle(color: Colors.blue),
                   ),
                 ),
                 Container(
