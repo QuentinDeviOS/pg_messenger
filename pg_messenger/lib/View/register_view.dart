@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/message_view.dart';
 import 'package:pg_messenger/generated/l10n.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RegisterView extends StatelessWidget {
   final _usernameController = TextEditingController();
@@ -28,9 +30,7 @@ class RegisterView extends StatelessWidget {
           child: SingleChildScrollView(
             child: Container(
               height: MediaQuery.of(context).size.height,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
                 Container(
                   padding: EdgeInsets.all(20),
                   child: TextFormField(
@@ -91,6 +91,22 @@ class RegisterView extends StatelessWidget {
                       hintText: S.of(context).register_password_verification,
                       border: OutlineInputBorder(),
                     ),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.all(20),
+                  child: Linkify(
+                    onOpen: (link) async {
+                      if (await canLaunch(link.url)) {
+                        await launch(link.url);
+                      } else {
+                        throw 'Could not launch $link';
+                      }
+                    },
+                    text:
+                        "En vous incrivant, vous accepter  https://www.cedric06nice.com/app-tc-and-privacypolicy/",
+                    style: TextStyle(color: Colors.purple),
+                    linkStyle: TextStyle(color: Colors.red),
                   ),
                 ),
                 Container(
