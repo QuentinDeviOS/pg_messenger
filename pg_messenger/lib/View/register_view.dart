@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/message_view.dart';
 import 'package:pg_messenger/generated/l10n.dart';
@@ -155,7 +156,7 @@ class RegisterView extends StatelessWidget {
     String password,
   ) {
     return http.post(
-      Uri.https('skyisthelimit.net', 'users/signup'),
+      Uri.https(Constant.URL_BASE, 'users/signup'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

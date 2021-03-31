@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http_auth/http_auth.dart' as http_auth;
+import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -77,13 +78,14 @@ class LoginView extends StatelessWidget {
     String password = _passwordController.text;
 
     if (username.isNotEmpty && password.isNotEmpty) {
-      final uri = Uri.parse("https://skyisthelimit.net/users/login");
+      final uri = Uri.parse(Constant.URL_WEB_SERVER_BASE + "/users/login");
       final client = http_auth.BasicAuthClient(username, password);
       final response = await client.post(uri);
       if (response.statusCode == 200) {
         User user = User.fromJsonResponseLogin(jsonDecode(response.body));
         registerToken(user.token);
-        await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MessageView(user)));
+        await Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => MessageView(user)));
       } else {
         _wrongLogin(context);
       }
