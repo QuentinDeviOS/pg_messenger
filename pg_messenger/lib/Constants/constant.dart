@@ -6,5 +6,5 @@ class Constant {
   static const JSONKEY_MESSAGE_TIMESTAMP = "timestamp";
   static const JSONKEY_MESSAGE_ID = "id";
   static const JSONKEY_MESSAGE_USERID = "userID";
-  static const JSONKEY_MESSAGE_MESSAGE = "subject";
+  static const JSONKEY_MESSAGE_MESSAGE = "message";
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Models/message.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -8,7 +9,7 @@ class WebSocketManager {
   Future<IOWebSocketChannel> connectToWS(String token) async {
     Map<String, dynamic> header = Map();
     header["Authorization"] = token;
-    var channel = IOWebSocketChannel.connect("wss://skyisthelimit.net:443/messages/message-web-socket", headers: header, pingInterval: Duration(seconds: 5));
+    var channel = IOWebSocketChannel.connect(Constant.URL_WEB_SOCKET, headers: header, pingInterval: Duration(seconds: 3));
     return channel;
   }
 

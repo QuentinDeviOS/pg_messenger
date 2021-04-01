@@ -18,8 +18,8 @@ class Message {
   Message(this._messageID, this._message, this._ownerID, this._timestamp, this._username);
 
   Map<String, dynamic> toJson() => {
-        'subject': message,
-        'owner': {'id': _ownerID}
+        Constant.JSONKEY_MESSAGE_MESSAGE: message,
+        'ownerId': {'id': _ownerID}
       };
 
   Message.fromJson(Map<String, dynamic> json)
