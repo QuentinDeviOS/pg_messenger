@@ -147,11 +147,21 @@ class S {
     );
   }
 
-  /// `By clicking register, you agree to our Privacy Policy and Terms and conditions available here : https://www.cedric06nice.com/app-tc-and-privacypolicy/`
+  /// `By clicking register, you agree to our `
   String get register_EULA_message {
     return Intl.message(
-      'By clicking register, you agree to our Privacy Policy and Terms and conditions available here : https://www.cedric06nice.com/app-tc-and-privacypolicy/',
+      'By clicking register, you agree to our ',
       name: 'register_EULA_message',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy Policy and Terms and Conditions`
+  String get register_EULA_message_link {
+    return Intl.message(
+      'Privacy Policy and Terms and Conditions',
+      name: 'register_EULA_message_link',
       desc: '',
       args: [],
     );

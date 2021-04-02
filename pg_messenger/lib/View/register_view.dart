@@ -1,11 +1,11 @@
 import 'dart:convert';
+import 'package:flutter/gestures.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/message_view.dart';
 import 'package:pg_messenger/generated/l10n.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RegisterView extends StatelessWidget {
@@ -31,93 +31,117 @@ class RegisterView extends StatelessWidget {
           child: SingleChildScrollView(
             child: Container(
               height: MediaQuery.of(context).size.height,
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Container(
-                  padding: EdgeInsets.all(20),
-                  child: TextFormField(
-                    controller: _usernameController,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    textInputAction: TextInputAction.next,
-                    onEditingComplete: () => node.nextFocus(),
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.person),
-                      hintText: S.of(context).register_username,
-                      border: OutlineInputBorder(),
+              child: AutofillGroup(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      child: TextFormField(
+                        controller: _usernameController,
+                        autofillHints: <String>[AutofillHints.nickname],
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        textInputAction: TextInputAction.next,
+                        onEditingComplete: () => node.nextFocus(),
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.person),
+                          hintText: S.of(context).register_username,
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(20),
-                  child: TextFormField(
-                    controller: _emailController,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    textInputAction: TextInputAction.next,
-                    onEditingComplete: () => node.nextFocus(),
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.email),
-                      hintText: S.of(context).register_email,
-                      border: OutlineInputBorder(),
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      child: TextFormField(
+                        controller: _emailController,
+                        autofillHints: <String>[AutofillHints.email],
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        textInputAction: TextInputAction.next,
+                        onEditingComplete: () => node.nextFocus(),
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.email),
+                          hintText: S.of(context).register_email,
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(20),
-                  child: TextFormField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    textInputAction: TextInputAction.next,
-                    onEditingComplete: () => node.nextFocus(),
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.lock),
-                      hintText: S.of(context).register_password,
-                      border: OutlineInputBorder(),
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      child: TextFormField(
+                        controller: _passwordController,
+                        autofillHints: <String>[AutofillHints.newPassword],
+                        obscureText: true,
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        textInputAction: TextInputAction.next,
+                        onEditingComplete: () => node.nextFocus(),
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.lock),
+                          hintText: S.of(context).register_password,
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(20),
-                  child: TextFormField(
-                    controller: _passwordVerificationController,
-                    obscureText: true,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    textInputAction: TextInputAction.next,
-                    onEditingComplete: () => node.nextFocus(),
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.lock),
-                      hintText: S.of(context).register_password_verification,
-                      border: OutlineInputBorder(),
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      child: TextFormField(
+                        controller: _passwordVerificationController,
+                        autofillHints: <String>[AutofillHints.newPassword],
+                        obscureText: true,
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        textInputAction: TextInputAction.next,
+                        onEditingComplete: () => node.nextFocus(),
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.lock),
+                          hintText:
+                              S.of(context).register_password_verification,
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
                     ),
-                  ),
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: S.of(context).register_EULA_message,
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            TextSpan(
+                              text: S.of(context).register_EULA_message_link,
+                              style: TextStyle(color: Colors.blue),
+                              recognizer: new TapGestureRecognizer()
+                                ..onTap = () async {
+                                  final url =
+                                      'https://www.cedric06nice.com/app-tc-and-privacypolicy/';
+                                  if (await canLaunch(url)) {
+                                    await launch(url);
+                                  } else {
+                                    throw S
+                                        .of(context)
+                                        .register_EULA_launching_error(url);
+                                  }
+                                },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      child: ElevatedButton(
+                        child: Text(S.of(context).register_send_button),
+                        onPressed: () => _registerUser(context),
+                      ),
+                    ),
+                    Spacer(),
+                  ],
                 ),
-                Container(
-                  padding: EdgeInsets.all(20),
-                  child: Linkify(
-                    onOpen: (link) async {
-                      if (await canLaunch(link.url)) {
-                        await launch(link.url);
-                      } else {
-                        throw S.of(context).register_EULA_launching_error(link);
-                      }
-                    },
-                    text: S.of(context).register_EULA_message,
-                    style: TextStyle(color: Colors.red),
-                    linkStyle: TextStyle(color: Colors.blue),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(20),
-                  child: ElevatedButton(
-                    child: Text(S.of(context).register_send_button),
-                    onPressed: () => _registerUser(context),
-                  ),
-                ),
-                Spacer(),
-              ]),
+              ),
             ),
           ),
         ),

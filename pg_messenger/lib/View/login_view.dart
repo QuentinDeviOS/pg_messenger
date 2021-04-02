@@ -25,48 +25,52 @@ class LoginView extends StatelessWidget {
         appBar: AppBar(title: Text(S.of(context).login_title)),
         resizeToAvoidBottomInset: true,
         body: SafeArea(
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.all(20),
-                child: TextFormField(
-                  controller: _usernameController,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  textInputAction: TextInputAction.next,
-                  onEditingComplete: () => node.nextFocus(),
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.person),
-                    hintText: S.of(context).login_username,
-                    border: OutlineInputBorder(),
+          child: AutofillGroup(
+            child: Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(20),
+                  child: TextFormField(
+                    controller: _usernameController,
+                    autofillHints: <String>[AutofillHints.username],
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    textInputAction: TextInputAction.next,
+                    onEditingComplete: () => node.nextFocus(),
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.person),
+                      hintText: S.of(context).login_username,
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                padding: EdgeInsets.all(20),
-                child: TextFormField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  textInputAction: TextInputAction.next,
-                  onEditingComplete: () => node.nextFocus(),
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.lock),
-                    hintText: S.of(context).login_password,
-                    border: OutlineInputBorder(),
+                Container(
+                  padding: EdgeInsets.all(20),
+                  child: TextFormField(
+                    controller: _passwordController,
+                    autofillHints: <String>[AutofillHints.password],
+                    obscureText: true,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    textInputAction: TextInputAction.next,
+                    onEditingComplete: () => node.nextFocus(),
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.lock),
+                      hintText: S.of(context).login_password,
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                padding: EdgeInsets.all(20),
-                child: ElevatedButton(
-                  child: Text(S.of(context).login_send_button),
-                  onPressed: () => _loginUser(context),
+                Container(
+                  padding: EdgeInsets.all(20),
+                  child: ElevatedButton(
+                    child: Text(S.of(context).login_send_button),
+                    onPressed: () => _loginUser(context),
+                  ),
                 ),
-              ),
-              Spacer(),
-            ],
+                Spacer(),
+              ],
+            ),
           ),
         ),
       ),
