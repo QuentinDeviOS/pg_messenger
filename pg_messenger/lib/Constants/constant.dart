@@ -13,7 +13,7 @@
 
 //LOCAL TEST
 class Constant {
-  static const URL_BASE = "127.0.0.1";
+  static const URL_BASE = "127.0.0.1:8080";
   static const URL_WEB_SERVER_BASE = "http://" + URL_BASE;
   static const URL_WEB_SOCKET = "ws://127.0.0.1:8080/messages/message-web-socket";
   static const JSONKEY_MESSAGE_USERNAME = "username";

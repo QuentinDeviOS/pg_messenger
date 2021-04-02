@@ -19,10 +19,14 @@ class Message {
 
   Message(this._messageID, this._message, this._ownerID, this._timestamp, this._username);
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJsonForSending() => {
         Constant.JSONKEY_MESSAGE_MESSAGE: message,
         'ownerId': {'id': _ownerID}
       };
+
+  Map<String, dynamic> toJsonForReport() {
+    return {"id": _messageID};
+  }
 
   Message.fromJson(Map<String, dynamic> json)
       : _message = json[Constant.JSONKEY_MESSAGE_MESSAGE],

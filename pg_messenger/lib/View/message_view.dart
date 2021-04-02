@@ -1,6 +1,3 @@
-import 'dart:ffi';
-import 'dart:html';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
@@ -175,10 +172,72 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     return;
   }
 
+  //Version Sans PopMenu
+
+  // Widget _singleMessage(BuildContext context, int num) {
+  //   WidgetsBinding.instance?.addPostFrameCallback((_) {
+  //     goToEndList();
+  //   });
+  //   print(_messageList[num].flag);
+  //   return Card(
+  //     child: Container(
+  //       padding: EdgeInsets.all(20),
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Container(
+  //             padding: EdgeInsets.only(bottom: 10.0),
+  //             child: Row(
+  //               children: [
+  //                 Text(_messageList[num].username),
+  //                 Spacer(),
+  //                 Text(_formatedTimestamp(_messageList[num].timestamp)),
+  //               ],
+  //             ),
+  //           ),
+  //           if (_messageList[num].flag != true)
+  //             Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Text(_messageList[num].message),
+  //                 Row(
+  //                   children: [
+  //                     Spacer(),
+  //                     TextButton(
+  //                         onPressed: () {
+  //                           _messageController.reportMessage(_messageList[num], _currentUser);
+  //                         },
+  //                         child: Row(
+  //                           children: [
+  //                             Icon(
+  //                               Icons.pan_tool,
+  //                               size: 12,
+  //                             ),
+  //                             Text(
+  //                               "  report abuse",
+  //                               style: TextStyle(fontSize: 12),
+  //                             )
+  //                           ],
+  //                         ))
+  //                   ],
+  //                 )
+  //               ],
+  //             ),
+  //           if (_messageList[num].flag == true) Text("Message en cours de modération")
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+  //
+
+  //Version avec popMenu
+
   Widget _singleMessage(BuildContext context, int num) {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       goToEndList();
     });
+    print(_messageList[num].flag);
     return Card(
       child: Container(
         padding: EdgeInsets.all(20),
@@ -192,16 +251,36 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                   Text(_messageList[num].username),
                   Spacer(),
                   Text(_formatedTimestamp(_messageList[num].timestamp)),
+                  if (_messageList[num].flag != true)
+                    PopupMenuButton(
+                      icon: Icon(Icons.more_vert),
+                      onSelected: (value) {
+                        if (value == "report") {
+                          _messageController.reportMessage(_messageList[num], _currentUser);
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                            value: "report",
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.pan_tool,
+                                  size: 12,
+                                  color: Colors.red.shade300,
+                                ),
+                                Text(
+                                  "  report abuse",
+                                  style: TextStyle(fontSize: 12, color: Colors.red),
+                                )
+                              ],
+                            ))
+                      ],
+                    )
                 ],
               ),
             ),
             if (_messageList[num].flag != true) Text(_messageList[num].message),
-            if (_messageList[num].flag != true)
-              IconButton(
-                icon: Icon(Icons.report, size: 15),
-                color: Colors.red.shade300,
-                onPressed: reportMessage,
-              ),
             if (_messageList[num].flag == true) Text("Message en cours de modération")
           ],
         ),
@@ -231,9 +310,5 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void logOut() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("token", "");
-  }
-
-  void reportMessage() async {
-    //report message to administrator/moderator
   }
 }
