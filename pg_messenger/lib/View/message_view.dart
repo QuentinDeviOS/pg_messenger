@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -189,17 +190,19 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
               child: Row(
                 children: [
                   Text(_messageList[num].username),
-                  IconButton(
-                    icon: Icon(Icons.report, size: 15),
-                    color: Colors.red.shade300,
-                    onPressed: reportMessage,
-                  ),
                   Spacer(),
                   Text(_formatedTimestamp(_messageList[num].timestamp)),
                 ],
               ),
             ),
-            Text(_messageList[num].message)
+            if (_messageList[num].flag != true) Text(_messageList[num].message),
+            if (_messageList[num].flag != true)
+              IconButton(
+                icon: Icon(Icons.report, size: 15),
+                color: Colors.red.shade300,
+                onPressed: reportMessage,
+              ),
+            if (_messageList[num].flag == true) Text("Message en cours de modération")
           ],
         ),
       ),
@@ -230,7 +233,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     prefs.setString("token", "");
   }
 
-  void reportMessage() {
+  void reportMessage() async {
     //report message to administrator/moderator
   }
 }

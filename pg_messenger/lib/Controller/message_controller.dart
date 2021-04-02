@@ -13,12 +13,10 @@ class MessageController {
   }
 
   Message createNewMessageFromString(String messageString, User user) {
-    return Message("", messageString, user.id, null, ""); //manque id ?
+    return Message("", messageString, user.id, null, "");
   }
 
-  void messageStream(
-      {required Function(List<Message> messageList)
-          onMessageListLoaded}) async {
+  void messageStream({required Function(List<Message> messageList) onMessageListLoaded}) async {
     _webSocketController?.onReceive(onReceiveData: (data) {
       if (hasMessages(data)) {
         onMessageListLoaded(_messageList);

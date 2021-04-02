@@ -6,11 +6,13 @@ class Message {
   final String _ownerID;
   final String _messageID;
   double? _timestamp;
+  bool? _flag;
 
   String get messageID => _messageID;
   String get username => _username;
   String get message => _message;
   String get owner => _ownerID;
+  bool? get flag => _flag;
   DateTime? get timestamp {
     return DateTime.fromMillisecondsSinceEpoch((_timestamp! * 1000).truncate());
   }
@@ -27,5 +29,6 @@ class Message {
         _ownerID = json[Constant.JSONKEY_MESSAGE_USERID],
         _username = json[Constant.JSONKEY_MESSAGE_USERNAME],
         _timestamp = json[Constant.JSONKEY_MESSAGE_TIMESTAMP],
-        _messageID = json[Constant.JSONKEY_MESSAGE_ID];
+        _messageID = json[Constant.JSONKEY_MESSAGE_ID],
+        _flag = json[Constant.JSONKEY_MESSAGE_FLAG];
 }
