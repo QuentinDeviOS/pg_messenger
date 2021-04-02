@@ -19,6 +19,8 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'fr';
 
+  static m0(link) => "Impossible d\'ouvrir ${link}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
     "login_alert_OK_button" : MessageLookupByLibrary.simpleMessage("OK"),
@@ -32,6 +34,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "message_logout" : MessageLookupByLibrary.simpleMessage("Se déconnecter"),
     "message_send_button" : MessageLookupByLibrary.simpleMessage("Envoyer le message"),
     "message_title" : MessageLookupByLibrary.simpleMessage("Messages"),
+    "register_EULA_launching_error" : m0,
+    "register_EULA_message" : MessageLookupByLibrary.simpleMessage("En vous enregistrant, vous acceptez les conditions d\'utilisation de l\'application qui sont consultables ici : https://www.cedric06nice.com/app-tc-and-privacypolicy/"),
     "register_alert_OK_button" : MessageLookupByLibrary.simpleMessage("D\'accord"),
     "register_alert_title" : MessageLookupByLibrary.simpleMessage("Erreur"),
     "register_email" : MessageLookupByLibrary.simpleMessage("Adresse mail"),

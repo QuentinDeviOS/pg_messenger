@@ -8,14 +8,11 @@ class WebSocketManager {
   Future<IOWebSocketChannel> connectToWS(String token) async {
     Map<String, dynamic> header = Map();
     header["Authorization"] = token;
-    var channel = IOWebSocketChannel.connect(
-        "wss://skyisthelimit.net:443/messages/message-web-socket",
-        headers: header);
+    var channel = IOWebSocketChannel.connect("wss://skyisthelimit.net:443/messages/message-web-socket", headers: header, pingInterval: Duration(seconds: 5));
     return channel;
   }
 
-  void sendNewMessageJson(
-      Future<IOWebSocketChannel> futureChannel, Message message) async {
+  void sendNewMessageJson(Future<IOWebSocketChannel> futureChannel, Message message) async {
     final channel = await futureChannel;
     channel.sink.add(JsonEncoder().convert(message.toJson()));
   }
@@ -25,8 +22,7 @@ class WebSocketManager {
     channel.sink.add(text);
   }
 
-  launchStream(Future<IOWebSocketChannel> futureChannel,
-      {required Function(dynamic data) onReceive}) async {
+  launchStream(Future<IOWebSocketChannel> futureChannel, {required Function(dynamic data) onReceive}) async {
     final channel = await futureChannel;
     channel.stream.listen((data) {
       onReceive(data);
@@ -36,7 +32,7 @@ class WebSocketManager {
 
   _onPing(Future<IOWebSocketChannel> futureChannel, dynamic data) async {
     final channel = await futureChannel;
-    if (data.toString() == "Ping") {
+    if (data.toString() == "ping") {
       channel.sink.add("pong");
     }
   }

@@ -9,6 +9,8 @@
     "register_error_email": "Must be a valid email address",
     "register_alert_OK_button": "OK",
     "register_alert_title": "Error",
+    "register_EULA_message": "By clicking register, you agree to our Privacy Policy and Terms and conditions available here : https://www.cedric06nice.com/app-tc-and-privacypolicy/",
+    "register_EULA_launching_error": "Could not launch {link}",
     "login_title": "Login",
     "login_username": "username",
     "login_password": "password",

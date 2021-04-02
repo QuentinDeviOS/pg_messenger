@@ -147,6 +147,26 @@ class S {
     );
   }
 
+  /// `By clicking register, you agree to our Privacy Policy and Terms and conditions available here : https://www.cedric06nice.com/app-tc-and-privacypolicy/`
+  String get register_EULA_message {
+    return Intl.message(
+      'By clicking register, you agree to our Privacy Policy and Terms and conditions available here : https://www.cedric06nice.com/app-tc-and-privacypolicy/',
+      name: 'register_EULA_message',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not launch {link}`
+  String register_EULA_launching_error(Object link) {
+    return Intl.message(
+      'Could not launch $link',
+      name: 'register_EULA_launching_error',
+      desc: '',
+      args: [link],
+    );
+  }
+
   /// `Login`
   String get login_title {
     return Intl.message(

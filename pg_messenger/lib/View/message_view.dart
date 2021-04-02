@@ -1,3 +1,6 @@
+import 'dart:ffi';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Models/message.dart';
@@ -5,6 +8,7 @@ import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/connection_view.dart';
 import 'package:intl/intl.dart';
 import 'package:pg_messenger/generated/l10n.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MessageView extends StatefulWidget {
   final User _currentUser;
@@ -24,7 +28,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   FocusNode? _inputFieldNode;
   List<Message> _messageList = [];
 
-  _MessageViewState(this._currentUser) {
+  _MessageViewState(User this._currentUser) {
     _messageController = MessageController(_currentUser.token);
   }
 
@@ -37,9 +41,11 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     _messageController.messageStream(
       onMessageListLoaded: (messageList) {
         if (_isCurrentView) {
-          setState(() {
-            this._messageList = messageList;
-          });
+          if (_messageList != messageList) {
+            setState(() {
+              this._messageList = messageList;
+            });
+          }
         }
       },
     );
@@ -50,14 +56,29 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void didChangeMetrics() {
     final value = MediaQuery.of(context).viewInsets.bottom;
     if (value > 0) {
-      _scrollController.position.jumpTo(
-          _oldPositionScrollMax ?? _scrollController.position.maxScrollExtent);
+      _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
     }
     super.didChangeMetrics();
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      _messageController = MessageController(_currentUser.token);
+      _messageController.messageStream(onMessageListLoaded: (onMessageListLoaded) {
+        if (_messageList != onMessageListLoaded) {
+          setState(() {
+            _messageList = onMessageListLoaded;
+          });
+        }
+      });
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
     _isCurrentView = false;
     _inputFieldNode?.dispose();
     super.dispose();
@@ -73,8 +94,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             icon: const Icon(Icons.logout),
             tooltip: S.of(context).message_logout,
             onPressed: () {
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => ConnectionView()));
+              logOut();
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConnectionView()));
             },
           ),
         ],
@@ -83,11 +104,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                itemBuilder: _singleMessage,
-                itemCount: _messageList.length,
-              ),
+              child: ListView.builder(controller: _scrollController, itemBuilder: _singleMessage, itemCount: _messageList.length),
             ),
             Form(
               child: Row(
@@ -135,32 +152,32 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
-      final message = _messageController.createNewMessageFromString(
-          _textController.text, _currentUser);
+      final message = _messageController.createNewMessageFromString(_textController.text, _currentUser);
       _messageController.sendMessage(message);
     }
     _textController.text = "";
   }
 
   goToEndList() async {
-    _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-    if (_scrollController.position.pixels == _oldPositionScrollMax ||
-        _oldPositionScrollMax == 0) {
+    if (_scrollController.position.pixels == _oldPositionScrollMax && _oldPositionScrollMax != _scrollController.position.maxScrollExtent && _oldPositionScrollMax != 0) {
       do {
         _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-        await _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          curve: Curves.easeOut,
-          duration: const Duration(milliseconds: 250),
-        );
-      } while (
-          _oldPositionScrollMax != _scrollController.position.maxScrollExtent);
+        await _scrollController.position.moveTo(_scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 500));
+      } while (_scrollController.position.pixels != _scrollController.position.maxScrollExtent);
+    } else if (_oldPositionScrollMax == 0) {
+      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+      print(_scrollController.position.maxScrollExtent);
+      _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
+      print(_scrollController.position.maxScrollExtent);
     }
+    _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
     return;
   }
 
   Widget _singleMessage(BuildContext context, int num) {
-    goToEndList();
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      goToEndList();
+    });
     return Card(
       child: Container(
         padding: EdgeInsets.all(20),
@@ -172,6 +189,11 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
               child: Row(
                 children: [
                   Text(_messageList[num].username),
+                  IconButton(
+                    icon: Icon(Icons.report, size: 15),
+                    color: Colors.red.shade300,
+                    onPressed: reportMessage,
+                  ),
                   Spacer(),
                   Text(_formatedTimestamp(_messageList[num].timestamp)),
                 ],
@@ -201,5 +223,14 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     } else {
       return "";
     }
+  }
+
+  void logOut() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("token", "");
+  }
+
+  void reportMessage() {
+    //report message to administrator/moderator
   }
 }

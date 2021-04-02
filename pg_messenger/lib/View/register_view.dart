@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/message_view.dart';
 import 'package:pg_messenger/generated/l10n.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RegisterView extends StatelessWidget {
   final _usernameController = TextEditingController();
@@ -28,9 +31,7 @@ class RegisterView extends StatelessWidget {
           child: SingleChildScrollView(
             child: Container(
               height: MediaQuery.of(context).size.height,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
                 Container(
                   padding: EdgeInsets.all(20),
                   child: TextFormField(
@@ -95,6 +96,21 @@ class RegisterView extends StatelessWidget {
                 ),
                 Container(
                   padding: EdgeInsets.all(20),
+                  child: Linkify(
+                    onOpen: (link) async {
+                      if (await canLaunch(link.url)) {
+                        await launch(link.url);
+                      } else {
+                        throw S.of(context).register_EULA_launching_error(link);
+                      }
+                    },
+                    text: S.of(context).register_EULA_message,
+                    style: TextStyle(color: Colors.red),
+                    linkStyle: TextStyle(color: Colors.blue),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.all(20),
                   child: ElevatedButton(
                     child: Text(S.of(context).register_send_button),
                     onPressed: () => _registerUser(context),
@@ -140,7 +156,7 @@ class RegisterView extends StatelessWidget {
     String password,
   ) {
     return http.post(
-      Uri.https('skyisthelimit.net', 'users/signup'),
+      Uri.https(Constant.URL_BASE, 'users/signup'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
