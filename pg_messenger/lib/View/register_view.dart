@@ -153,6 +153,8 @@ class RegisterView extends StatelessWidget {
     String email = _emailController.text;
     String password = _passwordController.text;
     String passwordVerification = _passwordVerificationController.text;
+    bool isActive = true;
+    bool isModerator = false;
 
     if (password != passwordVerification) {
       _wrongImput(context, S.of(context).register_error_password);
@@ -161,7 +163,7 @@ class RegisterView extends StatelessWidget {
       _wrongImput(context, S.of(context).register_error_email);
       return null;
     } else if (username.isNotEmpty && password.isNotEmpty) {
-      final response = await createUser(username, email, password);
+      final response = await createUser(username, email, password, isActive, isModerator);
       if (response.statusCode == 200) {
         User user = User.fromJsonResponseLogin(jsonDecode(response.body));
         await Navigator.push(context,
@@ -177,18 +179,20 @@ class RegisterView extends StatelessWidget {
     String username,
     String email,
     String password,
+    bool isActive,
+    bool isModerator,
   ) {
     return http.post(
       Uri.https(Constant.URL_BASE, 'users/signup'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
+      body: jsonEncode(<String, dynamic>{
         Constant.JSONKEY_USER_USERNAME: username,
         Constant.JSONKEY_USER_EMAIL: email,
         Constant.JSONKEY_USER_PASSWORD: password,
+        Constant.JSONKEY_USER_IS_ACTIVE: true,
         Constant.JSONKEY_USER_IS_MODERATOR: false,
-        Constant.JSONKEY_USER_IS_ACTIVE: true
       }),
     );
   }
