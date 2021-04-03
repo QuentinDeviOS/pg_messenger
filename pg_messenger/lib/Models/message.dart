@@ -6,26 +6,33 @@ class Message {
   final String _ownerID;
   final String _messageID;
   double? _timestamp;
+  bool? _flag;
 
   String get messageID => _messageID;
   String get username => _username;
   String get message => _message;
   String get owner => _ownerID;
+  bool? get flag => _flag;
   DateTime? get timestamp {
     return DateTime.fromMillisecondsSinceEpoch((_timestamp! * 1000).truncate());
   }
 
   Message(this._messageID, this._message, this._ownerID, this._timestamp, this._username);
 
-  Map<String, dynamic> toJson() => {
-        'subject': message,
-        'owner': {'id': _ownerID}
+  Map<String, dynamic> toJsonForSending() => {
+        Constant.JSONKEY_MESSAGE_MESSAGE: message,
+        'ownerId': {'id': _ownerID}
       };
+
+  Map<String, dynamic> toJsonForReport() {
+    return {"id": _messageID};
+  }
 
   Message.fromJson(Map<String, dynamic> json)
       : _message = json[Constant.JSONKEY_MESSAGE_MESSAGE],
         _ownerID = json[Constant.JSONKEY_MESSAGE_USERID],
         _username = json[Constant.JSONKEY_MESSAGE_USERNAME],
         _timestamp = json[Constant.JSONKEY_MESSAGE_TIMESTAMP],
-        _messageID = json[Constant.JSONKEY_MESSAGE_ID];
+        _messageID = json[Constant.JSONKEY_MESSAGE_ID],
+        _flag = json[Constant.JSONKEY_MESSAGE_FLAG];
 }
