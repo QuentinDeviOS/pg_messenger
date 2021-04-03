@@ -187,6 +187,8 @@ class RegisterView extends StatelessWidget {
         Constant.JSONKEY_USER_USERNAME: username,
         Constant.JSONKEY_USER_EMAIL: email,
         Constant.JSONKEY_USER_PASSWORD: password,
+        Constant.JSONKEY_USER_IS_MODERATOR: false,
+        Constant.JSONKEY_USER_IS_ACTIVE: true
       }),
     );
   }
