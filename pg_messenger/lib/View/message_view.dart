@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Models/user.dart';
@@ -54,7 +55,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void didChangeMetrics() {
     final value = MediaQuery.of(context).viewInsets.bottom;
     if (value > 0) {
-      _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
+      _scrollController.position
+          .jumpTo(_scrollController.position.maxScrollExtent);
     }
     super.didChangeMetrics();
   }
@@ -64,7 +66,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
       _messageController = MessageController(_currentUser.token);
-      _messageController.messageStream(onMessageListLoaded: (onMessageListLoaded) {
+      _messageController.messageStream(
+          onMessageListLoaded: (onMessageListLoaded) {
         if (_messageList != onMessageListLoaded) {
           setState(() {
             _messageList = onMessageListLoaded;
@@ -93,7 +96,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             tooltip: S.of(context).message_logout,
             onPressed: () {
               logOut();
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConnectionView()));
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => ConnectionView()));
             },
           ),
         ],
@@ -102,7 +106,10 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(controller: _scrollController, itemBuilder: _singleMessage, itemCount: _messageList.length),
+              child: ListView.builder(
+                  controller: _scrollController,
+                  itemBuilder: _singleMessage,
+                  itemCount: _messageList.length),
             ),
             Form(
               child: Row(
@@ -150,94 +157,40 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
-      final message = _messageController.createNewMessageFromString(_textController.text, _currentUser);
+      final message = _messageController.createNewMessageFromString(
+          _textController.text, _currentUser);
       _messageController.sendMessage(message);
     }
     _textController.text = "";
   }
 
   goToEndList() async {
-    if (_scrollController.position.pixels == _oldPositionScrollMax && _oldPositionScrollMax != _scrollController.position.maxScrollExtent && _oldPositionScrollMax != 0) {
+    if (_scrollController.position.pixels == _oldPositionScrollMax &&
+        _oldPositionScrollMax != _scrollController.position.maxScrollExtent &&
+        _oldPositionScrollMax != 0) {
       do {
         _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-        await _scrollController.position.moveTo(_scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 500));
-      } while (_scrollController.position.pixels != _scrollController.position.maxScrollExtent);
+        await _scrollController.position.moveTo(
+            _scrollController.position.maxScrollExtent,
+            duration: Duration(milliseconds: 500));
+      } while (_scrollController.position.pixels !=
+          _scrollController.position.maxScrollExtent);
     } else if (_oldPositionScrollMax == 0) {
       _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
       print(_scrollController.position.maxScrollExtent);
-      _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
+      _scrollController.position
+          .jumpTo(_scrollController.position.maxScrollExtent);
       print(_scrollController.position.maxScrollExtent);
     }
     _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
     return;
   }
 
-  //Version Sans PopMenu
-
-  // Widget _singleMessage(BuildContext context, int num) {
-  //   WidgetsBinding.instance?.addPostFrameCallback((_) {
-  //     goToEndList();
-  //   });
-  //   print(_messageList[num].flag);
-  //   return Card(
-  //     child: Container(
-  //       padding: EdgeInsets.all(20),
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           Container(
-  //             padding: EdgeInsets.only(bottom: 10.0),
-  //             child: Row(
-  //               children: [
-  //                 Text(_messageList[num].username),
-  //                 Spacer(),
-  //                 Text(_formatedTimestamp(_messageList[num].timestamp)),
-  //               ],
-  //             ),
-  //           ),
-  //           if (_messageList[num].flag != true)
-  //             Column(
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               children: [
-  //                 Text(_messageList[num].message),
-  //                 Row(
-  //                   children: [
-  //                     Spacer(),
-  //                     TextButton(
-  //                         onPressed: () {
-  //                           _messageController.reportMessage(_messageList[num], _currentUser);
-  //                         },
-  //                         child: Row(
-  //                           children: [
-  //                             Icon(
-  //                               Icons.pan_tool,
-  //                               size: 12,
-  //                             ),
-  //                             Text(
-  //                               "  report abuse",
-  //                               style: TextStyle(fontSize: 12),
-  //                             )
-  //                           ],
-  //                         ))
-  //                   ],
-  //                 )
-  //               ],
-  //             ),
-  //           if (_messageList[num].flag == true) Text("Message en cours de modération")
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-  //
-
-  //Version avec popMenu
-
   Widget _singleMessage(BuildContext context, int num) {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       goToEndList();
     });
-    print(_messageList[num].flag);
+    print(_messageList[num].timestamp);
     return Card(
       child: Container(
         padding: EdgeInsets.all(20),
@@ -256,7 +209,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                       icon: Icon(Icons.more_vert),
                       onSelected: (value) {
                         if (value == "report") {
-                          _messageController.reportMessage(_messageList[num], _currentUser);
+                          _messageController.reportMessage(
+                              _messageList[num], _currentUser);
                         }
                       },
                       itemBuilder: (context) => [
@@ -270,8 +224,9 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                                   color: Colors.red.shade300,
                                 ),
                                 Text(
-                                  "  report abuse",
-                                  style: TextStyle(fontSize: 12, color: Colors.red),
+                                  S.of(context).message_report,
+                                  style: TextStyle(
+                                      fontSize: 12, color: Colors.red),
                                 )
                               ],
                             ))
@@ -281,7 +236,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
               ),
             ),
             if (_messageList[num].flag != true) Text(_messageList[num].message),
-            if (_messageList[num].flag == true) Text("Message en cours de modération")
+            if (_messageList[num].flag == true)
+              Text(S.of(context).message_under_moderation)
           ],
         ),
       ),
@@ -309,6 +265,6 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   void logOut() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("token", "");
+    prefs.setString(Constant.JSONKEY_TOKEN, "");
   }
 }

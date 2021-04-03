@@ -22,5 +22,7 @@
     "message_title": "Messages",
     "message_logout": "Se déconnecter",
     "message_send_button": "Envoyer le message",
-    "message_just_now": "À l'instant"
+    "message_just_now": "À l'instant",
+    "message_report": " reporter le message",
+    "message_under_moderation": "Message en cours de modération"
 }

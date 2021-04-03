@@ -18,7 +18,9 @@ class MessageController {
     return Message("", messageString, user.id, null, "");
   }
 
-  void messageStream({required Function(List<Message> messageList) onMessageListLoaded}) async {
+  void messageStream(
+      {required Function(List<Message> messageList)
+          onMessageListLoaded}) async {
     _webSocketController?.onReceive(onReceiveData: (data) {
       if (hasMessages(data)) {
         onMessageListLoaded(_messageList);
@@ -47,7 +49,10 @@ class MessageController {
     headers["Authorization"] = "Bearer ${user.token}";
     headers["Content-Type"] = "application/json; charset=utf-8";
     print(JsonEncoder().convert(message.toJsonForReport()));
-    var response = await http.post(Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/report-message"), headers: headers, body: JsonEncoder().convert(message.toJsonForReport()));
+    var response = await http.post(
+        Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/report-message"),
+        headers: headers,
+        body: JsonEncoder().convert(message.toJsonForReport()));
     print(response.body);
   }
 }

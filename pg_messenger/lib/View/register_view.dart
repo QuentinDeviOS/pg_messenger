@@ -116,8 +116,7 @@ class RegisterView extends StatelessWidget {
                               style: TextStyle(color: Colors.blue),
                               recognizer: new TapGestureRecognizer()
                                 ..onTap = () async {
-                                  final url =
-                                      'https://www.cedric06nice.com/app-tc-and-privacypolicy/';
+                                  final url = Constant.URL_TC;
                                   if (await canLaunch(url)) {
                                     await launch(url);
                                   } else {
@@ -185,9 +184,9 @@ class RegisterView extends StatelessWidget {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        'name': username,
-        'email': email,
-        'password': password,
+        Constant.JSONKEY_USER_USERNAME: username,
+        Constant.JSONKEY_USER_EMAIL: email,
+        Constant.JSONKEY_USER_PASSWORD: password,
       }),
     );
   }
@@ -219,7 +218,7 @@ class RegisterView extends StatelessWidget {
 
     AlertDialog alert = AlertDialog(
       title: Text(S.of(context).register_alert_title),
-      content: Text(json["reason"]),
+      content: Text(json[Constant.JSONKEY_USER_RESPONSE_ERROR_REASON]),
       actions: [okButton],
     );
 

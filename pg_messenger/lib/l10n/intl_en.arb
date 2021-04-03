@@ -22,5 +22,7 @@
     "message_title": "Messages",
     "message_logout": "Log Out",
     "message_send_button": "Send message",
-    "message_just_now": "Just now"
+    "message_just_now": "Just now",
+    "message_report": "  report abuse",
+    "message_under_moderation": "Message under moderation"
 }

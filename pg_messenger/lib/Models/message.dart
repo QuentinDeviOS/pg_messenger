@@ -17,15 +17,23 @@ class Message {
     return DateTime.fromMillisecondsSinceEpoch((_timestamp! * 1000).truncate());
   }
 
-  Message(this._messageID, this._message, this._ownerID, this._timestamp, this._username);
+  Message(
+    this._messageID,
+    this._message,
+    this._ownerID,
+    this._timestamp,
+    this._username,
+  );
 
   Map<String, dynamic> toJsonForSending() => {
         Constant.JSONKEY_MESSAGE_MESSAGE: message,
-        'ownerId': {'id': _ownerID}
+        Constant.JSONKEY_MESSAGE_OWNER: {
+          Constant.JSONKEY_MESSAGE_OWNER_ID: _ownerID
+        }
       };
 
   Map<String, dynamic> toJsonForReport() {
-    return {"id": _messageID};
+    return {Constant.JSONKEY_MESSAGE_ID: _messageID};
   }
 
   Message.fromJson(Map<String, dynamic> json)

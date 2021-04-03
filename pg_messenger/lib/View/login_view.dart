@@ -117,6 +117,6 @@ class LoginView extends StatelessWidget {
 
   registerToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString("token", token);
+    prefs.setString(Constant.JSONKEY_TOKEN, token);
   }
 }

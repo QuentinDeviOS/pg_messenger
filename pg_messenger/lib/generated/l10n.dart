@@ -286,6 +286,26 @@ class S {
       args: [],
     );
   }
+
+  /// `  report abuse`
+  String get message_report {
+    return Intl.message(
+      '  report abuse',
+      name: 'message_report',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Message under moderation`
+  String get message_under_moderation {
+    return Intl.message(
+      'Message under moderation',
+      name: 'message_under_moderation',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
