@@ -56,7 +56,11 @@ class _TakePictureViewState extends State<TakePictureView> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             // If the Future is complete, display the preview.
-            return CameraPreview(_cameraController);
+            return Column(
+              children: [
+                Expanded(child: CameraPreview(_cameraController)),
+              ],
+            );
           } else {
             // Otherwise, display a loading indicator.
             return Center(child: CircularProgressIndicator());
