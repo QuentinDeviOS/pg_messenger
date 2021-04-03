@@ -4,6 +4,7 @@ import 'package:pg_messenger/View/loadingView.dart';
 import 'package:pg_messenger/generated/l10n.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
