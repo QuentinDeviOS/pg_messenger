@@ -15,7 +15,9 @@ class LoadingView extends StatelessWidget {
     });
 
     return Container(
-      child: CircularProgressIndicator(),
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 
