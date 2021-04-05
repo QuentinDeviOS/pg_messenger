@@ -7,6 +7,7 @@ class User {
   final String _token;
   final bool? _isActive;
   final bool? _isModerator;
+  final String? _isPicture;
 
   String get username => _username;
   String get id => _id;
@@ -14,6 +15,7 @@ class User {
   String get token => _token;
   bool? get isActive => _isActive;
   bool? get isModerator => _isModerator;
+  String? get picture => _isPicture;
 
   User.fromLogin(
     this._id,
@@ -22,6 +24,7 @@ class User {
     this._token,
     this._isActive,
     this._isModerator,
+    this._isPicture,
   );
 
   User.fromJsonResponseLogin(Map<String, dynamic> json)
@@ -32,10 +35,17 @@ class User {
             json[Constant.JSONKEY_USER][Constant.JSONKEY_USER_DATE_CREATION]),
         this._token = json[Constant.JSONKEY_TOKEN],
         this._isActive = json[Constant.JSONKEY_USER_IS_ACTIVE],
-        this._isModerator = json[Constant.JSONKEY_USER_IS_MODERATOR];
+        this._isModerator = json[Constant.JSONKEY_USER_IS_MODERATOR],
+        this._isPicture = json[Constant.JSONKEY_USER_PICTURE];
 
   User.fromJsonResponseMessage(
-      Map<String, dynamic> json, this._username, this._createdAt, this._token, this._isActive, this._isModerator)
+      Map<String, dynamic> json,
+      this._username,
+      this._createdAt,
+      this._token,
+      this._isActive,
+      this._isModerator,
+      this._isPicture)
       : this._id = json[Constant.JSONKEY_USER_ID];
 
   Map<String, dynamic> toJsonForSendMessage() => {

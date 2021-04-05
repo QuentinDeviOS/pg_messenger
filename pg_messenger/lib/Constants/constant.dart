@@ -1,15 +1,16 @@
 class Constant {
   //LOCAL
-  // static const URL_BASE = "127.0.0.1:8080";
-  // static const URL_WEB_SERVER_BASE = "http://" + URL_BASE;
-  // static const URL_WEB_SOCKET = "ws://127.0.0.1:8080/messages/message-web-socket";
-  
+  static const URL_BASE = "127.0.0.1:8080";
+  static const URL_WEB_SERVER_BASE = "http://" + URL_BASE;
+  static const URL_WEB_SOCKET = "ws://127.0.0.1:8080/messages/message-web-socket";
+
   // LIVE
-  static const URL_BASE = "skyisthelimit.net";
-  static const URL_WEB_SERVER_BASE = "https://" + URL_BASE;
-  static const URL_WEB_SOCKET = "wss://skyisthelimit.net/messages/message-web-socket";
-  
-  static const URL_TC = "https://www.cedric06nice.com/app-tc-and-privacypolicy/";
+  // static const URL_BASE = "skyisthelimit.net";
+  // static const URL_WEB_SERVER_BASE = "https://" + URL_BASE;
+  // static const URL_WEB_SOCKET = "wss://skyisthelimit.net/messages/message-web-socket";
+
+  static const URL_TC =
+      "https://www.cedric06nice.com/app-tc-and-privacypolicy/";
 
   static const JSONKEY_TOKEN = "token";
 
@@ -21,9 +22,10 @@ class Constant {
   static const JSONKEY_USER_PASSWORD_HASH = "passwordHash";
   static const JSONKEY_USER_IS_MODERATOR = "isModerator";
   static const JSONKEY_USER_IS_ACTIVE = "isActive";
+  static const JSONKEY_USER_PICTURE = "picture";
   static const JSONKEY_USER_DATE_CREATION = "createdAt";
   static const JSONKEY_USER_RESPONSE_ERROR = "error";
-  static const JSONKEY_USER_RESPONSE_ERROR_REASON = "reason";  
+  static const JSONKEY_USER_RESPONSE_ERROR_REASON = "reason";
 
   static const JSONKEY_MESSAGE_ID = "id";
   static const JSONKEY_MESSAGE_MESSAGE = "message";
@@ -31,6 +33,7 @@ class Constant {
   static const JSONKEY_MESSAGE_FLAG = "flag";
   static const JSONKEY_MESSAGE_OWNER = "ownerId";
   static const JSONKEY_MESSAGE_OWNER_ID = "id";
+  static const JSONKEY_MESSAGE_IS_PICTURE = "isPicture";
 
   static const JSONKEY_MESSAGE_USERNAME = "username";
   static const JSONKEY_MESSAGE_PASSWORD = "password";
