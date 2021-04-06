@@ -42,24 +42,35 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     _messageController = MessageController(_currentUser.token);
   }
 
-  Future _getImage() async {
+  Future _takePicture() async {
     final image = await imagePicker.getImage(source: ImageSource.camera);
-    print("image = $image");
-    http.MultipartFile _image = await http.MultipartFile.fromPath('file', image!.path);
-    setState(() {
-      _data = image.readAsBytes();
-      print("_image = $_image");
-      print("_data = $_data");
-    });
-    Map<String, String> headers = Map();
-    headers["Content-Type"] = "multipart/form-data";
-    headers["Authorization"] = "Bearer ${_currentUser.token}";
-    if (_image != null) {
-      var request = http.MultipartRequest("POST", Uri.parse("http://127.0.0.1:8080/photos/upload-picture"));
+    if (image != null) {
+      http.MultipartFile _image = await http.MultipartFile.fromPath('file', image.path);
+
+      Map<String, String> headers = Map();
+      headers["Content-Type"] = "multipart/form-data";
+      headers["Authorization"] = "Bearer ${_currentUser.token}";
+
+      var request = http.MultipartRequest("POST", Uri.parse(Constant.URL_WEB_SERVER_BASE + "/photos/upload-picture"));
       request.headers.addAll(headers);
       request.files.add(_image);
-      var response = await request.send();
-      print(response.statusCode);
+      await request.send();
+    }
+  }
+
+  Future _getImage() async {
+    final image = await imagePicker.getImage(source: ImageSource.gallery);
+    if (image != null) {
+      http.MultipartFile _image = await http.MultipartFile.fromPath('file', image.path);
+
+      Map<String, String> headers = Map();
+      headers["Content-Type"] = "multipart/form-data";
+      headers["Authorization"] = "Bearer ${_currentUser.token}";
+
+      var request = http.MultipartRequest("POST", Uri.parse(Constant.URL_WEB_SERVER_BASE + "/photos/upload-picture"));
+      request.headers.addAll(headers);
+      request.files.add(_image);
+      await request.send();
     }
   }
 
@@ -143,7 +154,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                   IconButton(
                     icon: Icon(Icons.photo_camera),
                     color: Theme.of(context).primaryColor,
-                    onPressed: () => _getImage(),
+                    onPressed: () => _takePicture(),
                     // onPressed: () {
                     //   Navigator.push(
                     //     context,
@@ -153,6 +164,11 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                     //     ),
                     //   );
                     // }
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.insert_photo),
+                    color: Theme.of(context).primaryColor,
+                    onPressed: () => _getImage(),
                   ),
                   Expanded(
                     child: TextFormField(

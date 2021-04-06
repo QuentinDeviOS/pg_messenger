@@ -1,8 +1,8 @@
 class Constant {
   //LOCAL
-  static const URL_BASE = "127.0.0.1:8080";
+  static const URL_BASE = "192.168.1.25:8080";
   static const URL_WEB_SERVER_BASE = "http://" + URL_BASE;
-  static const URL_WEB_SOCKET = "ws://127.0.0.1:8080/messages/message-web-socket";
+  static const URL_WEB_SOCKET = "ws://192.168.1.25:8080/messages/message-web-socket";
   static const PATH_TO_GET_PICTURE = "/photos/get-picture";
 
   // LIVE
