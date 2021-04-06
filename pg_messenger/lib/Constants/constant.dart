@@ -3,14 +3,14 @@ class Constant {
   static const URL_BASE = "127.0.0.1:8080";
   static const URL_WEB_SERVER_BASE = "http://" + URL_BASE;
   static const URL_WEB_SOCKET = "ws://127.0.0.1:8080/messages/message-web-socket";
+  static const PATH_TO_GET_PICTURE = "/photos/get-picture";
 
   // LIVE
   // static const URL_BASE = "skyisthelimit.net";
   // static const URL_WEB_SERVER_BASE = "https://" + URL_BASE;
   // static const URL_WEB_SOCKET = "wss://skyisthelimit.net/messages/message-web-socket";
 
-  static const URL_TC =
-      "https://www.cedric06nice.com/app-tc-and-privacypolicy/";
+  static const URL_TC = "https://www.cedric06nice.com/app-tc-and-privacypolicy/";
 
   static const JSONKEY_TOKEN = "token";
 
