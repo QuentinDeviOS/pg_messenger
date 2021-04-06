@@ -183,7 +183,7 @@ class RegisterView extends StatelessWidget {
     bool isModerator,
   ) {
     return http.post(
-      Uri.https(Constant.URL_BASE, 'users/signup'),
+      Uri.parse(Constant.URL_WEB_SERVER_BASE + '/users/signup'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
