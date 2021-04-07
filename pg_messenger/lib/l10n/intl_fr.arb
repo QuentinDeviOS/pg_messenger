@@ -25,5 +25,6 @@
     "message_send_button": "Envoyer le message",
     "message_just_now": "À l'instant",
     "message_report": " reporter le message",
+    "message_delete": " effacer le message",
     "message_under_moderation": "Message en cours de modération"
 }

@@ -262,21 +262,39 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                       },
                       itemBuilder: (context) => [
                         PopupMenuItem(
-                            value: "report",
+                          value: "report",
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.pan_tool,
+                                size: 12,
+                                color: Colors.red.shade300,
+                              ),
+                              Text(
+                                S.of(context).message_report,
+                                style:
+                                    TextStyle(fontSize: 12, color: Colors.red),
+                              )
+                            ],
+                          ),
+                        ),
+                        if (_currentUser.isModerator == true)
+                          PopupMenuItem(
                             child: Row(
                               children: [
                                 Icon(
-                                  Icons.pan_tool,
-                                  size: 12,
+                                  Icons.delete_forever,
+                                  size: 16,
                                   color: Colors.red.shade300,
                                 ),
                                 Text(
-                                  S.of(context).message_report,
+                                  S.of(context).message_delete,
                                   style: TextStyle(
                                       fontSize: 12, color: Colors.red),
                                 )
                               ],
-                            ))
+                            ),
+                          )
                       ],
                     )
                 ],

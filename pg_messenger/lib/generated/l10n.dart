@@ -297,11 +297,21 @@ class S {
     );
   }
 
-  /// `  report abuse`
+  /// ` report abuse`
   String get message_report {
     return Intl.message(
-      '  report abuse',
+      ' report abuse',
       name: 'message_report',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// ` delete message`
+  String get message_delete {
+    return Intl.message(
+      ' delete message',
+      name: 'message_delete',
       desc: '',
       args: [],
     );
