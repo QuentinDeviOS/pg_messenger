@@ -15,10 +15,16 @@ class MessageController {
   }
 
   Message createNewMessageFromString(String messageString, User user) {
-    return Message("", messageString, user.id, null, "");
+    return Message("", messageString, user.id, null, "", false);
   }
 
-  void messageStream({required Function(List<Message> messageList) onMessageListLoaded}) async {
+  Message createNewMessageWithPicture(String picturePath, User user) {
+    return Message("", picturePath, user.id, null, "", true);
+  }
+
+  void messageStream(
+      {required Function(List<Message> messageList)
+          onMessageListLoaded}) async {
     _webSocketController?.onReceive(onReceiveData: (data) {
       if (hasMessages(data)) {
         onMessageListLoaded(_messageList);
@@ -46,6 +52,9 @@ class MessageController {
     Map<String, String> headers = Map();
     headers["Authorization"] = "Bearer ${user.token}";
     headers["Content-Type"] = "application/json; charset=utf-8";
-    await http.post(Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/report-message"), headers: headers, body: JsonEncoder().convert(message.toJsonForReport()));
+    await http.post(
+        Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/report-message"),
+        headers: headers,
+        body: JsonEncoder().convert(message.toJsonForReport()));
   }
 }

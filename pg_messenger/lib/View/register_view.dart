@@ -96,8 +96,7 @@ class RegisterView extends StatelessWidget {
                         onEditingComplete: () => node.nextFocus(),
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.lock),
-                          hintText:
-                              S.of(context).register_password_verification,
+                          hintText: S.of(context).register_password_verification,
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -120,9 +119,7 @@ class RegisterView extends StatelessWidget {
                                   if (await canLaunch(url)) {
                                     await launch(url);
                                   } else {
-                                    throw S
-                                        .of(context)
-                                        .register_EULA_launching_error(url);
+                                    throw S.of(context).register_EULA_launching_error(url);
                                   }
                                 },
                             ),
@@ -166,8 +163,7 @@ class RegisterView extends StatelessWidget {
       final response = await createUser(username, email, password, isActive, isModerator);
       if (response.statusCode == 200) {
         User user = User.fromJsonResponseLogin(jsonDecode(response.body));
-        await Navigator.push(context,
-            MaterialPageRoute(builder: (context) => MessageView(user)));
+        await Navigator.push(context, MaterialPageRoute(builder: (context) => MessageView(user)));
       } else {
         _wrongRegistration(context, response.body);
       }
@@ -183,7 +179,7 @@ class RegisterView extends StatelessWidget {
     bool isModerator,
   ) {
     return http.post(
-      Uri.https(Constant.URL_BASE, 'users/signup'),
+      Uri.parse(Constant.URL_WEB_SERVER_BASE + '/users/signup'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

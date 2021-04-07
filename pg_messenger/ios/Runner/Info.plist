@@ -34,7 +34,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>The PG Messgenger App needs to access to your camera to be able to post or update any images from your device.</string>
+	<string>The PG Messgenger App needs access to your camera if you want to take a new picture from your device.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>The PG Messgenger App need access to your photo library if you want to update any images from your device.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

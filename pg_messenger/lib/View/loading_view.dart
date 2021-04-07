@@ -39,6 +39,7 @@ class LoadingView extends StatelessWidget {
           token,
           json[Constant.JSONKEY_USER_IS_ACTIVE],
           json[Constant.JSONKEY_USER_IS_MODERATOR],
+          json[Constant.JSONKEY_USER_PICTURE],
         );
         await Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => MessageView(user)));
