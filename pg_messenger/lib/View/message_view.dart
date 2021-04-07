@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,13 +5,10 @@ import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Models/user.dart';
-import 'package:pg_messenger/View/camera_view.dart';
 import 'package:pg_messenger/View/connection_view.dart';
 import 'package:intl/intl.dart';
-import 'package:pg_messenger/View/image_picker_view.dart';
 import 'package:pg_messenger/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'take_picture_view.dart';
 import 'package:http/http.dart' as http;
 
 class MessageView extends StatefulWidget {
@@ -36,7 +30,6 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   List<Message> _messageList = [];
 
   final ImagePicker imagePicker = ImagePicker();
-  Future<Uint8List>? _data;
 
   _MessageViewState(User this._currentUser) {
     _messageController = MessageController(_currentUser.token);
@@ -45,13 +38,15 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   Future _takePicture() async {
     final image = await imagePicker.getImage(source: ImageSource.camera);
     if (image != null) {
-      http.MultipartFile _image = await http.MultipartFile.fromPath('file', image.path);
+      http.MultipartFile _image =
+          await http.MultipartFile.fromPath('file', image.path);
 
       Map<String, String> headers = Map();
       headers["Content-Type"] = "multipart/form-data";
       headers["Authorization"] = "Bearer ${_currentUser.token}";
 
-      var request = http.MultipartRequest("POST", Uri.parse(Constant.URL_WEB_SERVER_BASE + "/photos/upload-picture"));
+      var request = http.MultipartRequest("POST",
+          Uri.parse(Constant.URL_WEB_SERVER_BASE + "/photos/upload-picture"));
       request.headers.addAll(headers);
       request.files.add(_image);
       await request.send();
@@ -61,13 +56,15 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   Future _getImage() async {
     final image = await imagePicker.getImage(source: ImageSource.gallery);
     if (image != null) {
-      http.MultipartFile _image = await http.MultipartFile.fromPath('file', image.path);
+      http.MultipartFile _image =
+          await http.MultipartFile.fromPath('file', image.path);
 
       Map<String, String> headers = Map();
       headers["Content-Type"] = "multipart/form-data";
       headers["Authorization"] = "Bearer ${_currentUser.token}";
 
-      var request = http.MultipartRequest("POST", Uri.parse(Constant.URL_WEB_SERVER_BASE + "/photos/upload-picture"));
+      var request = http.MultipartRequest("POST",
+          Uri.parse(Constant.URL_WEB_SERVER_BASE + "/photos/upload-picture"));
       request.headers.addAll(headers);
       request.files.add(_image);
       await request.send();
@@ -98,7 +95,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void didChangeMetrics() {
     final value = MediaQuery.of(context).viewInsets.bottom;
     if (value > 0) {
-      _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
+      _scrollController.position
+          .jumpTo(_scrollController.position.maxScrollExtent);
     }
     super.didChangeMetrics();
   }
@@ -108,7 +106,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
       _messageController = MessageController(_currentUser.token);
-      _messageController.messageStream(onMessageListLoaded: (onMessageListLoaded) {
+      _messageController.messageStream(
+          onMessageListLoaded: (onMessageListLoaded) {
         if (_messageList != onMessageListLoaded) {
           setState(() {
             _messageList = onMessageListLoaded;
@@ -137,7 +136,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             tooltip: S.of(context).message_logout,
             onPressed: () {
               logOut();
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConnectionView()));
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => ConnectionView()));
             },
           ),
         ],
@@ -146,7 +146,10 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(controller: _scrollController, itemBuilder: _singleMessage, itemCount: _messageList.length),
+              child: ListView.builder(
+                  controller: _scrollController,
+                  itemBuilder: _singleMessage,
+                  itemCount: _messageList.length),
             ),
             Form(
               child: Row(
@@ -155,15 +158,6 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                     icon: Icon(Icons.photo_camera),
                     color: Theme.of(context).primaryColor,
                     onPressed: () => _takePicture(),
-                    // onPressed: () {
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       //builder: (context) => PrepareForTakingPictureView(),
-                    //       builder: (context) => getImage,
-                    //     ),
-                    //   );
-                    // }
                   ),
                   IconButton(
                     icon: Icon(Icons.insert_photo),
@@ -213,21 +207,28 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
-      final message = _messageController.createNewMessageFromString(_textController.text, _currentUser);
+      final message = _messageController.createNewMessageFromString(
+          _textController.text, _currentUser);
       _messageController.sendMessage(message);
     }
     _textController.text = "";
   }
 
   goToEndList() async {
-    if (_scrollController.position.pixels == _oldPositionScrollMax && _oldPositionScrollMax != _scrollController.position.maxScrollExtent && _oldPositionScrollMax != 0) {
+    if (_scrollController.position.pixels == _oldPositionScrollMax &&
+        _oldPositionScrollMax != _scrollController.position.maxScrollExtent &&
+        _oldPositionScrollMax != 0) {
       do {
         _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-        await _scrollController.position.moveTo(_scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 500));
-      } while (_scrollController.position.pixels != _scrollController.position.maxScrollExtent);
+        await _scrollController.position.moveTo(
+            _scrollController.position.maxScrollExtent,
+            duration: Duration(milliseconds: 500));
+      } while (_scrollController.position.pixels !=
+          _scrollController.position.maxScrollExtent);
     } else if (_oldPositionScrollMax == 0) {
       _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-      _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
+      _scrollController.position
+          .jumpTo(_scrollController.position.maxScrollExtent);
     }
     _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
     return;
@@ -255,7 +256,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                       icon: Icon(Icons.more_vert),
                       onSelected: (value) {
                         if (value == "report") {
-                          _messageController.reportMessage(_messageList[num], _currentUser);
+                          _messageController.reportMessage(
+                              _messageList[num], _currentUser);
                         }
                       },
                       itemBuilder: (context) => [
@@ -270,7 +272,8 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                                 ),
                                 Text(
                                   S.of(context).message_report,
-                                  style: TextStyle(fontSize: 12, color: Colors.red),
+                                  style: TextStyle(
+                                      fontSize: 12, color: Colors.red),
                                 )
                               ],
                             ))
@@ -279,9 +282,16 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                 ],
               ),
             ),
-            if (_messageList[num].flag != true && !_messageList[num].isPicture) Text(_messageList[num].message),
-            if (_messageList[num].flag != true && _messageList[num].isPicture) messageIsImage(_messageList[num], _currentUser),
-            if (_messageList[num].flag == true) Text(S.of(context).message_under_moderation)
+            if (_messageList[num].isPicture == null ||
+                (_messageList[num].flag != true &&
+                    !_messageList[num].isPicture!))
+              Text(_messageList[num].message),
+            if (_messageList[num].isPicture != null &&
+                _messageList[num].flag != true &&
+                _messageList[num].isPicture!)
+              messageIsImage(_messageList[num], _currentUser),
+            if (_messageList[num].flag == true)
+              Text(S.of(context).message_under_moderation)
           ],
         ),
       ),
@@ -292,7 +302,9 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     Map<String, String> headers = Map();
     headers["Authorization"] = "Bearer ${currentUser.token}";
     return Image.network(
-      Constant.URL_WEB_SERVER_BASE + Constant.PATH_TO_GET_PICTURE + "?filename=${message.message}",
+      Constant.URL_WEB_SERVER_BASE +
+          Constant.PATH_TO_GET_PICTURE +
+          "?filename=${message.message}",
       headers: headers,
     );
   }

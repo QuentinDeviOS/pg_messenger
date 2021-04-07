@@ -7,14 +7,14 @@ class Message {
   final String _messageID;
   double? _timestamp;
   bool? _flag;
-  bool _isPicture;
+  bool? _isPicture;
 
   String get messageID => _messageID;
   String get username => _username;
   String get message => _message;
   String get owner => _ownerID;
   bool? get flag => _flag;
-  bool get isPicture => _isPicture;
+  bool? get isPicture => _isPicture;
   DateTime? get timestamp {
     return DateTime.fromMillisecondsSinceEpoch((_timestamp! * 1000).truncate());
   }
