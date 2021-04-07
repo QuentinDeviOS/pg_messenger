@@ -8,11 +8,17 @@ import 'package:pg_messenger/View/message_view.dart';
 import 'package:pg_messenger/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class RegisterView extends StatelessWidget {
+class RegisterView extends StatefulWidget {
+  @override
+  _RegisterViewState createState() => _RegisterViewState();
+}
+
+class _RegisterViewState extends State<RegisterView> {
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _passwordVerificationController = TextEditingController();
+  bool acceptTandC = false;
 
   @override
   Widget build(BuildContext context) {
@@ -96,35 +102,57 @@ class RegisterView extends StatelessWidget {
                         onEditingComplete: () => node.nextFocus(),
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.lock),
-                          hintText: S.of(context).register_password_verification,
+                          hintText:
+                              S.of(context).register_password_verification,
                           border: OutlineInputBorder(),
                         ),
                       ),
                     ),
                     Container(
                       padding: EdgeInsets.all(20),
-                      child: RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: S.of(context).register_EULA_message,
-                              style: TextStyle(color: Colors.red),
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            value: acceptTandC,
+                            onChanged: (newValue) {
+                              setState(() {
+                                acceptTandC = newValue as bool;
+                              });
+                            },
+                          ),
+                          Expanded(
+                            child: Container(
+                              child: RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: S.of(context).register_EULA_message,
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                    TextSpan(
+                                      text: S
+                                          .of(context)
+                                          .register_EULA_message_link,
+                                      style: TextStyle(color: Colors.blue),
+                                      recognizer: new TapGestureRecognizer()
+                                        ..onTap = () async {
+                                          final url = Constant.URL_TC;
+                                          if (await canLaunch(url)) {
+                                            await launch(url);
+                                          } else {
+                                            throw S
+                                                .of(context)
+                                                .register_EULA_launching_error(
+                                                    url);
+                                          }
+                                        },
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                            TextSpan(
-                              text: S.of(context).register_EULA_message_link,
-                              style: TextStyle(color: Colors.blue),
-                              recognizer: new TapGestureRecognizer()
-                                ..onTap = () async {
-                                  final url = Constant.URL_TC;
-                                  if (await canLaunch(url)) {
-                                    await launch(url);
-                                  } else {
-                                    throw S.of(context).register_EULA_launching_error(url);
-                                  }
-                                },
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                     Container(
@@ -159,11 +187,16 @@ class RegisterView extends StatelessWidget {
     } else if (!email.contains('@')) {
       _wrongImput(context, S.of(context).register_error_email);
       return null;
+    } else if (!acceptTandC) {
+      _wrongImput(context, S.of(context).register_error_accept_tc);
+      return null;
     } else if (username.isNotEmpty && password.isNotEmpty) {
-      final response = await createUser(username, email, password, isActive, isModerator);
+      final response =
+          await createUser(username, email, password, isActive, isModerator);
       if (response.statusCode == 200) {
         User user = User.fromJsonResponseLogin(jsonDecode(response.body));
-        await Navigator.push(context, MaterialPageRoute(builder: (context) => MessageView(user)));
+        await Navigator.push(context,
+            MaterialPageRoute(builder: (context) => MessageView(user)));
       } else {
         _wrongRegistration(context, response.body);
       }

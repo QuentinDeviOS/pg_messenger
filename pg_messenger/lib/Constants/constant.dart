@@ -7,11 +7,12 @@ class Constant {
   // LIVE
   static const URL_BASE = "skyisthelimit.net";
   static const URL_WEB_SERVER_BASE = "https://" + URL_BASE;
-  static const URL_WEB_SOCKET = "wss://skyisthelimit.net/messages/message-web-socket";
-  
+  static const URL_WEB_SOCKET =
+      "wss://skyisthelimit.net/messages/message-web-socket";
+
   static const PATH_TO_GET_PICTURE = "/photos/get-picture";
 
-  static const URL_TC = "https://www.cedric06nice.com/app-tc-and-privacypolicy/";
+  static const URL_TC = "https://www.cedric06nice.com/pg-messenger-app/";
 
   static const JSONKEY_TOKEN = "token";
 

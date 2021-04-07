@@ -127,6 +127,16 @@ class S {
     );
   }
 
+  /// `You must accept the T&C`
+  String get register_error_accept_tc {
+    return Intl.message(
+      'You must accept the T&C',
+      name: 'register_error_accept_tc',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `OK`
   String get register_alert_OK_button {
     return Intl.message(
@@ -147,20 +157,20 @@ class S {
     );
   }
 
-  /// `By clicking register, you agree to our `
+  /// `I agree with the `
   String get register_EULA_message {
     return Intl.message(
-      'By clicking register, you agree to our ',
+      'I agree with the ',
       name: 'register_EULA_message',
       desc: '',
       args: [],
     );
   }
 
-  /// `Privacy Policy and Terms and Conditions`
+  /// `End of User Agreement, Privacy Policy and Terms & Conditions`
   String get register_EULA_message_link {
     return Intl.message(
-      'Privacy Policy and Terms and Conditions',
+      'End of User Agreement, Privacy Policy and Terms & Conditions',
       name: 'register_EULA_message_link',
       desc: '',
       args: [],

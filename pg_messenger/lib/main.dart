@@ -19,7 +19,9 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData(
           brightness: Brightness.dark,
           primarySwatch: purpleGiraffe,
-          accentColor: purpleGiraffe),
+          primaryColor: purpleGiraffe,
+          accentColor: purpleGiraffe,
+          toggleableActiveColor: purpleGiraffe),
       home: LoadingView(),
       localizationsDelegates: [
         S.delegate,
