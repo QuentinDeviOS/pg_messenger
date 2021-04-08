@@ -40,6 +40,10 @@ class Message {
     return {Constant.JSONKEY_MESSAGE_ID: _messageID};
   }
 
+  Map<String, dynamic> toJsonForDeletion() {
+    return {Constant.JSONKEY_MESSAGE_ID: _messageID};
+  }
+
   Message.fromJson(Map<String, dynamic> json)
       : _message = json[Constant.JSONKEY_MESSAGE_MESSAGE],
         _ownerID = json[Constant.JSONKEY_MESSAGE_USERID],

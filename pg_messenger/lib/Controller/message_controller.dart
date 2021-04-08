@@ -57,4 +57,16 @@ class MessageController {
         headers: headers,
         body: JsonEncoder().convert(message.toJsonForReport()));
   }
+
+  deleteMessage(Message message, User user) async {
+    if (message.owner == user.id || user.isModerator == true) {
+      Map<String, String> headers = Map();
+      headers["Authorization"] = "Bearer ${user.token}";
+      headers["Content-Type"] = "application/json; charset=utf-8";
+      await http.post(
+          Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/delete-message"),
+          headers: headers,
+          body: JsonEncoder().convert(message.toJsonForDeletion()));
+    }
+  }
 }

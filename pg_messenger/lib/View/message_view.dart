@@ -259,6 +259,10 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                           _messageController.reportMessage(
                               _messageList[num], _currentUser);
                         }
+                        if (value == "delete") {
+                          _messageController.deleteMessage(
+                              _messageList[num], _currentUser);
+                        }
                       },
                       itemBuilder: (context) => [
                         PopupMenuItem(
@@ -280,6 +284,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                         ),
                         if (_currentUser.isModerator == true)
                           PopupMenuItem(
+                            value: "delete",
                             child: Row(
                               children: [
                                 Icon(
