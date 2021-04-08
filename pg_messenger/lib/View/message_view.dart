@@ -9,7 +9,6 @@ import 'package:pg_messenger/View/connection_view.dart';
 import 'package:intl/intl.dart';
 import 'package:pg_messenger/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 class MessageView extends StatefulWidget {
   final User _currentUser;
@@ -33,42 +32,6 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   _MessageViewState(User this._currentUser) {
     _messageController = MessageController(_currentUser.token);
-  }
-
-  Future _takePicture() async {
-    final image = await imagePicker.getImage(source: ImageSource.camera);
-    if (image != null) {
-      http.MultipartFile _image =
-          await http.MultipartFile.fromPath('file', image.path);
-
-      Map<String, String> headers = Map();
-      headers["Content-Type"] = "multipart/form-data";
-      headers["Authorization"] = "Bearer ${_currentUser.token}";
-
-      var request = http.MultipartRequest("POST",
-          Uri.parse(Constant.URL_WEB_SERVER_BASE + "/photos/upload-picture"));
-      request.headers.addAll(headers);
-      request.files.add(_image);
-      await request.send();
-    }
-  }
-
-  Future _getImage() async {
-    final image = await imagePicker.getImage(source: ImageSource.gallery);
-    if (image != null) {
-      http.MultipartFile _image =
-          await http.MultipartFile.fromPath('file', image.path);
-
-      Map<String, String> headers = Map();
-      headers["Content-Type"] = "multipart/form-data";
-      headers["Authorization"] = "Bearer ${_currentUser.token}";
-
-      var request = http.MultipartRequest("POST",
-          Uri.parse(Constant.URL_WEB_SERVER_BASE + "/photos/upload-picture"));
-      request.headers.addAll(headers);
-      request.files.add(_image);
-      await request.send();
-    }
   }
 
   @override
@@ -95,8 +58,9 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void didChangeMetrics() {
     final value = MediaQuery.of(context).viewInsets.bottom;
     if (value > 0) {
-      _scrollController.position
-          .jumpTo(_scrollController.position.maxScrollExtent);
+      if (_scrollController.position.pixels == _oldPositionScrollMax) {
+        _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
+      }
     }
     super.didChangeMetrics();
   }
@@ -106,8 +70,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
       _messageController = MessageController(_currentUser.token);
-      _messageController.messageStream(
-          onMessageListLoaded: (onMessageListLoaded) {
+      _messageController.messageStream(onMessageListLoaded: (onMessageListLoaded) {
         if (_messageList != onMessageListLoaded) {
           setState(() {
             _messageList = onMessageListLoaded;
@@ -136,8 +99,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             tooltip: S.of(context).message_logout,
             onPressed: () {
               logOut();
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => ConnectionView()));
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConnectionView()));
             },
           ),
         ],
@@ -146,10 +108,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                  controller: _scrollController,
-                  itemBuilder: _singleMessage,
-                  itemCount: _messageList.length),
+              child: ListView.builder(controller: _scrollController, itemBuilder: _singleMessage, itemCount: _messageList.length),
             ),
             Form(
               child: Row(
@@ -157,12 +116,12 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                   IconButton(
                     icon: Icon(Icons.photo_camera),
                     color: Theme.of(context).primaryColor,
-                    onPressed: () => _takePicture(),
+                    onPressed: () => _messageController.takePicture(_currentUser),
                   ),
                   IconButton(
                     icon: Icon(Icons.insert_photo),
                     color: Theme.of(context).primaryColor,
-                    onPressed: () => _getImage(),
+                    onPressed: () => _messageController.getImage(_currentUser),
                   ),
                   Expanded(
                     child: TextFormField(
@@ -205,35 +164,6 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     );
   }
 
-  void sendMessage() {
-    if (_textController.text.isNotEmpty) {
-      final message = _messageController.createNewMessageFromString(
-          _textController.text, _currentUser);
-      _messageController.sendMessage(message);
-    }
-    _textController.text = "";
-  }
-
-  goToEndList() async {
-    if (_scrollController.position.pixels == _oldPositionScrollMax &&
-        _oldPositionScrollMax != _scrollController.position.maxScrollExtent &&
-        _oldPositionScrollMax != 0) {
-      do {
-        _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-        await _scrollController.position.moveTo(
-            _scrollController.position.maxScrollExtent,
-            duration: Duration(milliseconds: 500));
-      } while (_scrollController.position.pixels !=
-          _scrollController.position.maxScrollExtent);
-    } else if (_oldPositionScrollMax == 0) {
-      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-      _scrollController.position
-          .jumpTo(_scrollController.position.maxScrollExtent);
-    }
-    _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-    return;
-  }
-
   Widget _singleMessage(BuildContext context, int num) {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       goToEndList();
@@ -256,55 +186,70 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                       icon: Icon(Icons.more_vert),
                       onSelected: (value) {
                         if (value == "report") {
-                          _messageController.reportMessage(
-                              _messageList[num], _currentUser);
+                          _messageController.reportMessage(_messageList[num], _currentUser);
                         }
                       },
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                            value: "report",
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.pan_tool,
-                                  size: 12,
-                                  color: Colors.red.shade300,
-                                ),
-                                Text(
-                                  S.of(context).message_report,
-                                  style: TextStyle(
-                                      fontSize: 12, color: Colors.red),
-                                )
-                              ],
-                            ))
-                      ],
+                      itemBuilder: messagePopUpItem,
                     )
                 ],
               ),
             ),
-            if (_messageList[num].isPicture == null ||
-                (_messageList[num].flag != true &&
-                    !_messageList[num].isPicture!))
-              Text(_messageList[num].message),
-            if (_messageList[num].isPicture != null &&
-                _messageList[num].flag != true &&
-                _messageList[num].isPicture!)
-              messageIsImage(_messageList[num], _currentUser),
-            if (_messageList[num].flag == true)
-              Text(S.of(context).message_under_moderation)
+            if (_messageList[num].isPicture == null || (_messageList[num].flag != true && !_messageList[num].isPicture!)) Text(_messageList[num].message),
+            if (_messageList[num].isPicture != null && _messageList[num].flag != true && _messageList[num].isPicture!) messageIsImage(_messageList[num], _currentUser),
+            if (_messageList[num].flag == true) Text(S.of(context).message_under_moderation)
           ],
         ),
       ),
     );
   }
 
+  List<PopupMenuEntry<String>> messagePopUpItem(BuildContext context) {
+    return [
+      PopupMenuItem(
+          value: "report",
+          child: Row(
+            children: [
+              Icon(
+                Icons.pan_tool,
+                size: 12,
+                color: Colors.red.shade300,
+              ),
+              Text(
+                S.of(context).message_report,
+                style: TextStyle(fontSize: 12, color: Colors.red),
+              )
+            ],
+          ))
+    ];
+  }
+
+  void sendMessage() {
+    if (_textController.text.isNotEmpty) {
+      final message = _messageController.createNewMessageFromString(_textController.text, _currentUser);
+      _messageController.sendMessage(message);
+    }
+    _textController.text = "";
+  }
+
+  goToEndList() async {
+    if (_scrollController.position.pixels == _oldPositionScrollMax && _oldPositionScrollMax != _scrollController.position.maxScrollExtent && _oldPositionScrollMax != 0) {
+      do {
+        _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+        await _scrollController.position.moveTo(_scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 500));
+      } while (_scrollController.position.pixels != _scrollController.position.maxScrollExtent);
+    } else if (_oldPositionScrollMax == 0) {
+      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+      _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
+    }
+    _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+    return;
+  }
+
   Widget messageIsImage(Message message, User currentUser) {
     Map<String, String> headers = Map();
     headers["Authorization"] = "Bearer ${currentUser.token}";
     return Image.network(
-      Constant.URL_WEB_SERVER_BASE +
-          Constant.PATH_TO_GET_PICTURE +
-          "?filename=${message.message}",
+      Constant.URL_WEB_SERVER_BASE + Constant.PATH_TO_GET_PICTURE + "?filename=${message.message}",
       headers: headers,
     );
   }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:image_picker/image_picker.dart';
 import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Controller/web_socket_controller.dart';
@@ -22,9 +23,7 @@ class MessageController {
     return Message("", picturePath, user.id, null, "", true);
   }
 
-  void messageStream(
-      {required Function(List<Message> messageList)
-          onMessageListLoaded}) async {
+  void messageStream({required Function(List<Message> messageList) onMessageListLoaded}) async {
     _webSocketController?.onReceive(onReceiveData: (data) {
       if (hasMessages(data)) {
         onMessageListLoaded(_messageList);
@@ -52,9 +51,33 @@ class MessageController {
     Map<String, String> headers = Map();
     headers["Authorization"] = "Bearer ${user.token}";
     headers["Content-Type"] = "application/json; charset=utf-8";
-    await http.post(
-        Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/report-message"),
-        headers: headers,
-        body: JsonEncoder().convert(message.toJsonForReport()));
+    await http.post(Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/report-message"), headers: headers, body: JsonEncoder().convert(message.toJsonForReport()));
+  }
+
+  Future takePicture(User currentUser) async {
+    final imagePicker = ImagePicker();
+    final image = await imagePicker.getImage(source: ImageSource.camera);
+    uploadImage(image, currentUser);
+  }
+
+  Future getImage(User currentUser) async {
+    final imagePicker = ImagePicker();
+    final image = await imagePicker.getImage(source: ImageSource.gallery);
+    uploadImage(image, currentUser);
+  }
+
+  Future uploadImage(PickedFile? image, User currentUser) async {
+    if (image != null) {
+      http.MultipartFile _image = await http.MultipartFile.fromPath('file', image.path);
+
+      Map<String, String> headers = Map();
+      headers["Content-Type"] = "multipart/form-data";
+      headers["Authorization"] = "Bearer ${currentUser.token}";
+
+      var request = http.MultipartRequest("POST", Uri.parse(Constant.URL_WEB_SERVER_BASE + "/photos/upload-picture"));
+      request.headers.addAll(headers);
+      request.files.add(_image);
+      await request.send();
+    }
   }
 }
