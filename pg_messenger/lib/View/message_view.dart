@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
@@ -85,6 +86,11 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
       },
     );
     _oldPositionScrollMax = 0;
+    _scrollController.addListener(() {
+      if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
+        _closeKeyboard();
+      }
+    });
   }
 
   @override
@@ -311,6 +317,12 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
       }
     } else {
       return "";
+    }
+  }
+
+  _closeKeyboard() {
+    if (_inputFieldNode != null) {
+      _inputFieldNode?.unfocus();
     }
   }
 
