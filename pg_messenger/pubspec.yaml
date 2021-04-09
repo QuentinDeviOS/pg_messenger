@@ -31,7 +31,6 @@ dependencies:
   provider: ^5.0.0
   cupertino_icons: ^1.0.2
   http_auth: ^1.0.0
-  flutter_launcher_icons: ^0.9.0
   intl: ^0.17.0
   scrollable_positioned_list: ^0.2.0-nullsafety.0
   shared_preferences: ^2.0.5
@@ -46,6 +45,12 @@ dev_dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  flutter_launcher_icons: "^0.9.0"
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "Assets/icon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
