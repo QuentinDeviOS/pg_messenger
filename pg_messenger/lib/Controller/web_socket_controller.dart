@@ -27,4 +27,9 @@ class WebSocketController {
       onReceive: (data) => onReceiveData(data),
     );
   }
+
+  closeWS() async {
+    var chan = await channel;
+    chan.sink.close();
+  }
 }
