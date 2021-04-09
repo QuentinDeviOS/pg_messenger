@@ -34,9 +34,9 @@ class User {
         this._createdAt = DateTime.parse(
             json[Constant.JSONKEY_USER][Constant.JSONKEY_USER_DATE_CREATION]),
         this._token = json[Constant.JSONKEY_TOKEN],
-        this._isActive = json[Constant.JSONKEY_USER_IS_ACTIVE],
-        this._isModerator = json[Constant.JSONKEY_USER_IS_MODERATOR],
-        this._picture = json[Constant.JSONKEY_USER_PICTURE];
+        this._isActive = json[Constant.JSONKEY_USER][Constant.JSONKEY_USER_IS_ACTIVE],
+        this._isModerator = json[Constant.JSONKEY_USER][Constant.JSONKEY_USER_IS_MODERATOR],
+        this._picture = json[Constant.JSONKEY_USER][Constant.JSONKEY_USER_PICTURE];
 
   User.fromJsonResponseMessage(
       Map<String, dynamic> json,
