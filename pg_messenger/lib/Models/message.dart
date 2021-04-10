@@ -8,6 +8,7 @@ class Message {
   double? _timestamp;
   bool? _flag;
   bool? _isPicture;
+  final String? _channel;
 
   String get messageID => _messageID;
   String get username => _username;
@@ -15,25 +16,18 @@ class Message {
   String get owner => _ownerID;
   bool? get flag => _flag;
   bool? get isPicture => _isPicture;
+  String? get channel => _channel;
   DateTime? get timestamp {
     return DateTime.fromMillisecondsSinceEpoch((_timestamp! * 1000).truncate());
   }
 
-  Message(
-    this._messageID,
-    this._message,
-    this._ownerID,
-    this._timestamp,
-    this._username,
-    this._isPicture,
-  );
+  Message(this._messageID, this._message, this._ownerID, this._timestamp, this._username, this._isPicture, this._channel);
 
   Map<String, dynamic> toJsonForSending() => {
         Constant.JSONKEY_MESSAGE_MESSAGE: message,
-        Constant.JSONKEY_MESSAGE_OWNER: {
-          Constant.JSONKEY_MESSAGE_OWNER_ID: _ownerID
-        },
+        Constant.JSONKEY_MESSAGE_OWNER: {Constant.JSONKEY_MESSAGE_OWNER_ID: _ownerID},
         Constant.JSONKEY_MESSAGE_IS_PICTURE: _isPicture,
+        Constant.JSONKEY_MESSAGE_CHANNEL: _channel
       };
 
   Map<String, dynamic> toJsonForReport() {
@@ -51,5 +45,6 @@ class Message {
         _timestamp = json[Constant.JSONKEY_MESSAGE_TIMESTAMP],
         _messageID = json[Constant.JSONKEY_MESSAGE_ID],
         _flag = json[Constant.JSONKEY_MESSAGE_FLAG],
-        _isPicture = json[Constant.JSONKEY_MESSAGE_IS_PICTURE];
+        _isPicture = json[Constant.JSONKEY_MESSAGE_IS_PICTURE],
+        _channel = json[Constant.JSONKEY_MESSAGE_CHANNEL];
 }

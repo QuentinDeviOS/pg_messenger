@@ -15,12 +15,12 @@ class MessageController {
     _webSocketController = WebSocketController(_userToken);
   }
 
-  Message createNewMessageFromString(String messageString, User user) {
-    return Message("", messageString, user.id, null, "", false);
+  Message createNewMessageFromString(String messageString, User user, String? channel) {
+    return Message("", messageString, user.id, null, "", false, channel);
   }
 
-  Message createNewMessageWithPicture(String picturePath, User user) {
-    return Message("", picturePath, user.id, null, "", true);
+  Message createNewMessageWithPicture(String picturePath, User user, String? channel) {
+    return Message("", picturePath, user.id, null, "", true, channel);
   }
 
   void messageStream({required Function(List<Message> messageList) onMessageListLoaded}) async {

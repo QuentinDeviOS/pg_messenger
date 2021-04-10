@@ -4,8 +4,11 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Models/user.dart';
+import 'package:pg_messenger/View/connection_view.dart';
+import 'package:pg_messenger/View/loading_view.dart';
 import 'package:pg_messenger/View/message_view.dart';
 import 'package:pg_messenger/generated/l10n.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RegisterView extends StatefulWidget {
@@ -102,8 +105,7 @@ class _RegisterViewState extends State<RegisterView> {
                         onEditingComplete: () => node.nextFocus(),
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.lock),
-                          hintText:
-                              S.of(context).register_password_verification,
+                          hintText: S.of(context).register_password_verification,
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -130,9 +132,7 @@ class _RegisterViewState extends State<RegisterView> {
                                       style: TextStyle(color: Colors.red),
                                     ),
                                     TextSpan(
-                                      text: S
-                                          .of(context)
-                                          .register_EULA_message_link,
+                                      text: S.of(context).register_EULA_message_link,
                                       style: TextStyle(color: Colors.blue),
                                       recognizer: new TapGestureRecognizer()
                                         ..onTap = () async {
@@ -140,10 +140,7 @@ class _RegisterViewState extends State<RegisterView> {
                                           if (await canLaunch(url)) {
                                             await launch(url);
                                           } else {
-                                            throw S
-                                                .of(context)
-                                                .register_EULA_launching_error(
-                                                    url);
+                                            throw S.of(context).register_EULA_launching_error(url);
                                           }
                                         },
                                     ),
@@ -191,12 +188,11 @@ class _RegisterViewState extends State<RegisterView> {
       _wrongImput(context, S.of(context).register_error_accept_tc);
       return null;
     } else if (username.isNotEmpty && password.isNotEmpty) {
-      final response =
-          await createUser(username, email, password, isActive, isModerator);
+      final response = await createUser(username, email, password, isActive, isModerator);
       if (response.statusCode == 200) {
         User user = User.fromJsonResponseLogin(jsonDecode(response.body));
-        await Navigator.push(context,
-            MaterialPageRoute(builder: (context) => MessageView(user)));
+        await _registerToken(user.token);
+        await Navigator.push(context, MaterialPageRoute(builder: (context) => LoadingView()));
       } else {
         _wrongRegistration(context, response.body);
       }
@@ -261,5 +257,10 @@ class _RegisterViewState extends State<RegisterView> {
       context: context,
       builder: (BuildContext context) => alert,
     );
+  }
+
+  _registerToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(Constant.JSONKEY_TOKEN, token);
   }
 }

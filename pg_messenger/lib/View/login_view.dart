@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http_auth/http_auth.dart' as http_auth;
 import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Models/user.dart';
+import 'package:pg_messenger/View/connection_view.dart';
+import 'package:pg_messenger/View/loading_view.dart';
 import 'package:pg_messenger/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'message_view.dart';
@@ -87,9 +89,8 @@ class LoginView extends StatelessWidget {
       final response = await client.post(uri);
       if (response.statusCode == 200) {
         User user = User.fromJsonResponseLogin(jsonDecode(response.body));
-        registerToken(user.token);
-        await Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => MessageView(user)));
+        await registerToken(user.token);
+        await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoadingView()));
       } else {
         _wrongLogin(context);
       }
