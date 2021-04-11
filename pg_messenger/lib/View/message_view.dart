@@ -332,6 +332,30 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             widget._currentUser.username,
             style: TextStyle(fontSize: 22, color: Colors.black54),
           ),
+          ListTile(
+            title: Text("General"),
+            onTap: () {
+              setState(() {
+                title = "General";
+                _currentChannel = null;
+                _messageController.closeWS();
+                _messageController = MessageController(_currentUser.token, _currentChannel);
+                _messageController.messageStream(
+                  onMessageListLoaded: (messageList) {
+                    print(messageList.length);
+                    if (_isCurrentView) {
+                      if (messageList != this.messageList) {
+                        setState(() {
+                          this.messageList = messageList;
+                        });
+                      }
+                    }
+                  },
+                );
+              });
+              Navigator.pop(context);
+            },
+          ),
           Expanded(
               child: ListView.builder(
             itemBuilder: itemBuilder,
