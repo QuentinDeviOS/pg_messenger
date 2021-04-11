@@ -365,7 +365,22 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         setState(() {
           title = channelList[num].name;
           currentChannel = channelList[num].id;
+          _messageController.closeWS();
+          _messageController.createWsConnection(channelList[num].id);
+          _messageController.messageStream(
+            onMessageListLoaded: (messageList) {
+              print(messageList.length);
+              if (_isCurrentView) {
+                if (messageList != this.messageList) {
+                  setState(() {
+                    this.messageList = messageList;
+                  });
+                }
+              }
+            },
+          );
         });
+        Navigator.pop(context);
       },
     );
   }
@@ -376,8 +391,24 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
           title: Text(channelList[num].name),
           onTap: () {
             setState(() {
+              title = channelList[num].name;
               currentChannel = channelList[num].id;
+              _messageController.closeWS();
+              _messageController.createWsConnection(channelList[num].id);
+              _messageController.messageStream(
+                onMessageListLoaded: (messageList) {
+                  print(messageList.length);
+                  if (_isCurrentView) {
+                    if (messageList != this.messageList) {
+                      setState(() {
+                        this.messageList = messageList;
+                      });
+                    }
+                  }
+                },
+              );
             });
+            Navigator.pop(context);
           });
     } else {
       return Padding(padding: EdgeInsets.all(0));

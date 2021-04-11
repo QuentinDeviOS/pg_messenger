@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import 'package:pg_messenger/Constants/constant.dart';
+import 'package:pg_messenger/Models/channel.dart';
 import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Controller/web_socket_controller.dart';
 import 'package:pg_messenger/Models/user.dart';
@@ -12,7 +13,11 @@ class MessageController {
   WebSocketController? _webSocketController;
 
   MessageController(this._userToken) {
-    _webSocketController = WebSocketController(_userToken);
+    _webSocketController = WebSocketController(_userToken, null);
+  }
+
+  createWsConnection(String? channel) {
+    _webSocketController = WebSocketController(_userToken, channel);
   }
 
   Message createNewMessageFromString(String messageString, User user, String? channel) {

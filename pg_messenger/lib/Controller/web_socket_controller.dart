@@ -4,32 +4,32 @@ import 'package:web_socket_channel/io.dart';
 
 class WebSocketController {
   final webSocketManager = WebSocketManager();
-  late Future<IOWebSocketChannel> channel;
+  late Future<IOWebSocketChannel> wsChannel;
   late bool haveNewMessage;
 
-  WebSocketController(String token) {
-    channel = webSocketManager.connectToWS("Bearer $token");
+  WebSocketController(String token, String? channel) {
+    wsChannel = webSocketManager.connectToWS("Bearer $token", channel);
     haveNewMessage = webSocketManager.messageNotificationHasChanged;
-    sendText("get-all-messages");
   }
 
   void sendMessage(Message message) {
-    webSocketManager.sendNewMessageJson(channel, message);
+    webSocketManager.sendNewMessageJson(wsChannel, message);
   }
 
   void sendText(String text) {
-    webSocketManager.sendText(channel, text);
+    webSocketManager.sendText(wsChannel, text);
   }
 
   onReceive({required Function(dynamic data) onReceiveData}) {
     webSocketManager.launchStream(
-      channel,
+      wsChannel,
       onReceive: (data) => onReceiveData(data),
     );
   }
 
   closeWS() async {
-    var chan = await channel;
+    print("close---------------------");
+    var chan = await wsChannel;
     chan.sink.close();
   }
 }
