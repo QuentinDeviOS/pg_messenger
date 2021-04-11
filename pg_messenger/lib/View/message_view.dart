@@ -23,7 +23,7 @@ class MessageView extends StatefulWidget {
 
 class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   List<Channel> channelList;
-  String? currentChannel = null;
+  String? _currentChannel;
   final _currentUser;
   late MessageController _messageController;
   final _textController = TextEditingController();
@@ -37,7 +37,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   final ImagePicker imagePicker = ImagePicker();
 
   MessageViewState(User this._currentUser, this.channelList) {
-    _messageController = MessageController(_currentUser.token);
+    _messageController = MessageController(_currentUser.token, _currentChannel);
   }
 
   @override
@@ -76,7 +76,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
-      _messageController = MessageController(_currentUser.token);
+      _messageController = MessageController(_currentUser.token, _currentChannel);
       _messageController.messageStream(onMessageListLoaded: (onMessageListLoaded) {
         if (messageList != onMessageListLoaded) {
           setState(() {
@@ -179,9 +179,9 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       goToEndList();
     });
-    print(currentChannel);
+    print(_currentChannel);
     print(messageList[num].channel);
-    if (messageList[num].channel == currentChannel) {
+    if (messageList[num].channel == _currentChannel) {
       return Card(
         child: Container(
           padding: EdgeInsets.all(20),
@@ -263,7 +263,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
-      final message = _messageController.createNewMessageFromString(_textController.text, _currentUser, currentChannel);
+      final message = _messageController.createNewMessageFromString(_textController.text, _currentUser, _currentChannel);
       _messageController.sendMessage(message);
     }
     _textController.text = "";
@@ -362,25 +362,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     return ListTile(
       title: Text(channelList[num].name),
       onTap: () {
-        setState(() {
-          title = channelList[num].name;
-          currentChannel = channelList[num].id;
-          _messageController.closeWS();
-          _messageController.createWsConnection(channelList[num].id);
-          _messageController.messageStream(
-            onMessageListLoaded: (messageList) {
-              print(messageList.length);
-              if (_isCurrentView) {
-                if (messageList != this.messageList) {
-                  setState(() {
-                    this.messageList = messageList;
-                  });
-                }
-              }
-            },
-          );
-        });
-        Navigator.pop(context);
+        onTapDrawerListTile(num);
       },
     );
   }
@@ -390,28 +372,32 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
       return ListTile(
           title: Text(channelList[num].name),
           onTap: () {
-            setState(() {
-              title = channelList[num].name;
-              currentChannel = channelList[num].id;
-              _messageController.closeWS();
-              _messageController.createWsConnection(channelList[num].id);
-              _messageController.messageStream(
-                onMessageListLoaded: (messageList) {
-                  print(messageList.length);
-                  if (_isCurrentView) {
-                    if (messageList != this.messageList) {
-                      setState(() {
-                        this.messageList = messageList;
-                      });
-                    }
-                  }
-                },
-              );
-            });
-            Navigator.pop(context);
+            onTapDrawerListTile(num);
           });
     } else {
       return Padding(padding: EdgeInsets.all(0));
     }
+  }
+
+  onTapDrawerListTile(int num) {
+    setState(() {
+      title = channelList[num].name;
+      _currentChannel = channelList[num].id;
+      _messageController.closeWS();
+      _messageController = MessageController(_currentUser.token, _currentChannel);
+      _messageController.messageStream(
+        onMessageListLoaded: (messageList) {
+          print(messageList.length);
+          if (_isCurrentView) {
+            if (messageList != this.messageList) {
+              setState(() {
+                this.messageList = messageList;
+              });
+            }
+          }
+        },
+      );
+    });
+    Navigator.pop(context);
   }
 }
