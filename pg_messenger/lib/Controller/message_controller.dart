@@ -54,19 +54,19 @@ class MessageController {
     await http.post(Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/report-message"), headers: headers, body: JsonEncoder().convert(message.toJsonForReport()));
   }
 
-  Future takePicture(User currentUser) async {
+  Future takePicture(User currentUser, String? channel) async {
     final imagePicker = ImagePicker();
     final image = await imagePicker.getImage(source: ImageSource.camera);
-    uploadImage(image, currentUser);
+    uploadImage(image, currentUser, channel);
   }
 
-  Future getImage(User currentUser) async {
+  Future getImage(User currentUser, String? channel) async {
     final imagePicker = ImagePicker();
     final image = await imagePicker.getImage(source: ImageSource.gallery);
-    uploadImage(image, currentUser);
+    uploadImage(image, currentUser, channel);
   }
 
-  Future uploadImage(PickedFile? image, User currentUser) async {
+  Future uploadImage(PickedFile? image, User currentUser, String? channel) async {
     if (image != null) {
       http.MultipartFile _image = await http.MultipartFile.fromPath('file', image.path);
 
@@ -74,7 +74,7 @@ class MessageController {
       headers["Content-Type"] = "multipart/form-data";
       headers["Authorization"] = "Bearer ${currentUser.token}";
 
-      var request = http.MultipartRequest("POST", Uri.parse(Constant.URL_WEB_SERVER_BASE + "/photos/upload-picture"));
+      var request = http.MultipartRequest("POST", Uri.parse(Constant.URL_WEB_SERVER_BASE + "/photos/upload-picture?channelID=$channel"));
       request.headers.addAll(headers);
       request.files.add(_image);
       await request.send();

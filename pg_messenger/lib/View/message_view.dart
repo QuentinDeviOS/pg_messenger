@@ -125,12 +125,12 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                   IconButton(
                     icon: Icon(Icons.photo_camera),
                     color: Theme.of(context).primaryColor,
-                    onPressed: () => _messageController.takePicture(_currentUser),
+                    onPressed: () => _messageController.takePicture(_currentUser, _currentChannel),
                   ),
                   IconButton(
                     icon: Icon(Icons.insert_photo),
                     color: Theme.of(context).primaryColor,
-                    onPressed: () => _messageController.getImage(_currentUser),
+                    onPressed: () => _messageController.getImage(_currentUser, _currentChannel),
                   ),
                   Expanded(
                     child: TextFormField(
@@ -322,7 +322,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   //Menu Drawer
   //
-  @override
+
   Widget menuDrawer(BuildContext context) {
     return Drawer(
       child: Column(
