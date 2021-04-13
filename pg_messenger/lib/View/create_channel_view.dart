@@ -24,14 +24,17 @@ class _CreateChannelViewState extends State<CreateChannelView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Créer un nouveaux channel de discution"),
+        title: Text("Créer un nouveau Channel de discussion"),
       ),
       body: Column(
         children: [
           Spacer(),
           Text(
             "Créer un nouveau Channel",
-            style: TextStyle(fontSize: 22, color: Color(Colors.black54.value), fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 22,
+                color: Color(Colors.black54.value),
+                fontWeight: FontWeight.bold),
           ),
           Form(
               child: Column(
@@ -63,7 +66,10 @@ class _CreateChannelViewState extends State<CreateChannelView> {
                 child: ElevatedButton(
                     onPressed: () => createChannel(_isPublic),
                     child: Row(
-                      children: [Icon(Icons.create_new_folder), Text("     Créer le channel !")],
+                      children: [
+                        Icon(Icons.create_new_folder),
+                        Text("     Créer le channel !")
+                      ],
                     )),
               )
             ],
@@ -78,9 +84,13 @@ class _CreateChannelViewState extends State<CreateChannelView> {
     final channelController = ChannelController();
     if (_controller.text.length < 3) {
     } else {
-      var responseCode = await _channelController.createNewChannel(widget._currentUser, name: _controller.text, isPublic: isPublic);
+      var responseCode = await _channelController.createNewChannel(
+          widget._currentUser,
+          name: _controller.text,
+          isPublic: isPublic);
       if (responseCode == 200) {
-        final channelList = await channelController.getChannels(widget._currentUser.token);
+        final channelList =
+            await channelController.getChannels(widget._currentUser.token);
         await Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
             if (channelList != null) {
