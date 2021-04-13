@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Controller/channel_controller.dart';
@@ -61,6 +62,11 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
       },
     );
     _oldPositionScrollMax = 0;
+    _scrollController.addListener(() {
+      if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
+        _closeKeyboard();
+      }
+    });
   }
 
   @override
@@ -208,7 +214,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                             _messageController.deleteMessage(messageList[num], _currentUser);
                           }
                         },
-                        itemBuilder: messagePopUpItem,
+                        itemBuilder: (context) => messagePopUpItem(messageList[num]),
                       )
                   ],
                 ),
@@ -225,25 +231,28 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     }
   }
 
-  List<PopupMenuEntry<String>> messagePopUpItem(BuildContext context) {
+  List<PopupMenuEntry<String>> messagePopUpItem(Message message) {
+    print(message.owner);
+    print(_currentUser.id);
     return [
-      PopupMenuItem(
-        value: "report",
-        child: Row(
-          children: [
-            Icon(
-              Icons.pan_tool,
-              size: 12,
-              color: Colors.red.shade300,
-            ),
-            Text(
-              S.of(context).message_report,
-              style: TextStyle(fontSize: 12, color: Colors.red),
-            )
-          ],
+      if (message.owner != _currentUser.id)
+        PopupMenuItem(
+          value: "report",
+          child: Row(
+            children: [
+              Icon(
+                Icons.pan_tool,
+                size: 12,
+                color: Colors.red.shade300,
+              ),
+              Text(
+                S.of(context).message_report,
+                style: TextStyle(fontSize: 12, color: Colors.red),
+              )
+            ],
+          ),
         ),
-      ),
-      if (_currentUser.isModerator == true)
+      if (_currentUser.isModerator == true || message.owner == _currentUser.id)
         PopupMenuItem(
           value: "delete",
           child: Row(
@@ -405,5 +414,11 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
       );
     });
     Navigator.pop(context);
+  }
+
+  _closeKeyboard() {
+    if (_inputFieldNode != null) {
+      _inputFieldNode!.unfocus();
+    }
   }
 }
