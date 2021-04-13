@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pg_messenger/Constants/constant.dart';
+import 'package:pg_messenger/Controller/channel_controller.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Models/channel.dart';
 import 'package:pg_messenger/Models/message.dart';
@@ -28,6 +29,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   late MessageController _messageController;
   final _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final channelController = ChannelController();
   bool _isCurrentView = false;
   double? _oldPositionScrollMax;
   FocusNode? _inputFieldNode;
@@ -37,8 +39,6 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   final ImagePicker imagePicker = ImagePicker();
 
   MessageViewState(User this._currentUser, this.channelList) {
-    final Channel generalChannel = Channel("General", true, [], null);
-    channelList.insert(0, generalChannel);
     _messageController = MessageController(_currentUser.token, _currentChannel);
   }
 
@@ -388,11 +388,15 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
       _messageController.closeWS();
       _messageController = MessageController(_currentUser.token, _currentChannel);
       _messageController.messageStream(
-        onMessageListLoaded: (messageList) {
+        onMessageListLoaded: (messageList) async {
           print(messageList.length);
           if (_isCurrentView) {
             if (messageList != this.messageList) {
+              final channelList = await channelController.getChannels(_currentUser.token);
               setState(() {
+                if (channelList != null) {
+                  this.channelList = channelList;
+                }
                 this.messageList = messageList;
               });
             }
