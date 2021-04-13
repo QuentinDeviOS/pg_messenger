@@ -1,14 +1,14 @@
 class Constant {
   //LOCAL
-  static const URL_BASE = "192.168.1.104:8080";
-  static const URL_WEB_SERVER_BASE = "http://" + URL_BASE;
-  static const URL_WEB_SOCKET = "ws://192.168.1.104:8080/messages/message-web-socket";
+  // static const URL_BASE = "192.168.1.25:8080";
+  // static const URL_WEB_SERVER_BASE = "http://" + URL_BASE;
+  // static const URL_WEB_SOCKET = "ws://192.168.1.25:8080/messages/message-web-socket";
 
   // LIVE
-  // static const URL_BASE = "skyisthelimit.net";
-  // static const URL_WEB_SERVER_BASE = "https://" + URL_BASE;
-  // static const URL_WEB_SOCKET =
-  //     "wss://skyisthelimit.net/messages/message-web-socket";
+  static const URL_BASE = "skyisthelimit.net";
+  static const URL_WEB_SERVER_BASE = "https://" + URL_BASE;
+  static const URL_WEB_SOCKET =
+      "wss://skyisthelimit.net/messages/message-web-socket";
 
   static const PATH_TO_GET_PICTURE = "/photos/get-picture";
 
