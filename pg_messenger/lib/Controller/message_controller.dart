@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pg_messenger/Constants/constant.dart';
@@ -43,7 +42,7 @@ class MessageController {
       for (var messageJson in dataListJson) {
         Message message = Message.fromJson(messageJson);
         _messageList.add(message);
-        Image? image = await ProfilePicture().getImagePicture(user: _user, randomInt: Random().nextInt(1000), username: message.owner, height: 40, width: 40);
+        Image? image = await ProfilePicture().getImagePicture(user: _user, username: message.owner, height: 40, width: 40, picture: message.ownerPicture);
         if (image == null) {
           if (_futureImageList[message.owner] != Container()) {
             _futureImageList[message.owner] = Container();
@@ -108,5 +107,15 @@ class MessageController {
 
   closeWS() {
     _webSocketController?.closeWS();
+  }
+
+  refreshMessage(User user, String? channel) {
+    Map<String, String> headers = Map();
+    headers["Authorization"] = "Bearer ${user.token}";
+    if (channel == null) {
+      http.get(Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/refresh-messages"), headers: headers);
+    } else {
+      http.get(Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/refresh-messages?channel=" + channel), headers: headers);
+    }
   }
 }

@@ -122,7 +122,9 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     return Scaffold(
       onDrawerChanged: (isOpened) {
         if (isOpened) {
-        } else {}
+        } else {
+          _messageController.refreshMessage(_currentUser, _currentChannel);
+        }
       },
       appBar: AppBar(
         title: /*Text(S.of(context).message_title)*/ Text(title),
@@ -219,7 +221,8 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                   children: [
                     Padding(
                         padding: const EdgeInsets.fromLTRB(8, 0, 12, 0),
-                        child: ClipRect(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
                           child: Container(
                             height: 40,
                             width: 40,

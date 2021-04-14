@@ -26,7 +26,7 @@ class ProfilePicture {
     }
   }
 
-  Future<Image?> getImagePicture({required User user, String? picture, required int randomInt, required String username, required double height, required double width}) async {
+  Future<Image?> getImagePicture({required User user, String? picture, int? randomInt, required String username, required double height, required double width}) async {
     bool canGetPictureBool = await canGetPicture(user, picture);
     Map<String, String> headers = Map();
     headers["Authorization"] = "Bearer ${user.token}";
@@ -36,20 +36,12 @@ class ProfilePicture {
           Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?picture=$picture&refresh=" + randomInt.toString(),
           headers: headers,
           fit: BoxFit.cover,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return defaultImagePicture(username, height: height, width: width);
-          },
         );
       } else {
         return Image.network(
           Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=" + randomInt.toString(),
           headers: headers,
           fit: BoxFit.cover,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return defaultImagePicture(username, height: height, width: width);
-          },
         );
       }
     } else {
