@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Controller/channel_controller.dart';
 import 'package:pg_messenger/Controller/user_controller.dart';
-import 'package:pg_messenger/View/connection_view.dart';
+import 'package:pg_messenger/View/Connection/connection_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'message_view.dart';
+import '../message_view.dart';
 
 class LoadingView extends StatelessWidget {
   final channelController = ChannelController();

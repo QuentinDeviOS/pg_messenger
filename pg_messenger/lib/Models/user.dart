@@ -28,25 +28,15 @@ class User {
   );
 
   User.fromJsonResponseLogin(Map<String, dynamic> json)
-      : this._username =
-            json[Constant.JSONKEY_USER][Constant.JSONKEY_USER_USERNAME],
+      : this._username = json[Constant.JSONKEY_USER][Constant.JSONKEY_USER_USERNAME],
         this._id = json[Constant.JSONKEY_USER][Constant.JSONKEY_USER_ID],
-        this._createdAt = DateTime.parse(
-            json[Constant.JSONKEY_USER][Constant.JSONKEY_USER_DATE_CREATION]),
+        this._createdAt = DateTime.parse(json[Constant.JSONKEY_USER][Constant.JSONKEY_USER_DATE_CREATION]),
         this._token = json[Constant.JSONKEY_TOKEN],
         this._isActive = json[Constant.JSONKEY_USER][Constant.JSONKEY_USER_IS_ACTIVE],
         this._isModerator = json[Constant.JSONKEY_USER][Constant.JSONKEY_USER_IS_MODERATOR],
         this._picture = json[Constant.JSONKEY_USER][Constant.JSONKEY_USER_PICTURE];
 
-  User.fromJsonResponseMessage(
-      Map<String, dynamic> json,
-      this._username,
-      this._createdAt,
-      this._token,
-      this._isActive,
-      this._isModerator,
-      this._picture)
-      : this._id = json[Constant.JSONKEY_USER_ID];
+  User.fromJsonResponseMessage(Map<String, dynamic> json, this._username, this._createdAt, this._token, this._isActive, this._isModerator, this._picture) : this._id = json[Constant.JSONKEY_USER_ID];
 
   Map<String, dynamic> toJsonForSendMessage() => {
         Constant.JSONKEY_USER_ID: _id,

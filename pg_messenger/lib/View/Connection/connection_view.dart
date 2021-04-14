@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pg_messenger/View/login_view.dart';
-import 'package:pg_messenger/View/register_view.dart';
+import 'package:pg_messenger/View/Connection/login_view.dart';
+import 'package:pg_messenger/View/Connection/register_view.dart';
 import 'package:pg_messenger/generated/l10n.dart';
 
 class ConnectionView extends StatefulWidget {

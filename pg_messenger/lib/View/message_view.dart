@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -5,11 +7,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Controller/channel_controller.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
+import 'package:pg_messenger/Controller/profile_picture_controller.dart';
 import 'package:pg_messenger/Models/channel.dart';
 import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Models/user.dart';
-import 'package:pg_messenger/View/connection_view.dart';
+import 'package:pg_messenger/View/Connection/connection_view.dart';
 import 'package:intl/intl.dart';
+import 'package:pg_messenger/View/user_settings_view.dart';
 import 'package:pg_messenger/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,7 +30,8 @@ class MessageView extends StatefulWidget {
 class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   List<Channel> channelList;
   String? _currentChannel;
-  final _currentUser;
+  final User _currentUser;
+  var profilePictureController = ProfilePicture();
   late MessageController _messageController;
   final _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -35,12 +40,14 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   double? _oldPositionScrollMax;
   FocusNode? _inputFieldNode;
   List<Message> messageList = [];
-  String title = "Messages";
+  String title = "Général";
+  final _drawerKey = PageStorageKey("drawerKey");
 
   final ImagePicker imagePicker = ImagePicker();
 
-  MessageViewState(User this._currentUser, this.channelList) {
+  MessageViewState(this._currentUser, this.channelList) {
     _messageController = MessageController(_currentUser.token, _currentChannel);
+    profilePictureController = ProfilePicture();
   }
 
   @override
@@ -107,6 +114,20 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      onDrawerChanged: (isOpened) {
+        if (isOpened) {
+        } else {
+          _messageController.closeWS();
+          _messageController = MessageController(_currentUser.token, _currentChannel);
+          _messageController.messageStream(onMessageListLoaded: (onMessageListLoaded) {
+            if (messageList != onMessageListLoaded) {
+              setState(() {
+                messageList = onMessageListLoaded;
+              });
+            }
+          });
+        }
+      },
       appBar: AppBar(
         title: /*Text(S.of(context).message_title)*/ Text(title),
         actions: <Widget>[
@@ -197,10 +218,32 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: EdgeInsets.only(bottom: 10.0),
+                padding: EdgeInsets.only(bottom: 20.0),
                 child: Row(
                   children: [
-                    Text(messageList[num].username),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 0, 12, 0),
+                      child: FutureBuilder(
+                        future: profilePictureController.getImagePicture(user: _currentUser, randomInt: Random().nextInt(5000), height: 60, width: 60, username: messageList[num].owner, picture: messageList[num].ownerPicture),
+                        builder: (context, AsyncSnapshot<dynamic> snapshot) {
+                          if (snapshot.hasData) {
+                            return ClipRRect(
+                                borderRadius: BorderRadius.circular(100),
+                                child: Container(
+                                  height: 40,
+                                  width: 40,
+                                  child: snapshot.data,
+                                ));
+                          } else {
+                            return profilePictureController.defaultImagePicture(messageList[num].owner, height: 40, width: 40);
+                          }
+                        },
+                      ),
+                    ),
+                    Text(
+                      messageList[num].username,
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black54),
+                    ),
                     Spacer(),
                     Text(_formatedTimestamp(messageList[num].timestamp)),
                     if (messageList[num].flag != true)
@@ -336,33 +379,112 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   Widget menuDrawer(BuildContext context) {
     return Drawer(
-      child: Column(
-        children: [
-          Padding(padding: EdgeInsets.all(20)),
-          Text(
-            widget._currentUser.username,
-            style: TextStyle(fontSize: 22, color: Colors.black54),
-          ),
-          Expanded(
-              child: ListView.builder(
-            itemBuilder: itemBuilder,
-            itemCount: channelList.length,
-          )),
-          Spacer(),
-          if (_currentUser.isModerator)
-            ListTile(
-              title: Row(
-                children: [Icon(Icons.plus_one), Text("  Ajouter un channel")],
+      key: _drawerKey,
+      child: SafeArea(
+        child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(padding: EdgeInsets.fromLTRB(20, 40, 0, 0)),
+              GestureDetector(
+                child: Row(
+                  children: [
+                    Padding(padding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
+                    FutureBuilder(
+                        future: profilePictureController.getImagePicture(user: _currentUser, randomInt: Random().nextInt(5000), height: 60, width: 60, username: _currentUser.username),
+                        builder: (context, AsyncSnapshot<dynamic> snapshot) {
+                          if (snapshot.hasData) {
+                            return ClipRRect(
+                              borderRadius: BorderRadius.circular(30),
+                              child: Container(
+                                height: 60,
+                                width: 60,
+                                child: snapshot.data,
+                              ),
+                            );
+                          } else {
+                            return profilePictureController.defaultImagePicture(_currentUser.username, height: 60, width: 60);
+                          }
+                        }),
+                    Padding(padding: EdgeInsets.fromLTRB(20, 0, 0, 0)),
+                    Text(
+                      widget._currentUser.username,
+                      style: TextStyle(fontSize: 22, color: Colors.black54, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => UserSettingsView(
+                              user: _currentUser,
+                            ))),
               ),
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CreateChannelView(widget.key, widget._currentUser))),
-            )
-        ],
+              Padding(padding: EdgeInsets.fromLTRB(20, 15, 20, 20)),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                child: Row(
+                  children: [
+                    Text(
+                      "Salons",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(fontSize: 24, color: Colors.black87.withAlpha(100), fontWeight: FontWeight.w600),
+                    ),
+                    Spacer(),
+                    if (_currentUser.isModerator == true)
+                      IconButton(
+                          icon: Icon(
+                            Icons.plus_one,
+                            color: Colors.black87.withAlpha(255),
+                          ),
+                          onPressed: () => pushToCreateChannelView()),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemBuilder: itemBuilder,
+                  itemCount: channelList.length,
+                ),
+              ),
+              Spacer(),
+              TextButton(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 15, 15),
+                  child: Row(
+                    children: [
+                      Spacer(),
+                      Icon(
+                        Icons.logout,
+                        color: Color(0xFF9C386C).withAlpha(200),
+                      ),
+                      Padding(padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
+                      Text(
+                        "Se deconnecter",
+                        style: TextStyle(color: Color(0xFF9C386C).withAlpha(200)),
+                      )
+                    ],
+                  ),
+                ),
+                onPressed: () {
+                  logOut();
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConnectionView()));
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
+  pushToCreateChannelView() {
+    Navigator.pop(context);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateChannelView(widget.key, widget._currentUser)));
+  }
+
   Widget itemBuilder(BuildContext context, int num) {
-    if (_currentUser.isModerator) {
+    if (_currentUser.isModerator == true) {
       return listViewBuilderIfModerator(num);
     } else {
       return listViewBuilderIfNotModerator(num);
@@ -370,24 +492,40 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   }
 
   Widget listViewBuilderIfModerator(int num) {
-    return ListTile(
-      title: Text(channelList[num].name),
-      onTap: () {
-        onTapDrawerListTile(num);
-      },
-    );
+    return drawerListViewComponent(num);
   }
 
   Widget listViewBuilderIfNotModerator(int num) {
     if (channelList[num].isPublic) {
-      return ListTile(
-          title: Text(channelList[num].name),
-          onTap: () {
-            onTapDrawerListTile(num);
-          });
+      return drawerListViewComponent(num);
     } else {
       return Padding(padding: EdgeInsets.all(0));
     }
+  }
+
+  Widget drawerListViewComponent(int num) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(40, 10, 0, 10),
+      child: GestureDetector(
+        child: Row(
+          children: [
+            Icon(
+              Icons.tag,
+              size: 20,
+              color: Colors.black45,
+            ),
+            Padding(padding: EdgeInsets.fromLTRB(0, 0, 3, 0)),
+            Text(
+              channelList[num].name,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        onTap: () {
+          onTapDrawerListTile(num);
+        },
+      ),
+    );
   }
 
   onTapDrawerListTile(int num) {

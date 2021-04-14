@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:pg_messenger/View/loading_view.dart';
+import 'package:pg_messenger/View/Connection/loading_view.dart';
 import 'package:pg_messenger/generated/l10n.dart';
 
 void main() {
@@ -16,12 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: purpleGiraffe,
       ),
-      darkTheme: ThemeData(
-          brightness: Brightness.dark,
-          primarySwatch: purpleGiraffe,
-          primaryColor: purpleGiraffe,
-          accentColor: purpleGiraffe,
-          toggleableActiveColor: purpleGiraffe),
+      darkTheme: ThemeData(brightness: Brightness.dark, primarySwatch: purpleGiraffe, primaryColor: purpleGiraffe, accentColor: purpleGiraffe, toggleableActiveColor: purpleGiraffe),
       home: LoadingView(),
       localizationsDelegates: [
         S.delegate,

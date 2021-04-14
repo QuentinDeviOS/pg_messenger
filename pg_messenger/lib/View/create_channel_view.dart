@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Controller/channel_controller.dart';
 import 'package:pg_messenger/Models/user.dart';
-import 'package:pg_messenger/View/loading_view.dart';
+import 'package:pg_messenger/View/Connection/loading_view.dart';
 import 'package:pg_messenger/View/message_view.dart';
 
 class CreateChannelView extends StatefulWidget {

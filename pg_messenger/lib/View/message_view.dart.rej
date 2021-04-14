@@ -1,0 +1,9 @@
+diff a/pg_messenger/lib/View/message_view.dart b/pg_messenger/lib/View/message_view.dart	(rejected hunks)
+@@ -63,6 +63,7 @@
+     );
+     _oldPositionScrollMax = 0;
+     _scrollController.addListener(() {
++      if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
+         _closeKeyboard();
+       }
+     });

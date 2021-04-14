@@ -9,6 +9,7 @@ class Message {
   bool? _flag;
   bool? _isPicture;
   final String? _channel;
+  String? _ownerPicture;
 
   String get messageID => _messageID;
   String get username => _username;
@@ -17,6 +18,7 @@ class Message {
   bool? get flag => _flag;
   bool? get isPicture => _isPicture;
   String? get channel => _channel;
+  String? get ownerPicture => _ownerPicture;
   DateTime? get timestamp {
     return DateTime.fromMillisecondsSinceEpoch((_timestamp! * 1000).truncate());
   }
@@ -46,5 +48,6 @@ class Message {
         _messageID = json[Constant.JSONKEY_MESSAGE_ID],
         _flag = json[Constant.JSONKEY_MESSAGE_FLAG],
         _isPicture = json[Constant.JSONKEY_MESSAGE_IS_PICTURE],
-        _channel = json[Constant.JSONKEY_MESSAGE_CHANNEL];
+        _channel = json[Constant.JSONKEY_MESSAGE_CHANNEL],
+        _ownerPicture = json[Constant.JSONKEY_MESSAGE_OWNER_PICTURE];
 }
