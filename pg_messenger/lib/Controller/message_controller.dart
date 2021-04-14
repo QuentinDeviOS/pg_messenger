@@ -10,7 +10,8 @@ import 'package:http/http.dart' as http;
 
 class MessageController {
   List<Message> _messageList = [];
-  Map<String, Widget> _futureImageList = Map();
+  Map<String, Widget> _profilePictureByOwner = Map();
+  Map<String, String> _literalPricutreDictionary = Map();
   final User _user;
   WebSocketController? _webSocketController;
 
@@ -30,7 +31,7 @@ class MessageController {
     _webSocketController?.onReceive(onReceiveData: (data) async {
       var haveData = await hasMessages(data);
       if (haveData) {
-        onMessageListLoaded(_messageList, _futureImageList);
+        onMessageListLoaded(_messageList, _profilePictureByOwner);
       }
     });
   }
@@ -42,16 +43,25 @@ class MessageController {
       for (var messageJson in dataListJson) {
         Message message = Message.fromJson(messageJson);
         _messageList.add(message);
-        Image? image = await ProfilePicture().getImagePicture(user: _user, username: message.owner, height: 40, width: 40, picture: message.ownerPicture);
-        Widget defaultImage = ProfilePicture().defaultImagePicture(message.username, height: 40, width: 40);
-        if (image == null) {
-          if (_futureImageList[message.owner] != defaultImage) {
-            _futureImageList[message.owner] = defaultImage;
+        if (message.ownerPicture != null) {
+          if (_literalPricutreDictionary[message.owner] != message.ownerPicture) {
+            Image? image = await ProfilePicture().getImagePicture(user: _user, username: message.owner, height: 40, width: 40, picture: message.ownerPicture);
+            Widget defaultImage = ProfilePicture().defaultImagePicture(message.username, height: 40, width: 40);
+            if (image == null) {
+              if (_profilePictureByOwner[message.owner] != defaultImage) {
+                _profilePictureByOwner[message.owner] = defaultImage;
+                _literalPricutreDictionary[message.owner] = message.ownerPicture!;
+              }
+            } else {
+              if (_profilePictureByOwner[message.owner] != image) {
+                _profilePictureByOwner[message.owner] = image;
+                _literalPricutreDictionary[message.owner] = message.ownerPicture!;
+              }
+            }
           }
         } else {
-          if (_futureImageList[message.owner] != image) {
-            _futureImageList[message.owner] = image;
-          }
+          Widget defaultImage = ProfilePicture().defaultImagePicture(message.username, height: 40, width: 40);
+          _profilePictureByOwner[message.owner] = defaultImage;
         }
       }
       return true;
