@@ -42,7 +42,6 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   List<Message> messageList = [];
   Map<String, Widget> _ownerImageMap = Map();
   String title = "Général";
-  final _drawerKey = PageStorageKey("drawerKey");
 
   final ImagePicker imagePicker = ImagePicker();
 
@@ -64,9 +63,8 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             if (_ownerImageMap != imageList) {
               _ownerImageMap = imageList;
             }
-            this.messageList = messageList;
             setState(() {
-              this.messageList;
+              this.messageList = messageList;
             });
           }
         }
@@ -363,7 +361,6 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   Widget menuDrawer(BuildContext context) {
     return Drawer(
-      key: _drawerKey,
       child: SafeArea(
         child: Container(
           child: Column(
@@ -525,9 +522,8 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
               if (_ownerImageMap != imageList) {
                 _ownerImageMap = imageList;
               }
-              this.messageList = messageList;
               setState(() {
-                this.messageList;
+                this.messageList = messageList;
               });
             }
           }

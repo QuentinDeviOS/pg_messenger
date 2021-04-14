@@ -14,8 +14,10 @@ class MessageController {
   Map<String, String> _literalPricutreDictionary = Map();
   final User _user;
   WebSocketController? _webSocketController;
+  String? channel;
 
   MessageController(this._user, String? channel) {
+    this.channel = channel;
     _webSocketController = WebSocketController(_user.token, channel);
   }
 
@@ -42,6 +44,9 @@ class MessageController {
       _messageList = [];
       for (var messageJson in dataListJson) {
         Message message = Message.fromJson(messageJson);
+        if (message.channel != channel) {
+          return false;
+        }
         _messageList.add(message);
         if (message.ownerPicture != null) {
           if (_literalPricutreDictionary[message.owner] != message.ownerPicture) {

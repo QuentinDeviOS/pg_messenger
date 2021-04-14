@@ -67,7 +67,7 @@ class ProfilePicture {
 
   Widget defaultImagePicture(String username, {required double height, required double width}) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(30),
+      borderRadius: BorderRadius.circular(100),
       child: Container(
         height: height,
         width: width,

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pg_messenger/Controller/profile_picture_controller.dart';
@@ -20,10 +18,12 @@ class _UserSettingsViewState extends State<UserSettingsView> {
   var _profilePictureController = ProfilePicture();
 
   var _profilePictureFuture;
+  var _randomInt = 1;
 
   _UserSettingsViewState(this.user) {
     _profilePictureController = ProfilePicture();
-    _profilePictureFuture = _profilePictureController.getImagePicture(user: user, randomInt: Random().nextInt(5000), height: 150, width: 150, username: user.username);
+    _randomInt = _randomInt + 1;
+    _profilePictureFuture = _profilePictureController.getImagePicture(user: user, randomInt: _randomInt + 1, height: 150, width: 150, username: user.username);
   }
 
   final TextEditingController _actualPasswordController = TextEditingController();
@@ -142,7 +142,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
             child: snapshot.data,
           ));
     }
-    return Text("data");
+    return _profilePictureController.defaultImagePicture(user.username, height: 150, width: 150);
   }
 
   onTapAddingPicture(context, User currentUser) async {
@@ -158,12 +158,15 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                 child: Container(
                   child: ListTile(
                     title: Text("Importer depuis la photothèque"),
-                    onTap: () {
-                      _profilePictureController.getImage(user, () {
+                    onTap: () async {
+                      await _profilePictureController.getImage(user, () {
                         setState(() {
-                          _profilePictureFuture = _profilePictureController.getImagePicture(user: user, randomInt: Random().nextInt(5000), height: 150, width: 150, username: user.username);
+                          print("setstate");
+                          _randomInt = _randomInt + 1;
+                          _profilePictureFuture = _profilePictureController.getImagePicture(user: user, randomInt: _randomInt + 1, height: 150, width: 150, username: user.username);
                         });
                       });
+                      Navigator.pop(context);
                     },
                     leading: Icon(Icons.photo_album),
                   ),
@@ -175,9 +178,11 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                   await _profilePictureController.takePicture(
                     currentUser,
                     onComplete: () {
-                      setState(() {
-                        _profilePictureFuture = _profilePictureController.getImagePicture(user: user, randomInt: Random().nextInt(5000), height: 150, width: 150, username: user.username);
+                      setState(() async {
+                        _randomInt = _randomInt + 1;
+                        _profilePictureFuture = await _profilePictureController.getImagePicture(user: user, randomInt: _randomInt + 1, height: 150, width: 150, username: user.username);
                       });
+                      Navigator.pop(context);
                     },
                   );
                 },
