@@ -40,13 +40,14 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   double? _oldPositionScrollMax;
   FocusNode? _inputFieldNode;
   List<Message> messageList = [];
+  Map<String, Widget> _ownerImageMap = Map();
   String title = "Général";
   final _drawerKey = PageStorageKey("drawerKey");
 
   final ImagePicker imagePicker = ImagePicker();
 
   MessageViewState(this._currentUser, this.channelList) {
-    _messageController = MessageController(_currentUser.token, _currentChannel);
+    _messageController = MessageController(_currentUser, _currentChannel);
     profilePictureController = ProfilePicture();
   }
 
@@ -57,12 +58,16 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     _isCurrentView = true;
     _inputFieldNode = FocusNode();
     _messageController.messageStream(
-      onMessageListLoaded: (messageList) {
+      onMessageListLoaded: (messageList, imageList) {
         print(messageList.length);
         if (_isCurrentView) {
           if (messageList != this.messageList) {
+            if (_ownerImageMap != imageList) {
+              _ownerImageMap = imageList;
+            }
+            this.messageList = messageList;
             setState(() {
-              this.messageList = messageList;
+              this.messageList;
             });
           }
         }
@@ -91,10 +96,11 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
-      _messageController = MessageController(_currentUser.token, _currentChannel);
-      _messageController.messageStream(onMessageListLoaded: (onMessageListLoaded) {
+      _messageController = MessageController(_currentUser, _currentChannel);
+      _messageController.messageStream(onMessageListLoaded: (onMessageListLoaded, imageList) {
         if (messageList != onMessageListLoaded) {
           setState(() {
+            _ownerImageMap = imageList;
             messageList = onMessageListLoaded;
           });
         }
@@ -116,17 +122,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     return Scaffold(
       onDrawerChanged: (isOpened) {
         if (isOpened) {
-        } else {
-          _messageController.closeWS();
-          _messageController = MessageController(_currentUser.token, _currentChannel);
-          _messageController.messageStream(onMessageListLoaded: (onMessageListLoaded) {
-            if (messageList != onMessageListLoaded) {
-              setState(() {
-                messageList = onMessageListLoaded;
-              });
-            }
-          });
-        }
+        } else {}
       },
       appBar: AppBar(
         title: /*Text(S.of(context).message_title)*/ Text(title),
@@ -222,24 +218,14 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                 child: Row(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 0, 12, 0),
-                      child: FutureBuilder(
-                        future: profilePictureController.getImagePicture(user: _currentUser, randomInt: Random().nextInt(5000), height: 60, width: 60, username: messageList[num].owner, picture: messageList[num].ownerPicture),
-                        builder: (context, AsyncSnapshot<dynamic> snapshot) {
-                          if (snapshot.hasData) {
-                            return ClipRRect(
-                                borderRadius: BorderRadius.circular(100),
-                                child: Container(
-                                  height: 40,
-                                  width: 40,
-                                  child: snapshot.data,
-                                ));
-                          } else {
-                            return profilePictureController.defaultImagePicture(messageList[num].owner, height: 40, width: 40);
-                          }
-                        },
-                      ),
-                    ),
+                        padding: const EdgeInsets.fromLTRB(8, 0, 12, 0),
+                        child: ClipRect(
+                          child: Container(
+                            height: 40,
+                            width: 40,
+                            child: _ownerImageMap[messageList[num].owner],
+                          ),
+                        )),
                     Text(
                       messageList[num].username,
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black54),
@@ -533,9 +519,9 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
       title = channelList[num].name;
       _currentChannel = channelList[num].id;
       _messageController.closeWS();
-      _messageController = MessageController(_currentUser.token, _currentChannel);
+      _messageController = MessageController(_currentUser, _currentChannel);
       _messageController.messageStream(
-        onMessageListLoaded: (messageList) async {
+        onMessageListLoaded: (messageList, imageFutureList) async {
           print(messageList.length);
           if (_isCurrentView) {
             if (messageList != this.messageList) {

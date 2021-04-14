@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'dart:math';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pg_messenger/Constants/constant.dart';
+import 'package:pg_messenger/Controller/profile_picture_controller.dart';
 import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Controller/web_socket_controller.dart';
 import 'package:pg_messenger/Models/user.dart';
@@ -8,11 +11,12 @@ import 'package:http/http.dart' as http;
 
 class MessageController {
   List<Message> _messageList = [];
-  final String _userToken;
+  Map<String, Widget> _futureImageList = Map();
+  final User _user;
   WebSocketController? _webSocketController;
 
-  MessageController(this._userToken, String? channel) {
-    _webSocketController = WebSocketController(_userToken, channel);
+  MessageController(this._user, String? channel) {
+    _webSocketController = WebSocketController(_user.token, channel);
   }
 
   Message createNewMessageFromString(String messageString, User user, String? channel) {
@@ -23,20 +27,32 @@ class MessageController {
     return Message("", picturePath, user.id, null, "", true, channel);
   }
 
-  void messageStream({required Function(List<Message> messageList) onMessageListLoaded}) async {
-    _webSocketController?.onReceive(onReceiveData: (data) {
-      if (hasMessages(data)) {
-        onMessageListLoaded(_messageList);
+  void messageStream({required Function(List<Message> messageList, Map<String, Widget> imageFutureList) onMessageListLoaded}) async {
+    _webSocketController?.onReceive(onReceiveData: (data) async {
+      var haveData = await hasMessages(data);
+      if (haveData) {
+        onMessageListLoaded(_messageList, _futureImageList);
       }
     });
   }
 
-  bool hasMessages(dynamic messageReceived) {
+  Future<bool> hasMessages(dynamic messageReceived) async {
     final List<dynamic>? dataListJson = jsonDecode(messageReceived.toString());
     if (dataListJson != null) {
       _messageList = [];
       for (var messageJson in dataListJson) {
-        _messageList.add(Message.fromJson(messageJson));
+        Message message = Message.fromJson(messageJson);
+        _messageList.add(message);
+        Image? image = await ProfilePicture().getImagePicture(user: _user, randomInt: Random().nextInt(1000), username: message.owner, height: 40, width: 40);
+        if (image == null) {
+          if (_futureImageList[message.owner] != Container()) {
+            _futureImageList[message.owner] = Container();
+          }
+        } else {
+          if (_futureImageList[message.owner] != image) {
+            _futureImageList[message.owner] = image;
+          }
+        }
       }
       return true;
     }
