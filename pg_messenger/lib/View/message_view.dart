@@ -519,15 +519,15 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
       _messageController.closeWS();
       _messageController = MessageController(_currentUser, _currentChannel);
       _messageController.messageStream(
-        onMessageListLoaded: (messageList, imageFutureList) async {
+        onMessageListLoaded: (messageList, imageList) {
           if (_isCurrentView) {
             if (messageList != this.messageList) {
-              final channelList = await channelController.getChannels(_currentUser.token);
+              if (_ownerImageMap != imageList) {
+                _ownerImageMap = imageList;
+              }
+              this.messageList = messageList;
               setState(() {
-                if (channelList != null) {
-                  this.channelList = channelList;
-                }
-                this.messageList = messageList;
+                this.messageList;
               });
             }
           }

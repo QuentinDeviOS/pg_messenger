@@ -9,9 +9,7 @@ class ChannelController {
     Map<String, String> headers = Map();
     headers["Authorization"] = "Bearer ${user.token}";
     headers["Content-Type"] = "application/json; charset=utf-8";
-    print(headers);
     var body = JsonEncoder().convert({Constant.JSONKEY_CHANNEL_NAME: name, Constant.JSONKEY_CHANNEL_IS_PUBLIC: isPublic});
-    print(body);
     var response = await http.post(Uri.parse(Constant.URL_WEB_SERVER_BASE + "/channel/create-channel"), body: body, headers: headers);
     return response.statusCode;
   }
@@ -20,13 +18,10 @@ class ChannelController {
     Map<String, String> headers = Map();
     headers["Authorization"] = "Bearer $token";
     final channelListQuery = await http.get(Uri.parse(Constant.URL_WEB_SERVER_BASE + "/channel/get-channel"), headers: headers);
-    print(channelListQuery.statusCode);
     if (channelListQuery.statusCode == 200) {
       List<Channel> channelList = [];
       List<dynamic> jsonList = jsonDecode(channelListQuery.body);
-      print("jsonlist : $jsonList");
       for (var jsonChannel in jsonList) {
-        print(jsonChannel);
         Channel channel = Channel.fromJson(jsonChannel);
         channelList.add(channel);
       }
