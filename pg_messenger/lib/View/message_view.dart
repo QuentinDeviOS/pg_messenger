@@ -59,7 +59,6 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     _inputFieldNode = FocusNode();
     _messageController.messageStream(
       onMessageListLoaded: (messageList, imageList) {
-        print(messageList.length);
         if (_isCurrentView) {
           if (messageList != this.messageList) {
             if (_ownerImageMap != imageList) {
@@ -206,8 +205,6 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       goToEndList();
     });
-    print(_currentChannel);
-    print(messageList[num].channel);
     if (messageList[num].channel == _currentChannel) {
       return Card(
         child: Container(
@@ -264,8 +261,6 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   }
 
   List<PopupMenuEntry<String>> messagePopUpItem(Message message) {
-    print(message.owner);
-    print(_currentUser.id);
     return [
       if (message.owner != _currentUser.id)
         PopupMenuItem(
@@ -525,7 +520,6 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
       _messageController = MessageController(_currentUser, _currentChannel);
       _messageController.messageStream(
         onMessageListLoaded: (messageList, imageFutureList) async {
-          print(messageList.length);
           if (_isCurrentView) {
             if (messageList != this.messageList) {
               final channelList = await channelController.getChannels(_currentUser.token);

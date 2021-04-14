@@ -18,11 +18,9 @@ class ProfilePicture {
     }
     var response = await http.get(Uri.parse(requestUri), headers: headers);
     if (response.statusCode == 200) {
-      print("I returned true");
       return true;
     } else {
-      print("I returned False");
-      return true;
+      return false;
     }
   }
 

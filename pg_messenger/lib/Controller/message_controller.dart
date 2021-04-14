@@ -43,9 +43,10 @@ class MessageController {
         Message message = Message.fromJson(messageJson);
         _messageList.add(message);
         Image? image = await ProfilePicture().getImagePicture(user: _user, username: message.owner, height: 40, width: 40, picture: message.ownerPicture);
+        Widget defaultImage = ProfilePicture().defaultImagePicture(message.username, height: 40, width: 40);
         if (image == null) {
-          if (_futureImageList[message.owner] != Container()) {
-            _futureImageList[message.owner] = Container();
+          if (_futureImageList[message.owner] != defaultImage) {
+            _futureImageList[message.owner] = defaultImage;
           }
         } else {
           if (_futureImageList[message.owner] != image) {

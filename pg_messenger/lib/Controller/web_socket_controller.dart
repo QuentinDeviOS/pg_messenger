@@ -28,7 +28,6 @@ class WebSocketController {
   }
 
   closeWS() async {
-    print("close---------------------");
     var chan = await wsChannel;
     chan.sink.close();
   }
