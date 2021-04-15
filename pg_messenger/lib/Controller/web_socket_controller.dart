@@ -7,9 +7,8 @@ class WebSocketController {
   late Future<IOWebSocketChannel> wsChannel;
   late bool haveNewMessage;
 
-  WebSocketController(String token, String? channel) {
+  connect(String token, String? channel) {
     wsChannel = webSocketManager.connectToWS("Bearer $token", channel);
-    haveNewMessage = webSocketManager.messageNotificationHasChanged;
   }
 
   void sendMessage(Message message) {

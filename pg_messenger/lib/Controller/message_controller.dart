@@ -11,14 +11,13 @@ import 'package:http/http.dart' as http;
 class MessageController {
   List<Message> _messageList = [];
   Map<String, Widget> _profilePictureByOwner = Map();
-  Map<String, String> _literalPricutreDictionary = Map();
-  final User _user;
-  WebSocketController? _webSocketController;
+  Map<String, String?> _literalPricutreDictionary = Map();
+  WebSocketController _webSocketController = WebSocketController();
   String? channel;
 
-  MessageController(this._user, String? channel) {
+  connectToWs(User user, String? channel) {
+    _webSocketController.connect(user.token, channel);
     this.channel = channel;
-    _webSocketController = WebSocketController(_user.token, channel);
   }
 
   Message createNewMessageFromString(String messageString, User user, String? channel) {
@@ -29,16 +28,16 @@ class MessageController {
     return Message("", picturePath, user.id, null, "", true, channel);
   }
 
-  void messageStream({required Function(List<Message> messageList, Map<String, Widget> imageFutureList) onMessageListLoaded}) async {
-    _webSocketController?.onReceive(onReceiveData: (data) async {
-      var haveData = await hasMessages(data);
+  void messageStream({required Function(List<Message> messageList, Map<String, Widget> imageFutureList) onMessageListLoaded, required User user}) async {
+    _webSocketController.onReceive(onReceiveData: (data) async {
+      var haveData = await hasMessages(data, user);
       if (haveData) {
         onMessageListLoaded(_messageList, _profilePictureByOwner);
       }
     });
   }
 
-  Future<bool> hasMessages(dynamic messageReceived) async {
+  Future<bool> hasMessages(dynamic messageReceived, User user) async {
     final List<dynamic>? dataListJson = jsonDecode(messageReceived.toString());
     if (dataListJson != null) {
       _messageList = [];
@@ -50,7 +49,7 @@ class MessageController {
         _messageList.add(message);
         if (message.ownerPicture != null) {
           if (_literalPricutreDictionary[message.owner] != message.ownerPicture) {
-            Image? image = await ProfilePicture().getImagePicture(user: _user, username: message.owner, height: 40, width: 40, picture: message.ownerPicture);
+            Image? image = await ProfilePicture().getImagePicture(user: user, username: message.owner, height: 40, width: 40, picture: message.ownerPicture);
             Widget defaultImage = ProfilePicture().defaultImagePicture(message.username, height: 40, width: 40);
             if (image == null) {
               if (_profilePictureByOwner[message.owner] != defaultImage) {
@@ -75,7 +74,7 @@ class MessageController {
   }
 
   sendMessage(Message message) {
-    _webSocketController?.sendMessage(message);
+    _webSocketController.sendMessage(message);
   }
 
   reportMessage(Message message, User user) async {
@@ -122,7 +121,7 @@ class MessageController {
   }
 
   closeWS() {
-    _webSocketController?.closeWS();
+    _webSocketController.closeWS();
   }
 
   refreshMessage(User user, String? channel) {
