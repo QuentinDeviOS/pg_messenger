@@ -95,12 +95,13 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
       _messageController.closeWS();
+      _messageController.connectToWs(_currentUser, _currentChannel);
       _messageController.messageStream(
           user: _currentUser,
           onMessageListLoaded: (onMessageListLoaded, imageList) {
             if (messageList != onMessageListLoaded) {
+              _ownerImageMap = imageList;
               setState(() {
-                _ownerImageMap = imageList;
                 messageList = onMessageListLoaded;
               });
             }
