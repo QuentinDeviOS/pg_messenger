@@ -37,6 +37,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
     return Scaffold(
       appBar: AppBar(title: Text("Modifier mes préférences")),
       body: SafeArea(
+        bottom: true,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.max,
@@ -147,6 +148,8 @@ class _UserSettingsViewState extends State<UserSettingsView> {
 
   onTapAddingPicture(context, User currentUser) async {
     showMaterialModalBottomSheet(
+        bounce: true,
+        elevation: 20,
         expand: false,
         context: context,
         builder: (context) {
@@ -187,7 +190,8 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                   );
                 },
                 leading: Icon(Icons.camera),
-              )
+              ),
+              Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 50))
             ],
           );
         });

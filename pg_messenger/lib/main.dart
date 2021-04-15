@@ -13,9 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Purple Giraffe Messenger",
-      theme: ThemeData(
-        primarySwatch: purpleGiraffe,
-      ),
+      theme: ThemeData(primarySwatch: purpleGiraffe),
       darkTheme: ThemeData(brightness: Brightness.dark, primarySwatch: purpleGiraffe, primaryColor: purpleGiraffe, accentColor: purpleGiraffe, toggleableActiveColor: purpleGiraffe),
       home: LoadingView(),
       localizationsDelegates: [
@@ -27,6 +25,10 @@ class MyApp extends StatelessWidget {
       supportedLocales: S.delegate.supportedLocales,
     );
   }
+}
+
+extension CustomColors on ColorScheme {
+  Color get textDarkModeTitle => brightness == Brightness.light ? Colors.grey.shade700 : Colors.grey.shade400;
 }
 
 MaterialColor purpleGiraffe = MaterialColor(0xFF9C386C, pgColour);

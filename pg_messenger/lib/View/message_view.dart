@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:pg_messenger/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
@@ -160,6 +161,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                   ),
                   Expanded(
                     child: TextFormField(
+                      textCapitalization: TextCapitalization.sentences,
                       controller: _textController,
                       focusNode: _inputFieldNode,
                       onFieldSubmitted: (_) {
@@ -208,7 +210,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     if (messageList[num].channel == _currentChannel) {
       return Card(
         child: Container(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.fromLTRB(10, 20, 0, 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -228,7 +230,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                         )),
                     Text(
                       messageList[num].username,
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black54),
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.textDarkModeTitle),
                     ),
                     Spacer(),
                     Text(_formatedTimestamp(messageList[num].timestamp)),
@@ -248,7 +250,11 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                   ],
                 ),
               ),
-              if (messageList[num].isPicture == null || (messageList[num].flag != true && !messageList[num].isPicture!)) Text(messageList[num].message),
+              if (messageList[num].isPicture == null || (messageList[num].flag != true && !messageList[num].isPicture!))
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                  child: Text(messageList[num].message),
+                ),
               if (messageList[num].isPicture != null && messageList[num].flag != true && messageList[num].isPicture!) messageIsImage(messageList[num], _currentUser),
               if (messageList[num].flag == true) Text(S.of(context).message_under_moderation)
             ],
@@ -392,7 +398,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                     Padding(padding: EdgeInsets.fromLTRB(20, 0, 0, 0)),
                     Text(
                       widget._currentUser.username,
-                      style: TextStyle(fontSize: 22, color: Colors.black54, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 22, color: Theme.of(context).colorScheme.textDarkModeTitle, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -411,14 +417,14 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                     Text(
                       "Salons",
                       textAlign: TextAlign.left,
-                      style: TextStyle(fontSize: 24, color: Colors.black87.withAlpha(100), fontWeight: FontWeight.w600),
+                      style: TextStyle(fontSize: 24, color: Theme.of(context).colorScheme.textDarkModeTitle, fontWeight: FontWeight.w600),
                     ),
                     Spacer(),
                     if (_currentUser.isModerator == true)
                       IconButton(
                           icon: Icon(
                             Icons.plus_one,
-                            color: Colors.black87.withAlpha(255),
+                            color: Theme.of(context).colorScheme.textDarkModeTitle,
                           ),
                           onPressed: () => pushToCreateChannelView()),
                   ],
@@ -439,12 +445,12 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                       Spacer(),
                       Icon(
                         Icons.logout,
-                        color: Color(0xFF9C386C).withAlpha(200),
+                        color: Theme.of(context).colorScheme.textDarkModeTitle,
                       ),
                       Padding(padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
                       Text(
                         "Se deconnecter",
-                        style: TextStyle(color: Color(0xFF9C386C).withAlpha(200)),
+                        style: TextStyle(color: Theme.of(context).colorScheme.textDarkModeTitle),
                       )
                     ],
                   ),
@@ -495,7 +501,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             Icon(
               Icons.tag,
               size: 20,
-              color: Colors.black45,
+              color: Theme.of(context).colorScheme.textDarkModeTitle,
             ),
             Padding(padding: EdgeInsets.fromLTRB(0, 0, 3, 0)),
             Text(
@@ -541,3 +547,5 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     }
   }
 }
+
+class CustomsColor {}
