@@ -3,6 +3,7 @@ import 'package:pg_messenger/Controller/channel_controller.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/Connection/loading_view.dart';
 import 'package:pg_messenger/View/message_view.dart';
+import 'package:pg_messenger/main.dart';
 
 class CreateChannelView extends StatefulWidget {
   final User _currentUser;
@@ -31,7 +32,7 @@ class _CreateChannelViewState extends State<CreateChannelView> {
           Spacer(),
           Text(
             "Créer un nouveau Channel",
-            style: TextStyle(fontSize: 22, color: Color(Colors.black54.value), fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 22, color: Theme.of(context).colorScheme.textDarkModeTitle, fontWeight: FontWeight.bold),
           ),
           Form(
               child: Column(
