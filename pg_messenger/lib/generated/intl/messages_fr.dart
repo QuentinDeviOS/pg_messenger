@@ -23,6 +23,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
+    "channel" : MessageLookupByLibrary.simpleMessage("Salons"),
     "channel_new_button" : MessageLookupByLibrary.simpleMessage("     Création"),
     "channel_new_checkbox" : MessageLookupByLibrary.simpleMessage("Accès public"),
     "channel_new_input_hint" : MessageLookupByLibrary.simpleMessage("Nom du salon"),
@@ -34,6 +35,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "login_send_button" : MessageLookupByLibrary.simpleMessage("Entrer"),
     "login_title" : MessageLookupByLibrary.simpleMessage("Se connecter"),
     "login_username" : MessageLookupByLibrary.simpleMessage("Nom d\'utilisateur"),
+    "logout_title" : MessageLookupByLibrary.simpleMessage("Se déconnecter"),
     "message_delete" : MessageLookupByLibrary.simpleMessage(" effacer le message"),
     "message_just_now" : MessageLookupByLibrary.simpleMessage("À l\'instant"),
     "message_logout" : MessageLookupByLibrary.simpleMessage("Se déconnecter"),

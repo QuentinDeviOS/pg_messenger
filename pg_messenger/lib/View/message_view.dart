@@ -425,7 +425,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                 child: Row(
                   children: [
                     Text(
-                      "Salons",
+                      S.of(context).channel,
                       textAlign: TextAlign.left,
                       style: TextStyle(fontSize: 24, color: Theme.of(context).colorScheme.textDarkModeTitle, fontWeight: FontWeight.w600),
                     ),
@@ -459,7 +459,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                       ),
                       Padding(padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
                       Text(
-                        "Se deconnecter",
+                        S.of(context).logout_title,
                         style: TextStyle(color: Theme.of(context).colorScheme.textDarkModeTitle),
                       )
                     ],

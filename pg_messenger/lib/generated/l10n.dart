@@ -257,6 +257,16 @@ class S {
     );
   }
 
+  /// `Log Out`
+  String get logout_title {
+    return Intl.message(
+      'Log Out',
+      name: 'logout_title',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Messages`
   String get message_title {
     return Intl.message(
@@ -322,6 +332,16 @@ class S {
     return Intl.message(
       'Message under moderation',
       name: 'message_under_moderation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Channels`
+  String get channel {
+    return Intl.message(
+      'Channels',
+      name: 'channel',
       desc: '',
       args: [],
     );
