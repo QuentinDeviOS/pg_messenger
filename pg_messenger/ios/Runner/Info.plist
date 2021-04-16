@@ -35,6 +35,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>The PG Messgenger App needs access to your camera if you want to take a new picture from your device.</string>
+	<key>NSFaceIDUsageDescription</key>
+<string>We need to acces FaceID to login.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>The PG Messgenger App need access to your photo library if you want to update any images from your device.</string>
 	<key>UILaunchStoryboardName</key>
