@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:pg_messenger/main.dart';
 import 'package:flutter/material.dart';
@@ -47,11 +45,13 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   final ImagePicker imagePicker = ImagePicker();
 
   MessageViewState(this._currentUser, this.channelList) {
+    _currentUser.getImagePicture();
     _messageController.connectToWs(_currentUser, _currentChannel);
   }
 
   @override
   void initState() {
+    print("initState");
     super.initState();
     WidgetsBinding.instance?.addObserver(this);
     _isCurrentView = true;
@@ -94,6 +94,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
+      print("didchange AppLifeCycle");
       _messageController.closeWS();
       _messageController.connectToWs(_currentUser, _currentChannel);
       _messageController.messageStream(
@@ -333,6 +334,17 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     headers["Authorization"] = "Bearer ${currentUser.token}";
     return Image.network(
       Constant.URL_WEB_SERVER_BASE + Constant.PATH_TO_GET_PICTURE + "?filename=${message.message}",
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) {
+          WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+            if (_scrollController.position.pixels == _oldPositionScrollMax) {
+              _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+            }
+          });
+          return child;
+        }
+        return CircularProgressIndicator();
+      },
       headers: headers,
     );
   }
@@ -377,39 +389,36 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             children: [
               Padding(padding: EdgeInsets.fromLTRB(20, 40, 0, 0)),
               GestureDetector(
-                child: Row(
-                  children: [
-                    Padding(padding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
-                    FutureBuilder(
-                        future: profilePictureController.getImagePicture(user: _currentUser, randomInt: Random().nextInt(5000), height: 60, width: 60, username: _currentUser.username),
-                        builder: (context, AsyncSnapshot<dynamic> snapshot) {
-                          if (snapshot.hasData) {
-                            return ClipRRect(
-                              borderRadius: BorderRadius.circular(30),
-                              child: Container(
-                                height: 60,
-                                width: 60,
-                                child: snapshot.data,
-                              ),
-                            );
-                          } else {
-                            return profilePictureController.defaultImagePicture(_currentUser.username, height: 60, width: 60);
-                          }
-                        }),
-                    Padding(padding: EdgeInsets.fromLTRB(20, 0, 0, 0)),
-                    Text(
-                      widget._currentUser.username,
-                      style: TextStyle(fontSize: 22, color: Theme.of(context).colorScheme.textDarkModeTitle, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => UserSettingsView(
-                              user: _currentUser,
-                            ))),
-              ),
+                  child: Row(
+                    children: [
+                      Padding(padding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
+                      if (_currentUser.profilePict != null)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: Container(
+                            child: _currentUser.profilePict,
+                            height: 60,
+                            width: 60,
+                          ),
+                        ),
+                      if (_currentUser.profilePict == null) ProfilePicture().defaultImagePicture(_currentUser.username, height: 60, width: 60),
+                      Padding(padding: EdgeInsets.fromLTRB(20, 0, 0, 0)),
+                      Text(
+                        widget._currentUser.username,
+                        style: TextStyle(fontSize: 22, color: Theme.of(context).colorScheme.textDarkModeTitle, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => UserSettingsView(
+                                  messageView: this,
+                                  user: _currentUser,
+                                )));
+                  }),
               Padding(padding: EdgeInsets.fromLTRB(20, 15, 20, 20)),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
@@ -548,6 +557,9 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
       _inputFieldNode!.unfocus();
     }
   }
-}
 
-class CustomsColor {}
+  updateState() async {
+    _messageController.refreshMessage(_currentUser, _currentChannel);
+    setState(() {});
+  }
+}

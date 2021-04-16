@@ -41,6 +41,7 @@ dependencies:
   path: ^1.8.0
   modal_bottom_sheet: ^2.0.0
   cached_network_image: ^3.0.0
+  flutter_cache_manager: ^3.0.1
   
 dev_dependencies:
   flutter_test:

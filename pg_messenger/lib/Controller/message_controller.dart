@@ -13,6 +13,7 @@ class MessageController {
   Map<String, Widget> _profilePictureByOwner = Map();
   Map<String, String?> _literalPricutreDictionary = Map();
   WebSocketController _webSocketController = WebSocketController();
+  final _profilePictureController = ProfilePicture();
   String? channel;
 
   connectToWs(User user, String? channel) {
@@ -49,8 +50,8 @@ class MessageController {
         _messageList.add(message);
         if (message.ownerPicture != null) {
           if (_literalPricutreDictionary[message.owner] != message.ownerPicture) {
-            Image? image = await ProfilePicture().getImagePicture(user: user, username: message.owner, height: 40, width: 40, picture: message.ownerPicture);
-            Widget defaultImage = ProfilePicture().defaultImagePicture(message.username, height: 40, width: 40);
+            Image? image = await _profilePictureController.getImagePicture(token: user.token, username: message.owner, picture: message.ownerPicture);
+            Widget defaultImage = _profilePictureController.defaultImagePicture(message.username, height: 40, width: 40);
             if (image == null) {
               if (_profilePictureByOwner[message.owner] != defaultImage) {
                 _profilePictureByOwner[message.owner] = defaultImage;
@@ -64,7 +65,7 @@ class MessageController {
             }
           }
         } else {
-          Widget defaultImage = ProfilePicture().defaultImagePicture(message.username, height: 40, width: 40);
+          Widget defaultImage = _profilePictureController.defaultImagePicture(message.username, height: 40, width: 40);
           _profilePictureByOwner[message.owner] = defaultImage;
         }
       }

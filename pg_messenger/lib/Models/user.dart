@@ -1,13 +1,20 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:pg_messenger/Constants/constant.dart';
+import 'package:pg_messenger/Controller/profile_picture_controller.dart';
 
 class User {
+  final _profilePictureController = ProfilePicture();
   final String _username;
   final String _id;
   final DateTime? _createdAt;
   final String _token;
   final bool? _isActive;
   final bool? _isModerator;
-  final String? _picture;
+  String? _picture;
+
+  Image? profilePict;
+  int _intToRefresh = 0;
 
   String get username => _username;
   String get id => _id;
@@ -41,4 +48,18 @@ class User {
   Map<String, dynamic> toJsonForSendMessage() => {
         Constant.JSONKEY_USER_ID: _id,
       };
+
+  getImagePicture() async {
+    if (_intToRefresh == 0) {
+      _intToRefresh = 1;
+      await DefaultCacheManager().removeFile(Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=0");
+      profilePict = await _profilePictureController.getImagePicture(token: this.token, username: this.username, randomInt: _intToRefresh);
+      return;
+    } else {
+      _intToRefresh = 0;
+      await DefaultCacheManager().removeFile(Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=1");
+      profilePict = await _profilePictureController.getImagePicture(token: this.token, username: this.username, randomInt: _intToRefresh);
+      return;
+    }
+  }
 }

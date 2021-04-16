@@ -8,10 +8,10 @@ import 'package:http/http.dart' as http;
 import 'package:pg_messenger/Models/user.dart';
 
 class ProfilePicture {
-  Future<bool> canGetPicture(User user, String? picture) async {
+  Future<bool> canGetPicture(String token, String? picture) async {
     Map<String, String> headers = Map();
     var requestUri;
-    headers["Authorization"] = "Bearer ${user.token}";
+    headers["Authorization"] = "Bearer $token";
     if (picture != null) {
       requestUri = Constant.URL_WEB_SERVER_BASE + "/users/canGetPicture?picture=$picture&refresh=" + Random().nextInt(5000000).toString();
     } else {
@@ -25,10 +25,10 @@ class ProfilePicture {
     }
   }
 
-  Future<Image?> getImagePicture({required User user, String? picture, int? randomInt, required String username, required double height, required double width}) async {
-    bool canGetPictureBool = await canGetPicture(user, picture);
+  Future<Image?> getImagePicture({required String token, String? picture, int? randomInt, required String username}) async {
+    bool canGetPictureBool = await canGetPicture(token, picture);
     Map<String, String> headers = Map();
-    headers["Authorization"] = "Bearer ${user.token}";
+    headers["Authorization"] = "Bearer $token";
     if (canGetPictureBool) {
       if (picture != null) {
         return Image(
