@@ -23,6 +23,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
+    "channel_new_button" : MessageLookupByLibrary.simpleMessage("     Create"),
+    "channel_new_checkbox" : MessageLookupByLibrary.simpleMessage("Public access"),
+    "channel_new_input_hint" : MessageLookupByLibrary.simpleMessage("Channel name"),
+    "channel_new_title" : MessageLookupByLibrary.simpleMessage("Create new channel"),
     "login_alert_OK_button" : MessageLookupByLibrary.simpleMessage("OK"),
     "login_error_text" : MessageLookupByLibrary.simpleMessage("Username and/or password do not match."),
     "login_error_title" : MessageLookupByLibrary.simpleMessage("Are you sure about your credentials?"),

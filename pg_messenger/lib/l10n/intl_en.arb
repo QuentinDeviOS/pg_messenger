@@ -26,5 +26,9 @@
     "message_just_now": "Just now",
     "message_report": " report abuse",
     "message_delete": " delete message",
-    "message_under_moderation": "Message under moderation"
+    "message_under_moderation": "Message under moderation",
+    "channel_new_title": "Create new channel",
+    "channel_new_input_hint": "Channel name",
+    "channel_new_checkbox": "Public access",
+    "channel_new_button": "     Create"
 }

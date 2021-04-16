@@ -3,7 +3,7 @@ import 'package:pg_messenger/Controller/channel_controller.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/Connection/loading_view.dart';
 import 'package:pg_messenger/View/message_view.dart';
-import 'package:pg_messenger/main.dart';
+import 'package:pg_messenger/generated/l10n.dart';
 
 class CreateChannelView extends StatefulWidget {
   final User _currentUser;
@@ -23,16 +23,20 @@ class _CreateChannelViewState extends State<CreateChannelView> {
 
   @override
   Widget build(BuildContext context) {
+  final String appBarTitle = S.of(context).channel_new_title;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Créer un nouveau Channel de discussion"),
+        title: Text("Nouveau salon"),
       ),
       body: Column(
         children: [
           Spacer(),
           Text(
-            "Créer un nouveau Channel",
-            style: TextStyle(fontSize: 22, color: Theme.of(context).colorScheme.textDarkModeTitle, fontWeight: FontWeight.bold),
+            S.of(context).channel_new_title,
+            style: TextStyle(
+                fontSize: 22,
+                color: Theme.of(context).colorScheme.textDarkModeTitle,
+                fontWeight: FontWeight.bold),
           ),
           Form(
               child: Column(
@@ -40,7 +44,8 @@ class _CreateChannelViewState extends State<CreateChannelView> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextFormField(
-                  decoration: InputDecoration(hintText: "Nom du channel"),
+                  decoration: InputDecoration(
+                      hintText: S.of(context).channel_new_input_hint),
                   controller: _controller,
                   onFieldSubmitted: (value) => createChannel(_isPublic),
                 ),
@@ -56,7 +61,7 @@ class _CreateChannelViewState extends State<CreateChannelView> {
                       });
                     },
                   ),
-                  Text("Créer ce Channel en Public")
+                  Text(S.of(context).channel_new_checkbox)
                 ],
               ),
               Padding(
@@ -64,7 +69,10 @@ class _CreateChannelViewState extends State<CreateChannelView> {
                 child: ElevatedButton(
                     onPressed: () => createChannel(_isPublic),
                     child: Row(
-                      children: [Icon(Icons.create_new_folder), Text("     Créer le channel !")],
+                      children: [
+                        Icon(Icons.create_new_folder),
+                        Text(S.of(context).channel_new_button)
+                      ],
                     )),
               )
             ],

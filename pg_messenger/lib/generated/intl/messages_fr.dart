@@ -23,6 +23,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
+    "channel_new_button" : MessageLookupByLibrary.simpleMessage("     Création"),
+    "channel_new_checkbox" : MessageLookupByLibrary.simpleMessage("Accès public"),
+    "channel_new_input_hint" : MessageLookupByLibrary.simpleMessage("Nom du salon"),
+    "channel_new_title" : MessageLookupByLibrary.simpleMessage("Créer un nouveau salon"),
     "login_alert_OK_button" : MessageLookupByLibrary.simpleMessage("OK"),
     "login_error_text" : MessageLookupByLibrary.simpleMessage("Le mot de passe et l\'identifiant ne concordent pas"),
     "login_error_title" : MessageLookupByLibrary.simpleMessage("Impossible de se connecter"),

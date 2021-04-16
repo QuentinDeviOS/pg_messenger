@@ -326,6 +326,46 @@ class S {
       args: [],
     );
   }
+
+  /// `Create new channel`
+  String get channel_new_title {
+    return Intl.message(
+      'Create new channel',
+      name: 'channel_new_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Channel name`
+  String get channel_new_input_hint {
+    return Intl.message(
+      'Channel name',
+      name: 'channel_new_input_hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Public access`
+  String get channel_new_checkbox {
+    return Intl.message(
+      'Public access',
+      name: 'channel_new_checkbox',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `     Create`
+  String get channel_new_button {
+    return Intl.message(
+      '     Create',
+      name: 'channel_new_button',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
