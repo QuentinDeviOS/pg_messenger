@@ -519,26 +519,27 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   }
 
   onTapDrawerListTile(int num) async {
-    title = channelList[num].name;
-    _currentChannel = channelList[num].id;
-    await _messageController.closeWS();
-    _messageController.connectToWs(_currentUser, _currentChannel);
-    _messageController.messageStream(
-      user: _currentUser,
-      onMessageListLoaded: (messageList, imageList) {
-        if (_isCurrentView) {
-          if (messageList != this.messageList) {
-            if (_ownerImageMap != imageList) {
-              _ownerImageMap = imageList;
+    if (_currentChannel != channelList[num].id) {
+      title = channelList[num].name;
+      _currentChannel = channelList[num].id;
+      await _messageController.closeWS();
+      _messageController.connectToWs(_currentUser, _currentChannel);
+      _messageController.messageStream(
+        user: _currentUser,
+        onMessageListLoaded: (messageList, imageList) {
+          if (_isCurrentView) {
+            if (messageList != this.messageList) {
+              if (_ownerImageMap != imageList) {
+                _ownerImageMap = imageList;
+              }
+              setState(() {
+                this.messageList = messageList;
+              });
             }
-            setState(() {
-              this.messageList = messageList;
-            });
           }
-        }
-      },
-    );
-
+        },
+      );
+    }
     Navigator.pop(context);
   }
 

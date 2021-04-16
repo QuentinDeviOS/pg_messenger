@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pg_messenger/Constants/constant.dart';
@@ -30,17 +31,20 @@ class ProfilePicture {
     headers["Authorization"] = "Bearer ${user.token}";
     if (canGetPictureBool) {
       if (picture != null) {
-        return Image.network(
-          Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?picture=$picture&refresh=" + randomInt.toString(),
-          headers: headers,
+        return Image(
+          image: CachedNetworkImageProvider(
+            Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?picture=$picture&refresh=" + randomInt.toString(),
+            headers: headers,
+          ),
           fit: BoxFit.cover,
         );
       } else {
-        return Image.network(
-          Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=" + randomInt.toString(),
-          headers: headers,
-          fit: BoxFit.cover,
-        );
+        return Image(
+            image: CachedNetworkImageProvider(
+              Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=" + randomInt.toString(),
+              headers: headers,
+            ),
+            fit: BoxFit.cover);
       }
     } else {
       return null;
