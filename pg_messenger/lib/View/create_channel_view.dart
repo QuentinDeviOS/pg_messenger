@@ -4,6 +4,7 @@ import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/Connection/loading_view.dart';
 import 'package:pg_messenger/View/message_view.dart';
 import 'package:pg_messenger/generated/l10n.dart';
+import 'package:pg_messenger/main.dart';
 
 class CreateChannelView extends StatefulWidget {
   final User _currentUser;
@@ -23,10 +24,10 @@ class _CreateChannelViewState extends State<CreateChannelView> {
 
   @override
   Widget build(BuildContext context) {
-  final String appBarTitle = S.of(context).channel_new_title;
+    final String appBarTitle = S.of(context).channel_new_title;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Nouveau salon"),
+        title: Text(appBarTitle),
       ),
       body: Column(
         children: [
@@ -87,9 +88,13 @@ class _CreateChannelViewState extends State<CreateChannelView> {
     final channelController = ChannelController();
     if (_controller.text.length < 3) {
     } else {
-      var responseCode = await _channelController.createNewChannel(widget._currentUser, name: _controller.text, isPublic: isPublic);
+      var responseCode = await _channelController.createNewChannel(
+          widget._currentUser,
+          name: _controller.text,
+          isPublic: isPublic);
       if (responseCode == 200) {
-        final channelList = await channelController.getChannels(widget._currentUser.token);
+        final channelList =
+            await channelController.getChannels(widget._currentUser.token);
         await Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
             if (channelList != null) {
