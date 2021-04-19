@@ -163,6 +163,8 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                   ),
                   Expanded(
                     child: TextFormField(
+                      minLines: 1,
+                      maxLines: 5,
                       textCapitalization: TextCapitalization.sentences,
                       controller: _textController,
                       focusNode: _inputFieldNode,
