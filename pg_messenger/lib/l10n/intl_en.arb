@@ -20,11 +20,17 @@
     "login_error_title": "Are you sure about your credentials?",
     "login_error_text": "Username and/or password do not match.",
     "login_alert_OK_button": "OK",
+    "logout_title": "Log Out",
     "message_title": "Messages",
     "message_logout": "Log Out",
     "message_send_button": "Send message",
     "message_just_now": "Just now",
     "message_report": " report abuse",
     "message_delete": " delete message",
-    "message_under_moderation": "Message under moderation"
+    "message_under_moderation": "Message under moderation",
+    "channel": "Channels",
+    "channel_new_title": "Create new channel",
+    "channel_new_input_hint": "Channel name",
+    "channel_new_checkbox": "Public access",
+    "channel_new_button": "     Create"
 }

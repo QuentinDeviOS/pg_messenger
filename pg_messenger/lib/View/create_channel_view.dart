@@ -3,6 +3,7 @@ import 'package:pg_messenger/Controller/channel_controller.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/Connection/loading_view.dart';
 import 'package:pg_messenger/View/message_view.dart';
+import 'package:pg_messenger/generated/l10n.dart';
 import 'package:pg_messenger/main.dart';
 
 class CreateChannelView extends StatefulWidget {
@@ -23,16 +24,20 @@ class _CreateChannelViewState extends State<CreateChannelView> {
 
   @override
   Widget build(BuildContext context) {
+    final String appBarTitle = S.of(context).channel_new_title;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Créer un nouveau Channel de discussion"),
+        title: Text(appBarTitle),
       ),
       body: Column(
         children: [
           Spacer(),
           Text(
-            "Créer un nouveau Channel",
-            style: TextStyle(fontSize: 22, color: Theme.of(context).colorScheme.textDarkModeTitle, fontWeight: FontWeight.bold),
+            S.of(context).channel_new_title,
+            style: TextStyle(
+                fontSize: 22,
+                color: Theme.of(context).colorScheme.textDarkModeTitle,
+                fontWeight: FontWeight.bold),
           ),
           Form(
               child: Column(
@@ -40,7 +45,8 @@ class _CreateChannelViewState extends State<CreateChannelView> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextFormField(
-                  decoration: InputDecoration(hintText: "Nom du channel"),
+                  decoration: InputDecoration(
+                      hintText: S.of(context).channel_new_input_hint),
                   controller: _controller,
                   onFieldSubmitted: (value) => createChannel(_isPublic),
                 ),
@@ -56,7 +62,7 @@ class _CreateChannelViewState extends State<CreateChannelView> {
                       });
                     },
                   ),
-                  Text("Créer ce Channel en Public")
+                  Text(S.of(context).channel_new_checkbox)
                 ],
               ),
               Padding(
@@ -64,7 +70,10 @@ class _CreateChannelViewState extends State<CreateChannelView> {
                 child: ElevatedButton(
                     onPressed: () => createChannel(_isPublic),
                     child: Row(
-                      children: [Icon(Icons.create_new_folder), Text("     Créer le channel !")],
+                      children: [
+                        Icon(Icons.create_new_folder),
+                        Text(S.of(context).channel_new_button)
+                      ],
                     )),
               )
             ],
@@ -79,9 +88,13 @@ class _CreateChannelViewState extends State<CreateChannelView> {
     final channelController = ChannelController();
     if (_controller.text.length < 3) {
     } else {
-      var responseCode = await _channelController.createNewChannel(widget._currentUser, name: _controller.text, isPublic: isPublic);
+      var responseCode = await _channelController.createNewChannel(
+          widget._currentUser,
+          name: _controller.text,
+          isPublic: isPublic);
       if (responseCode == 200) {
-        final channelList = await channelController.getChannels(widget._currentUser.token);
+        final channelList =
+            await channelController.getChannels(widget._currentUser.token);
         await Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
             if (channelList != null) {

@@ -257,6 +257,16 @@ class S {
     );
   }
 
+  /// `Log Out`
+  String get logout_title {
+    return Intl.message(
+      'Log Out',
+      name: 'logout_title',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Messages`
   String get message_title {
     return Intl.message(
@@ -322,6 +332,56 @@ class S {
     return Intl.message(
       'Message under moderation',
       name: 'message_under_moderation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Channels`
+  String get channel {
+    return Intl.message(
+      'Channels',
+      name: 'channel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create new channel`
+  String get channel_new_title {
+    return Intl.message(
+      'Create new channel',
+      name: 'channel_new_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Channel name`
+  String get channel_new_input_hint {
+    return Intl.message(
+      'Channel name',
+      name: 'channel_new_input_hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Public access`
+  String get channel_new_checkbox {
+    return Intl.message(
+      'Public access',
+      name: 'channel_new_checkbox',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `     Create`
+  String get channel_new_button {
+    return Intl.message(
+      '     Create',
+      name: 'channel_new_button',
       desc: '',
       args: [],
     );

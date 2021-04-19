@@ -20,11 +20,17 @@
     "login_error_title": "Impossible de se connecter",
     "login_error_text": "Le mot de passe et l'identifiant ne concordent pas",
     "login_alert_OK_button": "OK",
+    "logout_title": "Se déconnecter",
     "message_title": "Messages",
     "message_logout": "Se déconnecter",
     "message_send_button": "Envoyer le message",
     "message_just_now": "À l'instant",
     "message_report": " reporter le message",
     "message_delete": " effacer le message",
-    "message_under_moderation": "Message en cours de modération"
+    "message_under_moderation": "Message en cours de modération",
+    "channel": "Salons",
+    "channel_new_title": "Créer un nouveau salon",
+    "channel_new_input_hint": "Nom du salon",
+    "channel_new_checkbox": "Accès public",
+    "channel_new_button": "     Création"
 }
