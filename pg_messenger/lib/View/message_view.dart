@@ -175,20 +175,26 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                       },
                       onTap: () => goToEndList(),
                       decoration: InputDecoration(
-                        labelText: S.of(context).message_send_button,
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 4.0,
-                            color: Theme.of(context).primaryColor,
+                          hintText: "Aa",
+                          border: InputBorder.none,
+                          filled: true,
+                          contentPadding: EdgeInsets.all(8),
+                          //labelText: S.of(context).message_send_button,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(
+                              color: Theme.of(context).primaryColor,
+                              width: 1.0,
+                            ),
                           ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            width: 4.0,
-                            color: Theme.of(context).primaryColor,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(
+                              color: Theme.of(context).primaryColor,
+                              width: 1.0,
+                            ),
                           ),
-                        ),
-                      ),
+                          isDense: true),
                     ),
                   ),
                   IconButton(
