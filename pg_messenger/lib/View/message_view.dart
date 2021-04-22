@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pg_messenger/main.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +46,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   final ImagePicker imagePicker = ImagePicker();
 
   MessageViewState(this._currentUser, this.channelList) {
+    prepareNotification();
     _currentUser.getImagePicture();
     _messageController.connectToWs(_currentUser, _currentChannel);
   }
@@ -383,6 +385,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void logOut() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(Constant.JSONKEY_TOKEN, "");
+    FirebaseMessaging.instance.deleteToken();
   }
 
   //Menu Drawer
@@ -569,5 +572,17 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   updateState() async {
     _messageController.refreshMessage(_currentUser, _currentChannel);
     setState(() {});
+  }
+
+  prepareNotification() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    await messaging.requestPermission(alert: true, announcement: true, badge: true, carPlay: false, criticalAlert: false, provisional: false, sound: true);
+    if (_currentUser.isModerator == true) {
+      messaging.subscribeToTopic("moderator");
+      messaging.subscribeToTopic("general");
+    } else {
+      messaging.subscribeToTopic("general");
+    }
+    return;
   }
 }
