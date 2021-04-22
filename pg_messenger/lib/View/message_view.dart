@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:pg_messenger/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -53,7 +54,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    print("initState");
+    FlutterAppBadger.removeBadge();
     super.initState();
     WidgetsBinding.instance?.addObserver(this);
     _isCurrentView = true;
@@ -96,9 +97,9 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
-      print("didchange AppLifeCycle");
       _messageController.closeWS();
       _messageController.connectToWs(_currentUser, _currentChannel);
+      FlutterAppBadger.removeBadge();
       _messageController.messageStream(
           user: _currentUser,
           onMessageListLoaded: (onMessageListLoaded, imageList) {
