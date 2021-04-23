@@ -1,6 +1,10 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+<<<<<<< HEAD
 import 'package:flutter_app_badger/flutter_app_badger.dart';
+=======
+import 'package:pg_messenger/View/Components/image_message.dart';
+>>>>>>> 176647e2502397f4a72e8d35cbdccb3d567985e7
 import 'package:pg_messenger/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -178,7 +182,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                         sendMessage();
                         _textController.text = "";
                       },
-                      onTap: () => goToEndList(),
+                      onTap: () => _messageController.goToEndList(oldPositionScrollMax: _oldPositionScrollMax, scrollController: _scrollController),
                       decoration: InputDecoration(
                           hintText: "Aa",
                           border: InputBorder.none,
@@ -218,7 +222,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   Widget _singleMessage(BuildContext context, int num) {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
-      goToEndList();
+      _messageController.goToEndList(oldPositionScrollMax: _oldPositionScrollMax, scrollController: _scrollController);
     });
     if (messageList[num].channel == _currentChannel) {
       return Card(
@@ -268,7 +272,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                   padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                   child: Text(messageList[num].message),
                 ),
-              if (messageList[num].isPicture != null && messageList[num].flag != true && messageList[num].isPicture!) messageIsImage(messageList[num], _currentUser),
+              if (messageList[num].isPicture != null && messageList[num].flag != true && messageList[num].isPicture!) imageMessage(currentUser: _currentUser, message: messageList[num], oldPositionScrollMax: _oldPositionScrollMax, scrollController: _scrollController),
               if (messageList[num].flag == true) Text(S.of(context).message_under_moderation)
             ],
           ),
@@ -324,40 +328,6 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
       _messageController.sendMessage(message);
     }
     _textController.text = "";
-  }
-
-  goToEndList() async {
-    if (_scrollController.position.pixels == _oldPositionScrollMax && _oldPositionScrollMax != _scrollController.position.maxScrollExtent && _oldPositionScrollMax != 0) {
-      do {
-        _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-        await _scrollController.position.moveTo(_scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 500));
-      } while (_scrollController.position.pixels != _scrollController.position.maxScrollExtent);
-    } else if (_oldPositionScrollMax == 0) {
-      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-      _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
-    }
-    _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-    return;
-  }
-
-  Widget messageIsImage(Message message, User currentUser) {
-    Map<String, String> headers = Map();
-    headers["Authorization"] = "Bearer ${currentUser.token}";
-    return Image.network(
-      Constant.URL_WEB_SERVER_BASE + Constant.PATH_TO_GET_PICTURE + "?filename=${message.message}",
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) {
-          WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-            if (_scrollController.position.pixels == _oldPositionScrollMax) {
-              _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-            }
-          });
-          return child;
-        }
-        return CircularProgressIndicator();
-      },
-      headers: headers,
-    );
   }
 
   Widget messageIsText(Message message) {
@@ -491,7 +461,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   pushToCreateChannelView() {
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateChannelView(widget.key, widget._currentUser)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateChannelView(_currentUser)));
   }
 
   Widget itemBuilder(BuildContext context, int num) {

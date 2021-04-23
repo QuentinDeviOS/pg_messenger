@@ -9,7 +9,7 @@ import 'package:pg_messenger/main.dart';
 class CreateChannelView extends StatefulWidget {
   final User _currentUser;
 
-  CreateChannelView(Key? key, this._currentUser) : super(key: key);
+  CreateChannelView(this._currentUser);
 
   @override
   _CreateChannelViewState createState() => _CreateChannelViewState();
@@ -34,10 +34,7 @@ class _CreateChannelViewState extends State<CreateChannelView> {
           Spacer(),
           Text(
             S.of(context).channel_new_title,
-            style: TextStyle(
-                fontSize: 22,
-                color: Theme.of(context).colorScheme.textDarkModeTitle,
-                fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 22, color: Theme.of(context).colorScheme.textDarkModeTitle, fontWeight: FontWeight.bold),
           ),
           Form(
               child: Column(
@@ -45,8 +42,7 @@ class _CreateChannelViewState extends State<CreateChannelView> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextFormField(
-                  decoration: InputDecoration(
-                      hintText: S.of(context).channel_new_input_hint),
+                  decoration: InputDecoration(hintText: S.of(context).channel_new_input_hint),
                   controller: _controller,
                   onFieldSubmitted: (value) => createChannel(_isPublic),
                 ),
@@ -70,10 +66,7 @@ class _CreateChannelViewState extends State<CreateChannelView> {
                 child: ElevatedButton(
                     onPressed: () => createChannel(_isPublic),
                     child: Row(
-                      children: [
-                        Icon(Icons.create_new_folder),
-                        Text(S.of(context).channel_new_button)
-                      ],
+                      children: [Icon(Icons.create_new_folder), Text(S.of(context).channel_new_button)],
                     )),
               )
             ],
@@ -88,13 +81,9 @@ class _CreateChannelViewState extends State<CreateChannelView> {
     final channelController = ChannelController();
     if (_controller.text.length < 3) {
     } else {
-      var responseCode = await _channelController.createNewChannel(
-          widget._currentUser,
-          name: _controller.text,
-          isPublic: isPublic);
+      var responseCode = await _channelController.createNewChannel(widget._currentUser, name: _controller.text, isPublic: isPublic);
       if (responseCode == 200) {
-        final channelList =
-            await channelController.getChannels(widget._currentUser.token);
+        final channelList = await channelController.getChannels(widget._currentUser.token);
         await Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
             if (channelList != null) {
