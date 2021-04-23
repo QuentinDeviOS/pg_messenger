@@ -1,10 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
-<<<<<<< HEAD
 import 'package:flutter_app_badger/flutter_app_badger.dart';
-=======
 import 'package:pg_messenger/View/Components/image_message.dart';
->>>>>>> 176647e2502397f4a72e8d35cbdccb3d567985e7
 import 'package:pg_messenger/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';

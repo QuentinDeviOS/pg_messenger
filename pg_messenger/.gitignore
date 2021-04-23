@@ -44,3 +44,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Profile and cert and json keys
+/PGMESSENGER_PROFILE_&_Cert/
