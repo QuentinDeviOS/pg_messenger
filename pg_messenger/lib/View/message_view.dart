@@ -178,7 +178,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                         sendMessage();
                         _textController.text = "";
                       },
-                      onTap: () => _messageController.goToEndList(oldPositionScrollMax: _oldPositionScrollMax, scrollController: _scrollController),
+                      onTap: () => goToEndList(),
                       decoration: InputDecoration(
                           hintText: "Aa",
                           border: InputBorder.none,
@@ -216,9 +216,23 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     );
   }
 
+  goToEndList() async {
+    if (_scrollController.position.pixels == _oldPositionScrollMax && _oldPositionScrollMax != _scrollController.position.maxScrollExtent && _oldPositionScrollMax != 0) {
+      do {
+        _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+        await _scrollController.position.moveTo(_scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 500));
+      } while (_scrollController.position.pixels != _scrollController.position.maxScrollExtent);
+    } else if (_oldPositionScrollMax == 0) {
+      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+      _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
+    }
+    _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+    return;
+  }
+
   Widget _singleMessage(BuildContext context, int num) {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
-      _messageController.goToEndList(oldPositionScrollMax: _oldPositionScrollMax, scrollController: _scrollController);
+      goToEndList();
     });
     if (messageList[num].channel == _currentChannel) {
       return Card(

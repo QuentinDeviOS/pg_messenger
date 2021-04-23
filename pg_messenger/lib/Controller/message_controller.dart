@@ -137,20 +137,6 @@ class MessageController {
     }
   }
 
-  goToEndList({required ScrollController scrollController, required double? oldPositionScrollMax}) async {
-    if (scrollController.position.pixels == oldPositionScrollMax && oldPositionScrollMax != scrollController.position.maxScrollExtent && oldPositionScrollMax != 0) {
-      do {
-        oldPositionScrollMax = scrollController.position.maxScrollExtent;
-        await scrollController.position.moveTo(scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 500));
-      } while (scrollController.position.pixels != scrollController.position.maxScrollExtent);
-    } else if (oldPositionScrollMax == 0) {
-      oldPositionScrollMax = scrollController.position.maxScrollExtent;
-      scrollController.position.jumpTo(scrollController.position.maxScrollExtent);
-    }
-    oldPositionScrollMax = scrollController.position.maxScrollExtent;
-    return;
-  }
-
   void logOut() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(Constant.JSONKEY_TOKEN, "");
