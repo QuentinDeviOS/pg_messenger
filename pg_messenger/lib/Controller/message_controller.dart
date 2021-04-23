@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pg_messenger/Constants/constant.dart';
@@ -7,6 +8,7 @@ import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Controller/web_socket_controller.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MessageController {
   List<Message> _messageList = [];
@@ -133,5 +135,25 @@ class MessageController {
     } else {
       http.get(Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/refresh-messages?channel=" + channel), headers: headers);
     }
+  }
+
+  goToEndList({required ScrollController scrollController, required double? oldPositionScrollMax}) async {
+    if (scrollController.position.pixels == oldPositionScrollMax && oldPositionScrollMax != scrollController.position.maxScrollExtent && oldPositionScrollMax != 0) {
+      do {
+        oldPositionScrollMax = scrollController.position.maxScrollExtent;
+        await scrollController.position.moveTo(scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 500));
+      } while (scrollController.position.pixels != scrollController.position.maxScrollExtent);
+    } else if (oldPositionScrollMax == 0) {
+      oldPositionScrollMax = scrollController.position.maxScrollExtent;
+      scrollController.position.jumpTo(scrollController.position.maxScrollExtent);
+    }
+    oldPositionScrollMax = scrollController.position.maxScrollExtent;
+    return;
+  }
+
+  void logOut() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(Constant.JSONKEY_TOKEN, "");
+    FirebaseMessaging.instance.deleteToken();
   }
 }
