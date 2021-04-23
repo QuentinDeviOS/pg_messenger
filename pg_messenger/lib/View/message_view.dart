@@ -30,22 +30,22 @@ class MessageView extends StatefulWidget {
 }
 
 class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
-  List<Channel> channelList;
-  String? _currentChannel;
   final User _currentUser;
-  var profilePictureController = ProfilePicture();
-  late MessageController _messageController = MessageController();
   final _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final channelController = ChannelController();
+  final ImagePicker imagePicker = ImagePicker();
+  final FocusNode _inputFieldNode = FocusNode();
+
+  List<Channel> channelList;
+  String? _currentChannel;
+  var profilePictureController = ProfilePicture();
+  MessageController _messageController = MessageController();
   bool _isCurrentView = false;
   double? _oldPositionScrollMax;
-  FocusNode? _inputFieldNode;
   List<Message> messageList = [];
   Map<String, Widget> _ownerImageMap = Map();
   String title = "Général";
-
-  final ImagePicker imagePicker = ImagePicker();
 
   MessageViewState(this._currentUser, this.channelList) {
     prepareNotification();
@@ -59,7 +59,6 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance?.addObserver(this);
     _isCurrentView = true;
-    _inputFieldNode = FocusNode();
     _messageController.messageStream(
       user: _currentUser,
       onMessageListLoaded: (messageList, imageList) {
