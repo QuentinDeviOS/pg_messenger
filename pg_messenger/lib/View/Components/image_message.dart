@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Models/message.dart';
-import 'package:pg_messenger/Models/user.dart';
 
 Widget imageMessage({required MessageController messageController, required Message message}) {
   Map<String, String> headers = Map();

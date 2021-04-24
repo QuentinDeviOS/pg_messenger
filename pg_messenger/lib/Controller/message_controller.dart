@@ -34,6 +34,7 @@ class MessageController {
   String? _currentChannel;
 
   List<Message> _messageList = [];
+  List<Message> _messageListBuilder = [];
   Map<String, Widget> _profilePictureByOwner = Map();
   Map<String, String?> _literalPricutreDictionary = Map();
   WebSocketController _webSocketController = WebSocketController();
@@ -67,7 +68,7 @@ class MessageController {
     _webSocketController.onReceive(onReceiveData: (data) async {
       var haveData = await hasMessages(data, user);
       if (haveData) {
-        onMessageListLoaded(_messageList, _profilePictureByOwner);
+        onMessageListLoaded(_messageListBuilder, _profilePictureByOwner);
       }
     });
   }
@@ -75,13 +76,13 @@ class MessageController {
   Future<bool> hasMessages(dynamic messageReceived, User user) async {
     final List<dynamic>? dataListJson = jsonDecode(messageReceived.toString());
     if (dataListJson != null) {
-      _messageList = [];
+      _messageListBuilder = [];
       for (var messageJson in dataListJson) {
         Message message = Message.fromJson(messageJson);
         if (message.channel != channel) {
           return false;
         }
-        _messageList.add(message);
+        _messageListBuilder.add(message);
         if (message.ownerPicture != null) {
           if (_literalPricutreDictionary[message.owner] != message.ownerPicture) {
             Image? image = await profilePictureController.getImagePicture(token: user.token, username: message.owner, picture: message.ownerPicture);
@@ -188,16 +189,21 @@ class MessageController {
   }
 
   launchStream({required Function onNewMessage}) async {
-    await closeWS();
+    //await closeWS();
     connectToWs(_currentUser, _currentChannel);
     messageStream(
       user: _currentUser,
       onMessageListLoaded: (messageList, imageList) {
+        print("messageList loaded");
+        print(messageList + _messageList);
         if (_isCurrentView) {
-          if (messageList != messageList) {
+          if (_messageList != messageList) {
+            print("_messageList different to message receive");
             if (_ownerImageMap != imageList) {
               _ownerImageMap = imageList;
+              onNewMessage();
             }
+            print("addToMessageList");
             this._messageList = messageList;
             onNewMessage();
           }
@@ -207,6 +213,7 @@ class MessageController {
   }
 
   initView() {
+    _isCurrentView = true;
     _oldPositionScrollMax = 0;
     _scrollController.addListener(() {
       if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
@@ -224,6 +231,7 @@ class MessageController {
   }
 
   onDispose() {
+    _isCurrentView = false;
     inputFieldNode.dispose();
     closeWS();
   }
@@ -269,5 +277,9 @@ class MessageController {
       launchStream(onNewMessage: () => onChannelVerify());
     }
     Navigator.pop(context);
+  }
+
+  updateStateOnView(Function updateState) {
+    updateState();
   }
 }

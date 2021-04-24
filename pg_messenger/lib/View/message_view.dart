@@ -1,11 +1,9 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:pg_messenger/View/Components/image_message.dart';
 import 'package:pg_messenger/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Controller/profile_picture_controller.dart';
 import 'package:pg_messenger/Models/message.dart';
@@ -13,34 +11,36 @@ import 'package:pg_messenger/View/Connection/connection_view.dart';
 import 'package:intl/intl.dart';
 import 'package:pg_messenger/View/user_settings_view.dart';
 import 'package:pg_messenger/generated/l10n.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'create_channel_view.dart';
 
 class MessageView extends StatefulWidget {
   final MessageController _messageController;
-  MessageView(this._messageController, {Key? key}) : super(key: key);
+  MessageView(
+    this._messageController, {
+    Key? key,
+  }) : super(key: key);
   @override
-  MessageViewState createState() => MessageViewState(_messageController);
+  _MessageViewState createState() => _MessageViewState(_messageController);
 }
 
-class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
+class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   final MessageController _messageController;
 
-  bool _isCurrentView = false;
-
-  MessageViewState(this._messageController);
+  _MessageViewState(this._messageController);
 
   @override
   void initState() {
     FlutterAppBadger.removeBadge();
     super.initState();
     WidgetsBinding.instance?.addObserver(this);
-    _isCurrentView = true;
     _messageController.launchStream(onNewMessage: () {
       setState(() {});
     });
     _messageController.initView();
+    _messageController.updateStateOnView(() {
+      setState(() {});
+    });
   }
 
   @override
@@ -64,7 +64,6 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance?.removeObserver(this);
-    _isCurrentView = false;
     _messageController.onDispose();
     super.dispose();
   }
@@ -85,7 +84,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             icon: const Icon(Icons.logout),
             tooltip: S.of(context).message_logout,
             onPressed: () {
-              logOut();
+              _messageController.logOut();
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConnectionView()));
             },
           ),
@@ -162,8 +161,6 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
       ),
     );
   }
-
-
 
   Widget _singleMessage(BuildContext context, int num) {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
@@ -267,8 +264,6 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     ];
   }
 
-
-
   Widget messageIsText(Message message) {
     return Text(message.message);
   }
@@ -292,12 +287,6 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     }
   }
 
-  void logOut() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(Constant.JSONKEY_TOKEN, "");
-    FirebaseMessaging.instance.deleteToken();
-  }
-
   //Menu Drawer
   //
 
@@ -317,12 +306,12 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(100),
                           child: Container(
-                            child: _messageController.profilePict,
+                            child: _messageController.currentUser.profilePict,
                             height: 60,
                             width: 60,
                           ),
                         ),
-                      if (_messageController.profilePict == null) ProfilePicture().defaultImagePicture(_currentUser.username, height: 60, width: 60),
+                      if (_messageController.currentUser.profilePict == null) ProfilePicture().defaultImagePicture(_messageController.currentUser.username, height: 60, width: 60),
                       Padding(padding: EdgeInsets.fromLTRB(20, 0, 0, 0)),
                       Text(
                         _messageController.currentUser.username,
@@ -335,10 +324,11 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => UserSettingsView(
-                                  messageView: this,
-                                  user: _messageController.currentUser,
-                                )));
+                            builder: (context) => UserSettingsView(_messageController, () {
+                                  setState(() {
+                                    _messageController.refreshMessage();
+                                  });
+                                })));
                   }),
               Padding(padding: EdgeInsets.fromLTRB(20, 15, 20, 20)),
               Padding(
@@ -387,7 +377,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                   ),
                 ),
                 onPressed: () {
-                  logOut();
+                  _messageController.logOut();
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConnectionView()));
                 },
               ),
@@ -400,7 +390,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   pushToCreateChannelView() {
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateChannelView(_messageController.currentUser)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateChannelView(_messageController)));
   }
 
   Widget itemBuilder(BuildContext context, int num) {
@@ -442,24 +432,11 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
           ],
         ),
         onTap: () {
-          onTapDrawerListTile(num);
+          _messageController.onTapDrawerListTile(num, context, () {
+            setState(() {});
+          });
         },
       ),
     );
-  }
-
-  onTapDrawerListTile(int num) async {
-    if (_currentChannel != _channelList[num].id) {
-      title = _channelList[num].name;
-      _currentChannel = _channelList[num].id;
-      _messageController.launchStream(onNewMessage: (){setState(() {
-        
-      });});
-    Navigator.pop(context);
-  }
-
-  updateState() async {
-    _messageController.refreshMessage(_currentUser, _currentChannel);
-    setState(() {});
   }
 }

@@ -1,26 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Controller/profile_picture_controller.dart';
-import 'package:pg_messenger/Models/user.dart';
-import 'package:pg_messenger/View/message_view.dart';
 
 class UserSettingsView extends StatefulWidget {
-  final User user;
-  final MessageViewState messageView;
-
-  const UserSettingsView({Key? key, required this.user, required this.messageView}) : super(key: key);
+  final MessageController messageController;
+  final Function callback;
+  const UserSettingsView(this.messageController, this.callback);
 
   @override
-  _UserSettingsViewState createState() => _UserSettingsViewState(user);
+  _UserSettingsViewState createState() => _UserSettingsViewState(this.messageController);
 }
 
 class _UserSettingsViewState extends State<UserSettingsView> {
-  final User user;
+  final MessageController _messagecontroller;
 
   var _profilePictureController = ProfilePicture();
   var _randomInt = 1;
 
-  _UserSettingsViewState(this.user) {
+  _UserSettingsViewState(this._messagecontroller) {
     _profilePictureController = ProfilePicture();
     _randomInt = _randomInt + 1;
   }
@@ -137,16 +135,16 @@ class _UserSettingsViewState extends State<UserSettingsView> {
   }
 
   Widget _profilePictureBuilderWidget() {
-    if (user.profilePict != null) {
+    if (_messagecontroller.currentUser.profilePict != null) {
       return ClipRRect(
           borderRadius: BorderRadius.circular(100),
           child: Container(
             height: 150,
             width: 150,
-            child: user.profilePict,
+            child: _messagecontroller.currentUser.profilePict,
           ));
     }
-    return _profilePictureController.defaultImagePicture(user.username, height: 150, width: 150);
+    return _profilePictureController.defaultImagePicture(_messagecontroller.currentUser.username, height: 150, width: 150);
   }
 
   onTapAddingPicture(context) async {
@@ -166,11 +164,12 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                     title: Text("Importer depuis la photothèque"),
                     onTap: () async {
                       await _profilePictureController.getImage(
-                        user,
+                        _messagecontroller.currentUser,
                         () async {
-                          await user.getImagePicture();
-                          setState(() {});
-                          widget.messageView.updateState();
+                          await _messagecontroller.currentUser.getImagePicture();
+                          setState(() {
+                            widget.callback();
+                          });
                           Navigator.pop(context);
                         },
                       );
@@ -183,11 +182,12 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                 title: Text("Prendre une nouvelle photo"),
                 onTap: () async {
                   await _profilePictureController.takePicture(
-                    user,
+                    _messagecontroller.currentUser,
                     onComplete: () async {
-                      await user.getImagePicture();
-                      widget.messageView.updateState();
-                      setState(() {});
+                      await _messagecontroller.currentUser.getImagePicture();
+                      setState(() {
+                        widget.callback();
+                      });
                       Navigator.pop(context);
                     },
                   );

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Controller/channel_controller.dart';
-import 'package:pg_messenger/Models/user.dart';
+import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/View/Connection/loading_view.dart';
 import 'package:pg_messenger/View/message_view.dart';
 import 'package:pg_messenger/generated/l10n.dart';
 import 'package:pg_messenger/main.dart';
 
 class CreateChannelView extends StatefulWidget {
-  final User _currentUser;
+  final MessageController _messageController;
 
-  CreateChannelView(this._currentUser);
+  CreateChannelView(this._messageController);
 
   @override
   _CreateChannelViewState createState() => _CreateChannelViewState();
@@ -81,13 +81,14 @@ class _CreateChannelViewState extends State<CreateChannelView> {
     final channelController = ChannelController();
     if (_controller.text.length < 3) {
     } else {
-      var responseCode = await _channelController.createNewChannel(widget._currentUser, name: _controller.text, isPublic: isPublic);
+      var responseCode = await _channelController.createNewChannel(widget._messageController.currentUser, name: _controller.text, isPublic: isPublic);
       if (responseCode == 200) {
-        final channelList = await channelController.getChannels(widget._currentUser.token);
+        final channelList = await channelController.getChannels(widget._messageController.currentUser.token);
         await Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
             if (channelList != null) {
-              return MessageView(widget._currentUser, channelList);
+              final messageController = MessageController(widget._messageController.currentUser, channelList);
+              return MessageView(messageController);
             }
             return LoadingView();
           },
