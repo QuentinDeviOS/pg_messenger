@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Controller/channel_controller.dart';
@@ -14,16 +15,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class MessageController {
   User get currentUser => _currentUser;
+  ScrollController get scrollController => _scrollController;
+  TextEditingController get textController => _textController;
+  List<Channel> get channelList => _channelList;
+  String? get currentChannel => _currentChannel;
+  Map<String, Widget> get ownerImageMap => _ownerImageMap;
+  List<Message> get messageList => _messageList;
 
-  final _profilePictureController = ProfilePicture();
+  final FocusNode inputFieldNode = FocusNode();
+  final ImagePicker imagePicker = ImagePicker();
+  final channelController = ChannelController();
+  final profilePictureController = ProfilePicture();
   final User _currentUser;
   final _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  final channelController = ChannelController();
-  final ImagePicker imagePicker = ImagePicker();
-  final FocusNode _inputFieldNode = FocusNode();
 
-  List<Channel> channelList;
+  List<Channel> _channelList;
   String? _currentChannel;
 
   List<Message> _messageList = [];
@@ -33,12 +40,11 @@ class MessageController {
   String? channel;
   bool _isCurrentView = false;
   double? _oldPositionScrollMax;
-  List<Message> messageList = [];
   Map<String, Widget> _ownerImageMap = Map();
 
   String title = "Général";
 
-  MessageController(this._currentUser, this.channelList) {
+  MessageController(this._currentUser, this._channelList) {
     prepareNotification();
     _currentUser.getImagePicture();
     connectToWs(_currentUser, _currentChannel);
@@ -78,8 +84,8 @@ class MessageController {
         _messageList.add(message);
         if (message.ownerPicture != null) {
           if (_literalPricutreDictionary[message.owner] != message.ownerPicture) {
-            Image? image = await _profilePictureController.getImagePicture(token: user.token, username: message.owner, picture: message.ownerPicture);
-            Widget defaultImage = _profilePictureController.defaultImagePicture(message.username, height: 40, width: 40);
+            Image? image = await profilePictureController.getImagePicture(token: user.token, username: message.owner, picture: message.ownerPicture);
+            Widget defaultImage = profilePictureController.defaultImagePicture(message.username, height: 40, width: 40);
             if (image == null) {
               if (_profilePictureByOwner[message.owner] != defaultImage) {
                 _profilePictureByOwner[message.owner] = defaultImage;
@@ -93,7 +99,7 @@ class MessageController {
             }
           }
         } else {
-          Widget defaultImage = _profilePictureController.defaultImagePicture(message.username, height: 40, width: 40);
+          Widget defaultImage = profilePictureController.defaultImagePicture(message.username, height: 40, width: 40);
           _profilePictureByOwner[message.owner] = defaultImage;
         }
       }
@@ -102,7 +108,7 @@ class MessageController {
     return false;
   }
 
-  sendMessage(Message message) {
+  _sendMessage(Message message) {
     _webSocketController.sendMessage(message);
   }
 
@@ -113,13 +119,13 @@ class MessageController {
     await http.post(Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/report-message"), headers: headers, body: JsonEncoder().convert(message.toJsonForReport()));
   }
 
-  Future takePicture(User currentUser, String? channel) async {
+  Future takePicture() async {
     final imagePicker = ImagePicker();
     final image = await imagePicker.getImage(source: ImageSource.camera);
     uploadImage(image, currentUser, channel);
   }
 
-  Future getImage(User currentUser, String? channel) async {
+  Future getImage() async {
     final imagePicker = ImagePicker();
     final image = await imagePicker.getImage(source: ImageSource.gallery);
     uploadImage(image, currentUser, channel);
@@ -153,13 +159,13 @@ class MessageController {
     _webSocketController.closeWS();
   }
 
-  refreshMessage(User user, String? channel) {
+  refreshMessage() {
     Map<String, String> headers = Map();
-    headers["Authorization"] = "Bearer ${user.token}";
-    if (channel == null) {
+    headers["Authorization"] = "Bearer ${_currentUser.token}";
+    if (_currentChannel == null) {
       http.get(Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/refresh-messages"), headers: headers);
     } else {
-      http.get(Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/refresh-messages?channel=" + channel), headers: headers);
+      http.get(Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/refresh-messages?channel=" + _currentChannel!), headers: headers);
     }
   }
 
@@ -181,7 +187,9 @@ class MessageController {
     return;
   }
 
-  initView() {
+  launchStream({required Function onNewMessage}) async {
+    await closeWS();
+    connectToWs(_currentUser, _currentChannel);
     messageStream(
       user: _currentUser,
       onMessageListLoaded: (messageList, imageList) {
@@ -190,10 +198,76 @@ class MessageController {
             if (_ownerImageMap != imageList) {
               _ownerImageMap = imageList;
             }
-            this.messageList = messageList;
+            this._messageList = messageList;
+            onNewMessage();
           }
         }
       },
     );
+  }
+
+  initView() {
+    _oldPositionScrollMax = 0;
+    _scrollController.addListener(() {
+      if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
+        inputFieldNode.unfocus();
+      }
+    });
+  }
+
+  onChangeMetrics(double value) {
+    if (value > 0) {
+      if (_scrollController.position.pixels == _oldPositionScrollMax) {
+        _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
+      }
+    }
+  }
+
+  onDispose() {
+    inputFieldNode.dispose();
+    closeWS();
+  }
+
+  onDrawerWillClose() {
+    refreshMessage();
+  }
+
+  goToEndList() async {
+    if (_scrollController.position.pixels == _oldPositionScrollMax && _oldPositionScrollMax != _scrollController.position.maxScrollExtent && _oldPositionScrollMax != 0) {
+      do {
+        _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+        await _scrollController.position.moveTo(_scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 500));
+      } while (_scrollController.position.pixels != _scrollController.position.maxScrollExtent);
+    } else if (_oldPositionScrollMax == 0) {
+      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+      _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
+    }
+    _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
+    return;
+  }
+
+  void sendMessage() {
+    if (_textController.text.isNotEmpty) {
+      final message = createNewMessageFromString(_textController.text, _currentUser, _currentChannel);
+      _sendMessage(message);
+    }
+    _textController.text = "";
+  }
+
+  jumpToEndAfterImageLoaded() {
+    if (_scrollController.position.pixels == _oldPositionScrollMax) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    }
+  }
+
+  onTapDrawerListTile(int num, BuildContext context, Function onChannelVerify) async {
+    if (_currentChannel != _channelList[num].id) {
+      title = _channelList[num].name;
+      _currentChannel = _channelList[num].id;
+      await closeWS();
+      connectToWs(_currentUser, _currentChannel);
+      launchStream(onNewMessage: () => onChannelVerify());
+    }
+    Navigator.pop(context);
   }
 }

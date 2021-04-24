@@ -37,37 +37,16 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance?.addObserver(this);
     _isCurrentView = true;
-    _messageController.messageStream(
-      user: _messageController.currentUser,
-      onMessageListLoaded: (messageList, imageList) {
-        if (_isCurrentView) {
-          if (messageList != _messageController.messageList) {
-            if (_ownerImageMap != imageList) {
-              _ownerImageMap = imageList;
-            }
-            setState(() {
-              this.messageList = messageList;
-            });
-          }
-        }
-      },
-    );
-    _oldPositionScrollMax = 0;
-    _scrollController.addListener(() {
-      if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
-        _closeKeyboard();
-      }
+    _messageController.launchStream(onNewMessage: () {
+      setState(() {});
     });
+    _messageController.initView();
   }
 
   @override
   void didChangeMetrics() {
     final value = MediaQuery.of(context).viewInsets.bottom;
-    if (value > 0) {
-      if (_scrollController.position.pixels == _oldPositionScrollMax) {
-        _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
-      }
-    }
+    _messageController.onChangeMetrics(value);
     super.didChangeMetrics();
   }
 
@@ -75,19 +54,10 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
-      _messageController.closeWS();
-      _messageController.connectToWs(_currentUser, _currentChannel);
       FlutterAppBadger.removeBadge();
-      _messageController.messageStream(
-          user: _currentUser,
-          onMessageListLoaded: (onMessageListLoaded, imageList) {
-            if (messageList != onMessageListLoaded) {
-              _ownerImageMap = imageList;
-              setState(() {
-                messageList = onMessageListLoaded;
-              });
-            }
-          });
+      _messageController.launchStream(onNewMessage: () {
+        setState(() {});
+      });
     }
   }
 
@@ -95,8 +65,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance?.removeObserver(this);
     _isCurrentView = false;
-    _inputFieldNode?.dispose();
-    _messageController.closeWS();
+    _messageController.onDispose();
     super.dispose();
   }
 
@@ -106,11 +75,11 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
       onDrawerChanged: (isOpened) {
         if (isOpened) {
         } else {
-          _messageController.refreshMessage(_currentUser, _currentChannel);
+          _messageController.onDrawerWillClose();
         }
       },
       appBar: AppBar(
-        title: /*Text(S.of(context).message_title)*/ Text(title),
+        title: Text(_messageController.title),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.logout),
@@ -127,7 +96,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(controller: _scrollController, itemBuilder: _singleMessage, itemCount: messageList.length),
+              child: ListView.builder(controller: _messageController.scrollController, itemBuilder: _singleMessage, itemCount: _messageController.messageList.length),
             ),
             Form(
               child: Row(
@@ -135,28 +104,28 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                   IconButton(
                     icon: Icon(Icons.photo_camera),
                     color: Theme.of(context).primaryColor,
-                    onPressed: () => _messageController.takePicture(_currentUser, _currentChannel),
+                    onPressed: () => _messageController.takePicture(),
                   ),
                   IconButton(
                     icon: Icon(Icons.insert_photo),
                     color: Theme.of(context).primaryColor,
-                    onPressed: () => _messageController.getImage(_currentUser, _currentChannel),
+                    onPressed: () => _messageController.getImage(),
                   ),
                   Expanded(
                     child: TextFormField(
                       minLines: 1,
                       maxLines: 5,
                       textCapitalization: TextCapitalization.sentences,
-                      controller: _textController,
-                      focusNode: _inputFieldNode,
+                      controller: _messageController.textController,
+                      focusNode: _messageController.inputFieldNode,
                       onFieldSubmitted: (_) {
-                        if (_textController.text == "") {
+                        if (_messageController.textController.text == "") {
                           FocusScope.of(context).unfocus();
                         }
-                        sendMessage();
-                        _textController.text = "";
+                        _messageController.sendMessage();
+                        _messageController.textController.text = "";
                       },
-                      onTap: () => goToEndList(),
+                      onTap: () => _messageController.goToEndList(),
                       decoration: InputDecoration(
                           hintText: "Aa",
                           border: InputBorder.none,
@@ -182,7 +151,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                   ),
                   IconButton(
                     icon: Icon(Icons.send),
-                    onPressed: sendMessage,
+                    onPressed: _messageController.sendMessage,
                     color: Theme.of(context).primaryColor,
                   )
                 ],
@@ -194,25 +163,13 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     );
   }
 
-  goToEndList() async {
-    if (_scrollController.position.pixels == _oldPositionScrollMax && _oldPositionScrollMax != _scrollController.position.maxScrollExtent && _oldPositionScrollMax != 0) {
-      do {
-        _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-        await _scrollController.position.moveTo(_scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 500));
-      } while (_scrollController.position.pixels != _scrollController.position.maxScrollExtent);
-    } else if (_oldPositionScrollMax == 0) {
-      _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-      _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
-    }
-    _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-    return;
-  }
+
 
   Widget _singleMessage(BuildContext context, int num) {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
-      goToEndList();
+      _messageController.goToEndList();
     });
-    if (messageList[num].channel == _currentChannel) {
+    if (_messageController.messageList[num].channel == _messageController.currentChannel) {
       return Card(
         child: Container(
           padding: EdgeInsets.fromLTRB(10, 20, 0, 20),
@@ -230,38 +187,38 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                           child: Container(
                             height: 40,
                             width: 40,
-                            child: _ownerImageMap[messageList[num].owner],
+                            child: _messageController.ownerImageMap[_messageController.messageList[num].owner],
                           ),
                         )),
                     Text(
-                      messageList[num].username,
+                      _messageController.messageList[num].username,
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.textDarkModeTitle),
                     ),
                     Spacer(),
-                    Text(_formatedTimestamp(messageList[num].timestamp)),
-                    if (messageList[num].flag != true)
+                    Text(_formatedTimestamp(_messageController.messageList[num].timestamp)),
+                    if (_messageController.messageList[num].flag != true)
                       PopupMenuButton(
                         icon: Icon(Icons.more_vert),
                         onSelected: (value) {
                           if (value == "report") {
-                            _messageController.reportMessage(messageList[num], _currentUser);
+                            _messageController.reportMessage(_messageController.messageList[num], _messageController.currentUser);
                           }
                           if (value == "delete") {
-                            _messageController.deleteMessage(messageList[num], _currentUser);
+                            _messageController.deleteMessage(_messageController.messageList[num], _messageController.currentUser);
                           }
                         },
-                        itemBuilder: (context) => messagePopUpItem(messageList[num]),
+                        itemBuilder: (context) => messagePopUpItem(_messageController.messageList[num]),
                       )
                   ],
                 ),
               ),
-              if (messageList[num].isPicture == null || (messageList[num].flag != true && !messageList[num].isPicture!))
+              if (_messageController.messageList[num].isPicture == null || (_messageController.messageList[num].flag != true && !_messageController.messageList[num].isPicture!))
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                  child: Text(messageList[num].message),
+                  child: Text(_messageController.messageList[num].message),
                 ),
-              if (messageList[num].isPicture != null && messageList[num].flag != true && messageList[num].isPicture!) imageMessage(currentUser: _currentUser, message: messageList[num], oldPositionScrollMax: _oldPositionScrollMax, scrollController: _scrollController),
-              if (messageList[num].flag == true) Text(S.of(context).message_under_moderation)
+              if (_messageController.messageList[num].isPicture != null && _messageController.messageList[num].flag != true && _messageController.messageList[num].isPicture!) imageMessage(message: _messageController.messageList[num], messageController: _messageController),
+              if (_messageController.messageList[num].flag == true) Text(S.of(context).message_under_moderation)
             ],
           ),
         ),
@@ -273,7 +230,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   List<PopupMenuEntry<String>> messagePopUpItem(Message message) {
     return [
-      if (message.owner != _currentUser.id)
+      if (message.owner != _messageController.currentUser.id)
         PopupMenuItem(
           value: "report",
           child: Row(
@@ -290,7 +247,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             ],
           ),
         ),
-      if (_currentUser.isModerator == true || message.owner == _currentUser.id)
+      if (_messageController.currentUser.isModerator == true || message.owner == _messageController.currentUser.id)
         PopupMenuItem(
           value: "delete",
           child: Row(
@@ -310,13 +267,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     ];
   }
 
-  void sendMessage() {
-    if (_textController.text.isNotEmpty) {
-      final message = _messageController.createNewMessageFromString(_textController.text, _currentUser, _currentChannel);
-      _messageController.sendMessage(message);
-    }
-    _textController.text = "";
-  }
+
 
   Widget messageIsText(Message message) {
     return Text(message.message);
@@ -362,19 +313,19 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                   child: Row(
                     children: [
                       Padding(padding: EdgeInsets.fromLTRB(10, 0, 0, 0)),
-                      if (_currentUser.profilePict != null)
+                      if (_messageController.currentUser.profilePict != null)
                         ClipRRect(
                           borderRadius: BorderRadius.circular(100),
                           child: Container(
-                            child: _currentUser.profilePict,
+                            child: _messageController.profilePict,
                             height: 60,
                             width: 60,
                           ),
                         ),
-                      if (_currentUser.profilePict == null) ProfilePicture().defaultImagePicture(_currentUser.username, height: 60, width: 60),
+                      if (_messageController.profilePict == null) ProfilePicture().defaultImagePicture(_currentUser.username, height: 60, width: 60),
                       Padding(padding: EdgeInsets.fromLTRB(20, 0, 0, 0)),
                       Text(
-                        widget._currentUser.username,
+                        _messageController.currentUser.username,
                         style: TextStyle(fontSize: 22, color: Theme.of(context).colorScheme.textDarkModeTitle, fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -386,7 +337,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                         MaterialPageRoute(
                             builder: (context) => UserSettingsView(
                                   messageView: this,
-                                  user: _currentUser,
+                                  user: _messageController.currentUser,
                                 )));
                   }),
               Padding(padding: EdgeInsets.fromLTRB(20, 15, 20, 20)),
@@ -400,7 +351,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                       style: TextStyle(fontSize: 24, color: Theme.of(context).colorScheme.textDarkModeTitle, fontWeight: FontWeight.w600),
                     ),
                     Spacer(),
-                    if (_currentUser.isModerator == true)
+                    if (_messageController.currentUser.isModerator == true)
                       IconButton(
                           icon: Icon(
                             Icons.plus_one,
@@ -413,7 +364,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
               Expanded(
                 child: ListView.builder(
                   itemBuilder: itemBuilder,
-                  itemCount: channelList.length,
+                  itemCount: _messageController.channelList.length,
                 ),
               ),
               Spacer(),
@@ -449,11 +400,11 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
   pushToCreateChannelView() {
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateChannelView(_currentUser)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateChannelView(_messageController.currentUser)));
   }
 
   Widget itemBuilder(BuildContext context, int num) {
-    if (_currentUser.isModerator == true) {
+    if (_messageController.currentUser.isModerator == true) {
       return listViewBuilderIfModerator(num);
     } else {
       return listViewBuilderIfNotModerator(num);
@@ -465,7 +416,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   }
 
   Widget listViewBuilderIfNotModerator(int num) {
-    if (channelList[num].isPublic) {
+    if (_messageController.channelList[num].isPublic) {
       return drawerListViewComponent(num);
     } else {
       return Padding(padding: EdgeInsets.all(0));
@@ -485,7 +436,7 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             ),
             Padding(padding: EdgeInsets.fromLTRB(0, 0, 3, 0)),
             Text(
-              channelList[num].name,
+              _messageController.channelList[num].name,
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -498,34 +449,13 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   }
 
   onTapDrawerListTile(int num) async {
-    if (_currentChannel != channelList[num].id) {
-      title = channelList[num].name;
-      _currentChannel = channelList[num].id;
-      await _messageController.closeWS();
-      _messageController.connectToWs(_currentUser, _currentChannel);
-      _messageController.messageStream(
-        user: _currentUser,
-        onMessageListLoaded: (messageList, imageList) {
-          if (_isCurrentView) {
-            if (messageList != this.messageList) {
-              if (_ownerImageMap != imageList) {
-                _ownerImageMap = imageList;
-              }
-              setState(() {
-                this.messageList = messageList;
-              });
-            }
-          }
-        },
-      );
-    }
+    if (_currentChannel != _channelList[num].id) {
+      title = _channelList[num].name;
+      _currentChannel = _channelList[num].id;
+      _messageController.launchStream(onNewMessage: (){setState(() {
+        
+      });});
     Navigator.pop(context);
-  }
-
-  _closeKeyboard() {
-    if (_inputFieldNode != null) {
-      _inputFieldNode!.unfocus();
-    }
   }
 
   updateState() async {
