@@ -163,7 +163,6 @@ class MessageController {
   }
 
   _refreshMessage() {
-    print("refresh messages------------------------------------------------");
     Map<String, String> headers = Map();
     headers["Authorization"] = "Bearer ${_currentUser.token}";
     if (_currentChannel == null) {
@@ -197,7 +196,6 @@ class MessageController {
     messageStream(
       user: _currentUser,
       onMessageListLoaded: (messageList, imageList) {
-        print(messageList + _messageList);
         if (_isCurrentView) {
           if (_messageList != messageList) {
             if (_ownerImageMap != imageList) {
@@ -236,7 +234,6 @@ class MessageController {
   }
 
   onDrawerWillClose() {
-    print("On Drawer Will Close");
     _refreshMessage();
   }
 
