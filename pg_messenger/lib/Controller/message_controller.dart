@@ -23,29 +23,29 @@ class MessageController {
   String? get currentChannel => _currentChannel;
   Map<String, Widget> get ownerImageMap => _ownerImageMap;
   List<Message> get messageList => _messageList;
+  String get title => _title;
 
   final FocusNode inputFieldNode = FocusNode();
   final ImagePicker imagePicker = ImagePicker();
   final channelController = ChannelController();
   final profilePictureController = ProfilePicture();
+
   final User _currentUser;
   final _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
   List<Channel> _channelList;
   String? _currentChannel;
-
   List<Message> _messageList = [];
   List<Message> _messageListBuilder = [];
   Map<String, Widget> _profilePictureByOwner = Map();
   Map<String, String?> _literalPricutreDictionary = Map();
   WebSocketController _webSocketController = WebSocketController();
-  String? channel;
   bool _isCurrentView = false;
   double? _oldPositionScrollMax;
   Map<String, Widget> _ownerImageMap = Map();
 
-  String title = "Général";
+  String _title = "Général";
 
   MessageController(this._currentUser, this._channelList) {
     prepareNotification();
@@ -55,7 +55,6 @@ class MessageController {
 
   connectToWs(User user, String? channel) {
     _webSocketController.connect(user.token, channel);
-    this.channel = channel;
   }
 
   Message createNewMessageFromString(String messageString, User user, String? channel) {
@@ -81,7 +80,7 @@ class MessageController {
       _messageListBuilder = [];
       for (var messageJson in dataListJson) {
         Message message = Message.fromJson(messageJson);
-        if (message.channel != channel) {
+        if (message.channel != _currentChannel) {
           return false;
         }
         _messageListBuilder.add(message);
@@ -125,13 +124,13 @@ class MessageController {
   Future takePicture() async {
     final imagePicker = ImagePicker();
     final image = await imagePicker.getImage(source: ImageSource.camera);
-    uploadImage(image, currentUser, channel);
+    uploadImage(image, currentUser, _currentChannel);
   }
 
   Future getImage() async {
     final imagePicker = ImagePicker();
     final image = await imagePicker.getImage(source: ImageSource.gallery);
-    uploadImage(image, currentUser, channel);
+    uploadImage(image, currentUser, _currentChannel);
   }
 
   Future uploadImage(PickedFile? image, User currentUser, String? channel) async {
@@ -267,7 +266,7 @@ class MessageController {
 
   onTapDrawerListTile(int num, BuildContext context, Function onChannelVerify) async {
     if (_currentChannel != _channelList[num].id) {
-      title = _channelList[num].name;
+      _title = _channelList[num].name;
       _currentChannel = _channelList[num].id;
       launchStream(onNewMessage: () => onChannelVerify());
     }
