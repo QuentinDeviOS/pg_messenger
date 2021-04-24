@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:js';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -163,7 +162,8 @@ class MessageController {
     _webSocketController.closeWS();
   }
 
-  refreshMessage() {
+  _refreshMessage() {
+    print("refresh messages------------------------------------------------");
     Map<String, String> headers = Map();
     headers["Authorization"] = "Bearer ${_currentUser.token}";
     if (_currentChannel == null) {
@@ -192,21 +192,17 @@ class MessageController {
   }
 
   launchStream({required Function onNewMessage}) async {
-    //await closeWS();
+    await closeWS();
     connectToWs(_currentUser, _currentChannel);
     messageStream(
       user: _currentUser,
       onMessageListLoaded: (messageList, imageList) {
-        print("messageList loaded");
         print(messageList + _messageList);
         if (_isCurrentView) {
           if (_messageList != messageList) {
-            print("_messageList different to message receive");
             if (_ownerImageMap != imageList) {
               _ownerImageMap = imageList;
-              onNewMessage();
             }
-            print("addToMessageList");
             this._messageList = messageList;
             onNewMessage();
           }
@@ -240,7 +236,8 @@ class MessageController {
   }
 
   onDrawerWillClose() {
-    refreshMessage();
+    print("On Drawer Will Close");
+    _refreshMessage();
   }
 
   goToEndList() async {
@@ -275,15 +272,9 @@ class MessageController {
     if (_currentChannel != _channelList[num].id) {
       title = _channelList[num].name;
       _currentChannel = _channelList[num].id;
-      await closeWS();
-      connectToWs(_currentUser, _currentChannel);
       launchStream(onNewMessage: () => onChannelVerify());
     }
     Navigator.pop(context);
-  }
-
-  updateStateOnView(Function updateState) {
-    updateState();
   }
 
   String formatedTimestamp(DateTime? timestamp, BuildContext context) {
