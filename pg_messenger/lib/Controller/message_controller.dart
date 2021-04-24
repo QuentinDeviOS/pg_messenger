@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:js';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Controller/channel_controller.dart';
 import 'package:pg_messenger/Controller/profile_picture_controller.dart';
@@ -11,6 +13,7 @@ import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Controller/web_socket_controller.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:http/http.dart' as http;
+import 'package:pg_messenger/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MessageController {
@@ -281,5 +284,24 @@ class MessageController {
 
   updateStateOnView(Function updateState) {
     updateState();
+  }
+
+  String formatedTimestamp(DateTime? timestamp, BuildContext context) {
+    if (timestamp != null) {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final difference = today.compareTo(timestamp);
+      if (difference == 1) {
+        return DateFormat("d MMM").format(timestamp).toString();
+      } else if (difference == 0) {
+        return S.of(context).message_just_now;
+      } else if (difference == -1) {
+        return DateFormat("Hm").format(timestamp).toString();
+      } else {
+        return "";
+      }
+    } else {
+      return "";
+    }
   }
 }

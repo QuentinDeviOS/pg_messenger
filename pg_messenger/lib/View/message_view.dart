@@ -8,7 +8,6 @@ import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Controller/profile_picture_controller.dart';
 import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/View/Connection/connection_view.dart';
-import 'package:intl/intl.dart';
 import 'package:pg_messenger/View/user_settings_view.dart';
 import 'package:pg_messenger/generated/l10n.dart';
 
@@ -192,7 +191,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.textDarkModeTitle),
                     ),
                     Spacer(),
-                    Text(_formatedTimestamp(_messageController.messageList[num].timestamp)),
+                    Text(_messageController.formatedTimestamp(_messageController.messageList[num].timestamp, context)),
                     if (_messageController.messageList[num].flag != true)
                       PopupMenuButton(
                         icon: Icon(Icons.more_vert),
@@ -262,29 +261,6 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
           ),
         )
     ];
-  }
-
-  Widget messageIsText(Message message) {
-    return Text(message.message);
-  }
-
-  String _formatedTimestamp(DateTime? timestamp) {
-    if (timestamp != null) {
-      final now = DateTime.now();
-      final today = DateTime(now.year, now.month, now.day);
-      final difference = today.compareTo(timestamp);
-      if (difference == 1) {
-        return DateFormat("d MMM").format(timestamp).toString();
-      } else if (difference == 0) {
-        return S.of(context).message_just_now;
-      } else if (difference == -1) {
-        return DateFormat("Hm").format(timestamp).toString();
-      } else {
-        return "";
-      }
-    } else {
-      return "";
-    }
   }
 
   //Menu Drawer
