@@ -5,14 +5,10 @@ import 'package:pg_messenger/View/Components/image_message.dart';
 import 'package:pg_messenger/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:pg_messenger/Constants/constant.dart';
-import 'package:pg_messenger/Controller/channel_controller.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Controller/profile_picture_controller.dart';
-import 'package:pg_messenger/Models/channel.dart';
 import 'package:pg_messenger/Models/message.dart';
-import 'package:pg_messenger/Models/user.dart';
 import 'package:pg_messenger/View/Connection/connection_view.dart';
 import 'package:intl/intl.dart';
 import 'package:pg_messenger/View/user_settings_view.dart';
@@ -22,36 +18,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'create_channel_view.dart';
 
 class MessageView extends StatefulWidget {
-  final User _currentUser;
-  final List<Channel> _channelList;
-  MessageView(this._currentUser, this._channelList, {Key? key}) : super(key: key);
+  final MessageController _messageController;
+  MessageView(this._messageController, {Key? key}) : super(key: key);
   @override
-  MessageViewState createState() => MessageViewState(_currentUser, _channelList);
+  MessageViewState createState() => MessageViewState(_messageController);
 }
 
 class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
-  final User _currentUser;
-  final _textController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-  final channelController = ChannelController();
-  final ImagePicker imagePicker = ImagePicker();
-  final FocusNode _inputFieldNode = FocusNode();
+  final MessageController _messageController;
 
-  List<Channel> channelList;
-  String? _currentChannel;
-  var profilePictureController = ProfilePicture();
-  MessageController _messageController = MessageController();
   bool _isCurrentView = false;
-  double? _oldPositionScrollMax;
-  List<Message> messageList = [];
-  Map<String, Widget> _ownerImageMap = Map();
-  String title = "Général";
 
-  MessageViewState(this._currentUser, this.channelList) {
-    prepareNotification();
-    _currentUser.getImagePicture();
-    _messageController.connectToWs(_currentUser, _currentChannel);
-  }
+  MessageViewState(this._messageController);
 
   @override
   void initState() {
@@ -60,10 +38,10 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     WidgetsBinding.instance?.addObserver(this);
     _isCurrentView = true;
     _messageController.messageStream(
-      user: _currentUser,
+      user: _messageController.currentUser,
       onMessageListLoaded: (messageList, imageList) {
         if (_isCurrentView) {
-          if (messageList != this.messageList) {
+          if (messageList != _messageController.messageList) {
             if (_ownerImageMap != imageList) {
               _ownerImageMap = imageList;
             }
@@ -553,17 +531,5 @@ class MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   updateState() async {
     _messageController.refreshMessage(_currentUser, _currentChannel);
     setState(() {});
-  }
-
-  prepareNotification() async {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    await messaging.requestPermission(alert: true, announcement: true, badge: true, carPlay: false, criticalAlert: false, provisional: false, sound: true);
-    if (_currentUser.isModerator == true) {
-      messaging.subscribeToTopic("moderator");
-      messaging.subscribeToTopic("general");
-    } else {
-      messaging.subscribeToTopic("general");
-    }
-    return;
   }
 }

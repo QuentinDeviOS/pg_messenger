@@ -3,7 +3,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pg_messenger/Constants/constant.dart';
+import 'package:pg_messenger/Controller/channel_controller.dart';
 import 'package:pg_messenger/Controller/profile_picture_controller.dart';
+import 'package:pg_messenger/Models/channel.dart';
 import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Controller/web_socket_controller.dart';
 import 'package:pg_messenger/Models/user.dart';
@@ -11,12 +13,36 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MessageController {
+  User get currentUser => _currentUser;
+
+  final _profilePictureController = ProfilePicture();
+  final User _currentUser;
+  final _textController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  final channelController = ChannelController();
+  final ImagePicker imagePicker = ImagePicker();
+  final FocusNode _inputFieldNode = FocusNode();
+
+  List<Channel> channelList;
+  String? _currentChannel;
+
   List<Message> _messageList = [];
   Map<String, Widget> _profilePictureByOwner = Map();
   Map<String, String?> _literalPricutreDictionary = Map();
   WebSocketController _webSocketController = WebSocketController();
-  final _profilePictureController = ProfilePicture();
   String? channel;
+  bool _isCurrentView = false;
+  double? _oldPositionScrollMax;
+  List<Message> messageList = [];
+  Map<String, Widget> _ownerImageMap = Map();
+
+  String title = "Général";
+
+  MessageController(this._currentUser, this.channelList) {
+    prepareNotification();
+    _currentUser.getImagePicture();
+    connectToWs(_currentUser, _currentChannel);
+  }
 
   connectToWs(User user, String? channel) {
     _webSocketController.connect(user.token, channel);
@@ -141,5 +167,33 @@ class MessageController {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(Constant.JSONKEY_TOKEN, "");
     FirebaseMessaging.instance.deleteToken();
+  }
+
+  prepareNotification() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    await messaging.requestPermission(alert: true, announcement: true, badge: true, carPlay: false, criticalAlert: false, provisional: false, sound: true);
+    if (_currentUser.isModerator == true) {
+      messaging.subscribeToTopic("moderator");
+      messaging.subscribeToTopic("general");
+    } else {
+      messaging.subscribeToTopic("general");
+    }
+    return;
+  }
+
+  initView() {
+    messageStream(
+      user: _currentUser,
+      onMessageListLoaded: (messageList, imageList) {
+        if (_isCurrentView) {
+          if (messageList != messageList) {
+            if (_ownerImageMap != imageList) {
+              _ownerImageMap = imageList;
+            }
+            this.messageList = messageList;
+          }
+        }
+      },
+    );
   }
 }
