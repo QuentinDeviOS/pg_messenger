@@ -226,12 +226,14 @@ class _UserSettingsViewState extends State<UserSettingsView> {
         });
   }
 
-  Future<http.Response> _updatePassword(String password, String newPassword) {
+  Future<http.Response> _updatePassword(String password, String newPassword,
+      {String? token}) {
     String newPasswordToSend = "newPassword";
     return http.post(
       Uri.parse(Constant.URL_WEB_SERVER_BASE + '/users/update-password'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Autorization': "Bearer $token"
       },
       body: jsonEncode(<String, dynamic>{
         Constant.JSONKEY_USER_PASSWORD: password,
