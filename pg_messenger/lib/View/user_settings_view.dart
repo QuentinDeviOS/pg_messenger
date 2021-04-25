@@ -142,10 +142,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                       Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: ElevatedButton(
-                            onPressed: () {
-                              //mettre la fonction une fois l'API fait
-                              return;
-                            },
+                            onPressed: () => _changePassword(context),
                             child: Text("Changer mon mot de passe")),
                       )
                     ],
