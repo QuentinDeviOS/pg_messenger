@@ -229,7 +229,8 @@ class _UserSettingsViewState extends State<UserSettingsView> {
         });
   }
 
-  Future<http.Response> _updatePassword(String password) {
+  Future<http.Response> _updatePassword(String password, String newPassword) {
+    String newPasswordToSend = "newPassword";
     return http.post(
       Uri.parse(Constant.URL_WEB_SERVER_BASE + '/users/signup'),
       headers: <String, String>{
@@ -237,12 +238,13 @@ class _UserSettingsViewState extends State<UserSettingsView> {
       },
       body: jsonEncode(<String, dynamic>{
         Constant.JSONKEY_USER_PASSWORD: password,
+        newPasswordToSend: newPassword,
       }),
     );
   }
 
   Future<User?> _changePassword(context) async {
-    //String password = _passwordController.text;
+    String password = _passwordController.text;
     String newPassword = _newPasswordController.text;
     String newPasswordVerification = _newPasswordVerificationController.text;
 
@@ -250,7 +252,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
       _wrongInput(context, S.of(context).register_error_password);
       return null;
     } else if (newPassword.isNotEmpty) {
-      final response = await _updatePassword(newPassword);
+      final response = await _updatePassword(password, newPassword);
       if (response.statusCode == 200) {
         User user = User.fromJsonResponseLogin(jsonDecode(response.body));
         await _registerToken(user.token);
