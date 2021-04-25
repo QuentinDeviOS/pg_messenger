@@ -229,7 +229,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
   Future<http.Response> _updatePassword(String password, String newPassword) {
     String newPasswordToSend = "newPassword";
     return http.post(
-      Uri.parse(Constant.URL_WEB_SERVER_BASE + '/users/signup'),
+      Uri.parse(Constant.URL_WEB_SERVER_BASE + '/users/update-password'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
