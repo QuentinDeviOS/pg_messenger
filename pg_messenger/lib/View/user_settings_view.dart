@@ -236,14 +236,14 @@ class _UserSettingsViewState extends State<UserSettingsView> {
   }
 
   Future<User?> _changePassword(context) async {
-    String password = _passwordController.text;
-    String passwordVerification = _passwordVerificationController.text;
+    String newPassword = _passwordController.text;
+    String newPasswordVerification = _passwordVerificationController.text;
 
-    if (password != passwordVerification) {
+    if (newPassword != newPasswordVerification) {
       _wrongInput(context, S.of(context).register_error_password);
       return null;
-    } else if (password.isNotEmpty) {
-      final response = await updatePassword(password);
+    } else if (newPassword.isNotEmpty) {
+      final response = await updatePassword(newPassword);
       if (response.statusCode == 200) {
         User user = User.fromJsonResponseLogin(jsonDecode(response.body));
         await _registerToken(user.token);
