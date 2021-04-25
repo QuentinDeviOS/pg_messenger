@@ -25,7 +25,8 @@ class _UserSettingsViewState extends State<UserSettingsView> {
   final MessageController _messagecontroller;
 
   final _passwordController = TextEditingController();
-  final _passwordVerificationController = TextEditingController();
+  final _newPasswordController = TextEditingController();
+  final _newPasswordVerificationController = TextEditingController();
 
   var _profilePictureController = ProfilePicture();
   var _randomInt = 1;
@@ -85,6 +86,8 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                         child: TextFormField(
                           controller: _actualPasswordController,
                           autofillHints: [AutofillHints.password],
+                          obscureText: true,
+                          autocorrect: false,
                           decoration: InputDecoration(
                               hintText: "Mot de passe actuelle"),
                           onFieldSubmitted: (value) {
@@ -103,6 +106,8 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                           controller: _firstNewPassword,
                           focusNode: _focusFirstNewPassword,
                           autofillHints: [AutofillHints.password],
+                          obscureText: true,
+                          autocorrect: false,
                           decoration:
                               InputDecoration(hintText: "Nouveau mot de passe"),
                           onFieldSubmitted: (value) {
@@ -121,6 +126,8 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                           controller: _secondNewPassword,
                           focusNode: _focusSecondNewPassword,
                           autofillHints: [AutofillHints.password],
+                          obscureText: true,
+                          autocorrect: false,
                           decoration:
                               InputDecoration(hintText: "Nouveau mot de passe"),
                           onFieldSubmitted: (value) {
@@ -136,6 +143,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                         padding: const EdgeInsets.all(20.0),
                         child: ElevatedButton(
                             onPressed: () {
+                              //mettre la fonction une fois l'API fait
                               return;
                             },
                             child: Text("Changer mon mot de passe")),
@@ -221,9 +229,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
         });
   }
 
-  Future<http.Response> updatePassword(
-    String password,
-  ) {
+  Future<http.Response> _updatePassword(String password) {
     return http.post(
       Uri.parse(Constant.URL_WEB_SERVER_BASE + '/users/signup'),
       headers: <String, String>{
@@ -236,21 +242,22 @@ class _UserSettingsViewState extends State<UserSettingsView> {
   }
 
   Future<User?> _changePassword(context) async {
-    String newPassword = _passwordController.text;
-    String newPasswordVerification = _passwordVerificationController.text;
+    //String password = _passwordController.text;
+    String newPassword = _newPasswordController.text;
+    String newPasswordVerification = _newPasswordVerificationController.text;
 
     if (newPassword != newPasswordVerification) {
       _wrongInput(context, S.of(context).register_error_password);
       return null;
     } else if (newPassword.isNotEmpty) {
-      final response = await updatePassword(newPassword);
+      final response = await _updatePassword(newPassword);
       if (response.statusCode == 200) {
         User user = User.fromJsonResponseLogin(jsonDecode(response.body));
         await _registerToken(user.token);
         await Navigator.push(
             context, MaterialPageRoute(builder: (context) => LoadingView()));
       } else {
-        _wrongRegistration(context, response.body);
+        _wrongUpdatePassword(context, response.body);
       }
       return null;
     }
@@ -274,7 +281,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
     );
   }
 
-  _wrongRegistration(BuildContext context, String responseBodyError) {
+  _wrongUpdatePassword(BuildContext context, String responseBodyError) {
     Map<String, dynamic> json = jsonDecode(responseBodyError);
     Widget okButton = TextButton(
       child: Text(S.of(context).register_alert_OK_button),
