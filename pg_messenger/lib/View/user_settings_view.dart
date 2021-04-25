@@ -1,7 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Controller/profile_picture_controller.dart';
+import 'package:pg_messenger/Models/user.dart';
+import 'package:pg_messenger/View/Connection/loading_view.dart';
+import 'package:pg_messenger/generated/l10n.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserSettingsView extends StatefulWidget {
   final MessageController messageController;
@@ -9,11 +17,15 @@ class UserSettingsView extends StatefulWidget {
   const UserSettingsView(this.messageController, this.callback);
 
   @override
-  _UserSettingsViewState createState() => _UserSettingsViewState(this.messageController);
+  _UserSettingsViewState createState() =>
+      _UserSettingsViewState(this.messageController);
 }
 
 class _UserSettingsViewState extends State<UserSettingsView> {
   final MessageController _messagecontroller;
+
+  final _passwordController = TextEditingController();
+  final _passwordVerificationController = TextEditingController();
 
   var _profilePictureController = ProfilePicture();
   var _randomInt = 1;
@@ -29,7 +41,8 @@ class _UserSettingsViewState extends State<UserSettingsView> {
     super.initState();
   }
 
-  final TextEditingController _actualPasswordController = TextEditingController();
+  final TextEditingController _actualPasswordController =
+      TextEditingController();
   final FocusNode _focusFirstNewPassword = FocusNode();
   final TextEditingController _firstNewPassword = TextEditingController();
   final FocusNode _focusSecondNewPassword = FocusNode();
@@ -64,14 +77,16 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                     children: [
                       Text(
                         "Changer mon mot de passe :",
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w600),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
                           controller: _actualPasswordController,
                           autofillHints: [AutofillHints.password],
-                          decoration: InputDecoration(hintText: "Mot de passe actuelle"),
+                          decoration: InputDecoration(
+                              hintText: "Mot de passe actuelle"),
                           onFieldSubmitted: (value) {
                             if (_actualPasswordController.text == "") {
                               FocusScope.of(context).unfocus();
@@ -88,7 +103,8 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                           controller: _firstNewPassword,
                           focusNode: _focusFirstNewPassword,
                           autofillHints: [AutofillHints.password],
-                          decoration: InputDecoration(hintText: "Nouveau mot de passe"),
+                          decoration:
+                              InputDecoration(hintText: "Nouveau mot de passe"),
                           onFieldSubmitted: (value) {
                             if (_actualPasswordController.text == "") {
                               FocusScope.of(context).unfocus();
@@ -105,7 +121,8 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                           controller: _secondNewPassword,
                           focusNode: _focusSecondNewPassword,
                           autofillHints: [AutofillHints.password],
-                          decoration: InputDecoration(hintText: "Nouveau mot de passe"),
+                          decoration:
+                              InputDecoration(hintText: "Nouveau mot de passe"),
                           onFieldSubmitted: (value) {
                             if (_actualPasswordController.text == "") {
                               FocusScope.of(context).unfocus();
@@ -144,7 +161,10 @@ class _UserSettingsViewState extends State<UserSettingsView> {
             child: _messagecontroller.currentUser.profilePict,
           ));
     }
-    return _profilePictureController.defaultImagePicture(_messagecontroller.currentUser.username, height: 150, width: 150);
+    return _profilePictureController.defaultImagePicture(
+        _messagecontroller.currentUser.username,
+        height: 150,
+        width: 150);
   }
 
   onTapAddingPicture(context) async {
@@ -166,7 +186,8 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                       await _profilePictureController.getImage(
                         _messagecontroller.currentUser,
                         () async {
-                          await _messagecontroller.currentUser.getImagePicture();
+                          await _messagecontroller.currentUser
+                              .getImagePicture();
                           setState(() {
                             widget.callback();
                           });
@@ -198,5 +219,82 @@ class _UserSettingsViewState extends State<UserSettingsView> {
             ],
           );
         });
+  }
+
+  Future<http.Response> updatePassword(
+    String password,
+  ) {
+    return http.post(
+      Uri.parse(Constant.URL_WEB_SERVER_BASE + '/users/signup'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        Constant.JSONKEY_USER_PASSWORD: password,
+      }),
+    );
+  }
+
+  Future<User?> _changePassword(context) async {
+    String password = _passwordController.text;
+    String passwordVerification = _passwordVerificationController.text;
+
+    if (password != passwordVerification) {
+      _wrongInput(context, S.of(context).register_error_password);
+      return null;
+    } else if (password.isNotEmpty) {
+      final response = await updatePassword(password);
+      if (response.statusCode == 200) {
+        User user = User.fromJsonResponseLogin(jsonDecode(response.body));
+        await _registerToken(user.token);
+        await Navigator.push(
+            context, MaterialPageRoute(builder: (context) => LoadingView()));
+      } else {
+        _wrongRegistration(context, response.body);
+      }
+      return null;
+    }
+  }
+
+  _wrongInput(BuildContext context, String error) {
+    Widget okButton = TextButton(
+      child: Text(S.of(context).register_alert_OK_button),
+      onPressed: () => Navigator.of(context).pop(),
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text(S.of(context).register_alert_title),
+      content: Text(error),
+      actions: [okButton],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => alert,
+    );
+  }
+
+  _wrongRegistration(BuildContext context, String responseBodyError) {
+    Map<String, dynamic> json = jsonDecode(responseBodyError);
+    Widget okButton = TextButton(
+      child: Text(S.of(context).register_alert_OK_button),
+      onPressed: () => Navigator.of(context).pop(),
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text(S.of(context).register_alert_title),
+      content: Text(json[Constant.JSONKEY_USER_RESPONSE_ERROR_REASON]),
+      actions: [okButton],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => alert,
+    );
+  }
+
+  _registerToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(Constant.JSONKEY_TOKEN, token);
   }
 }
