@@ -1,12 +1,13 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:pg_messenger/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Controller/profile_picture_controller.dart';
 import 'package:pg_messenger/Models/user.dart';
+import 'package:pg_messenger/View/Connection/connection_view.dart';
 import 'package:pg_messenger/View/Connection/loading_view.dart';
 import 'package:pg_messenger/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,16 +23,15 @@ class UserSettingsView extends StatefulWidget {
 }
 
 class _UserSettingsViewState extends State<UserSettingsView> {
-  final MessageController _messagecontroller;
-
+  final MessageController _messageController;
   final _passwordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _newPasswordVerificationController = TextEditingController();
-
   var _profilePictureController = ProfilePicture();
   var _randomInt = 1;
+  bool _showChangePassword = false;
 
-  _UserSettingsViewState(this._messagecontroller) {
+  _UserSettingsViewState(this._messageController) {
     _profilePictureController = ProfilePicture();
     _randomInt = _randomInt + 1;
   }
@@ -144,7 +144,38 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                         child: ElevatedButton(
                             onPressed: () => _changePassword(context),
                             child: Text("Changer mon mot de passe")),
-                      )
+                      ),
+                      TextButton(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 15, 15),
+                          child: Row(
+                            children: [
+                              Spacer(),
+                              Icon(
+                                Icons.logout,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .textDarkModeTitle,
+                              ),
+                              Padding(padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
+                              Text(
+                                S.of(context).logout_title,
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .textDarkModeTitle),
+                              )
+                            ],
+                          ),
+                        ),
+                        onPressed: () {
+                          _messageController.logOut();
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ConnectionView()));
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -157,17 +188,17 @@ class _UserSettingsViewState extends State<UserSettingsView> {
   }
 
   Widget _profilePictureBuilderWidget() {
-    if (_messagecontroller.currentUser.profilePict != null) {
+    if (_messageController.currentUser.profilePict != null) {
       return ClipRRect(
           borderRadius: BorderRadius.circular(100),
           child: Container(
             height: 150,
             width: 150,
-            child: _messagecontroller.currentUser.profilePict,
+            child: _messageController.currentUser.profilePict,
           ));
     }
     return _profilePictureController.defaultImagePicture(
-        _messagecontroller.currentUser.username,
+        _messageController.currentUser.username,
         height: 150,
         width: 150);
   }
@@ -189,9 +220,9 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                     title: Text("Importer depuis la photothèque"),
                     onTap: () async {
                       await _profilePictureController.getImage(
-                        _messagecontroller.currentUser,
+                        _messageController.currentUser,
                         () async {
-                          await _messagecontroller.currentUser
+                          await _messageController.currentUser
                               .getImagePicture();
                           setState(() {
                             widget.callback();
@@ -208,9 +239,9 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                 title: Text("Prendre une nouvelle photo"),
                 onTap: () async {
                   await _profilePictureController.takePicture(
-                    _messagecontroller.currentUser,
+                    _messageController.currentUser,
                     onComplete: () async {
-                      await _messagecontroller.currentUser.getImagePicture();
+                      await _messageController.currentUser.getImagePicture();
                       setState(() {
                         widget.callback();
                       });

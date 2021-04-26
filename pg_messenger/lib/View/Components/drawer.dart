@@ -72,31 +72,7 @@ Widget menuDrawer(BuildContext context, MessageController _messageController, Fu
                 itemBuilder: (context, num) => itemBuilder(context, num, _messageController, upDateState),
                 itemCount: _messageController.channelList.length,
               ),
-            ),
-            Spacer(),
-            TextButton(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 15, 15),
-                child: Row(
-                  children: [
-                    Spacer(),
-                    Icon(
-                      Icons.logout,
-                      color: Theme.of(context).colorScheme.textDarkModeTitle,
-                    ),
-                    Padding(padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
-                    Text(
-                      S.of(context).logout_title,
-                      style: TextStyle(color: Theme.of(context).colorScheme.textDarkModeTitle),
-                    )
-                  ],
-                ),
-              ),
-              onPressed: () {
-                _messageController.logOut();
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConnectionView()));
-              },
-            ),
+            )
           ],
         ),
       ),
