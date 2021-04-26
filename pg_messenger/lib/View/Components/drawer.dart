@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Controller/profile_picture_controller.dart';
-import 'package:pg_messenger/View/Connection/connection_view.dart';
 import 'package:pg_messenger/generated/l10n.dart';
 import 'package:pg_messenger/main.dart';
 

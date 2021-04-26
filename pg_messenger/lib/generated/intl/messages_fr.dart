@@ -43,6 +43,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "message_send_button" : MessageLookupByLibrary.simpleMessage("Envoyer le message"),
     "message_title" : MessageLookupByLibrary.simpleMessage("Messages"),
     "message_under_moderation" : MessageLookupByLibrary.simpleMessage("Message en cours de modération"),
+    "picture_import_gallery" : MessageLookupByLibrary.simpleMessage("Importer depuis la photothèque"),
+    "picture_new" : MessageLookupByLibrary.simpleMessage("Prendre une nouvelle photo"),
     "register_EULA_launching_error" : m0,
     "register_EULA_message" : MessageLookupByLibrary.simpleMessage("J\'accepte les "),
     "register_EULA_message_link" : MessageLookupByLibrary.simpleMessage("conditions d\'utilisation de l\'application."),
@@ -56,6 +58,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "register_password_verification" : MessageLookupByLibrary.simpleMessage("Vérification du mot de passe"),
     "register_send_button" : MessageLookupByLibrary.simpleMessage("S\'enregistrer"),
     "register_title" : MessageLookupByLibrary.simpleMessage("Créer un utilisateur"),
-    "register_username" : MessageLookupByLibrary.simpleMessage("Nom d\'utilisateur")
+    "register_username" : MessageLookupByLibrary.simpleMessage("Nom d\'utilisateur"),
+    "settings_actual_password" : MessageLookupByLibrary.simpleMessage("Mot de passe actuel"),
+    "settings_change_password_button" : MessageLookupByLibrary.simpleMessage("Changer mon mot de passe"),
+    "settings_change_password_title" : MessageLookupByLibrary.simpleMessage("Changer mon mot de passe :"),
+    "settings_change_picture" : MessageLookupByLibrary.simpleMessage("Changer ma photo de profil"),
+    "settings_new_password" : MessageLookupByLibrary.simpleMessage("Nouveau mot de passe"),
+    "settings_title" : MessageLookupByLibrary.simpleMessage("Préférences")
   };
 }

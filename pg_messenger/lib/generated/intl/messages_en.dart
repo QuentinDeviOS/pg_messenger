@@ -43,6 +43,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "message_send_button" : MessageLookupByLibrary.simpleMessage("Send message"),
     "message_title" : MessageLookupByLibrary.simpleMessage("Messages"),
     "message_under_moderation" : MessageLookupByLibrary.simpleMessage("Message under moderation"),
+    "picture_import_gallery" : MessageLookupByLibrary.simpleMessage("Import from gallery"),
+    "picture_new" : MessageLookupByLibrary.simpleMessage("Take new picture"),
     "register_EULA_launching_error" : m0,
     "register_EULA_message" : MessageLookupByLibrary.simpleMessage("I agree with the "),
     "register_EULA_message_link" : MessageLookupByLibrary.simpleMessage("End of User Agreement, Privacy Policy and Terms & Conditions"),
@@ -56,6 +58,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "register_password_verification" : MessageLookupByLibrary.simpleMessage("password verification"),
     "register_send_button" : MessageLookupByLibrary.simpleMessage("Register"),
     "register_title" : MessageLookupByLibrary.simpleMessage("Register"),
-    "register_username" : MessageLookupByLibrary.simpleMessage("username")
+    "register_username" : MessageLookupByLibrary.simpleMessage("username"),
+    "settings_actual_password" : MessageLookupByLibrary.simpleMessage("Actual password"),
+    "settings_change_password_button" : MessageLookupByLibrary.simpleMessage("Change password"),
+    "settings_change_password_title" : MessageLookupByLibrary.simpleMessage("Change password:"),
+    "settings_change_picture" : MessageLookupByLibrary.simpleMessage("Change profil picture"),
+    "settings_new_password" : MessageLookupByLibrary.simpleMessage("New password"),
+    "settings_title" : MessageLookupByLibrary.simpleMessage("Settings")
   };
 }

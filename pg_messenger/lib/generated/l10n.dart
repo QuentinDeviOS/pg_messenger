@@ -337,6 +337,26 @@ class S {
     );
   }
 
+  /// `Import from gallery`
+  String get picture_import_gallery {
+    return Intl.message(
+      'Import from gallery',
+      name: 'picture_import_gallery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Take new picture`
+  String get picture_new {
+    return Intl.message(
+      'Take new picture',
+      name: 'picture_new',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Channels`
   String get channel {
     return Intl.message(
@@ -382,6 +402,66 @@ class S {
     return Intl.message(
       '     Create',
       name: 'channel_new_button',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Settings`
+  String get settings_title {
+    return Intl.message(
+      'Settings',
+      name: 'settings_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change profil picture`
+  String get settings_change_picture {
+    return Intl.message(
+      'Change profil picture',
+      name: 'settings_change_picture',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change password:`
+  String get settings_change_password_title {
+    return Intl.message(
+      'Change password:',
+      name: 'settings_change_password_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Actual password`
+  String get settings_actual_password {
+    return Intl.message(
+      'Actual password',
+      name: 'settings_actual_password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New password`
+  String get settings_new_password {
+    return Intl.message(
+      'New password',
+      name: 'settings_new_password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change password`
+  String get settings_change_password_button {
+    return Intl.message(
+      'Change password',
+      name: 'settings_change_password_button',
       desc: '',
       args: [],
     );

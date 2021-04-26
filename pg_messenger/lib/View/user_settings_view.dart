@@ -23,9 +23,6 @@ class UserSettingsView extends StatefulWidget {
 
 class _UserSettingsViewState extends State<UserSettingsView> {
   final MessageController _messageController;
-  final _passwordController = TextEditingController();
-  final _newPasswordController = TextEditingController();
-  final _newPasswordVerificationController = TextEditingController();
   var _profilePictureController = ProfilePicture();
   var _randomInt = 1;
 
@@ -51,7 +48,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Préférences"),
+        title: Text(S.of(context).settings_title),
         actions: [
           IconButton(
               icon: const Icon(Icons.logout),
@@ -79,7 +76,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
               ),
               Center(
                 child: ElevatedButton(
-                  child: Text("Changer ma photo de profil"),
+                  child: Text(S.of(context).settings_change_picture),
                   onPressed: () => onTapAddingPicture(context),
                 ),
               ),
@@ -89,7 +86,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                   child: Column(
                     children: [
                       Text(
-                        "Changer mon mot de passe :",
+                        S.of(context).settings_change_password_title,
                         style: TextStyle(
                             fontSize: 15, fontWeight: FontWeight.w600),
                       ),
@@ -102,7 +99,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                           autocorrect: false,
                           textInputAction: TextInputAction.next,
                           decoration:
-                              InputDecoration(hintText: "Mot de passe actuel"),
+                              InputDecoration(hintText: S.of(context).settings_actual_password),
                           onFieldSubmitted: (value) {
                             if (_actualPasswordController.text == "") {
                               FocusScope.of(context).unfocus();
@@ -123,7 +120,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                           autocorrect: false,
                           textInputAction: TextInputAction.next,
                           decoration:
-                              InputDecoration(hintText: "Nouveau mot de passe"),
+                              InputDecoration(hintText: S.of(context).settings_new_password),
                           onFieldSubmitted: (value) {
                             if (_actualPasswordController.text == "") {
                               FocusScope.of(context).unfocus();
@@ -144,7 +141,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                           autocorrect: false,
                           textInputAction: TextInputAction.done,
                           decoration:
-                              InputDecoration(hintText: "Nouveau mot de passe"),
+                              InputDecoration(hintText: S.of(context).settings_new_password),
                           onFieldSubmitted: (value) {
                             if (_actualPasswordController.text == "") {
                               FocusScope.of(context).unfocus();
@@ -156,7 +153,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                         padding: const EdgeInsets.all(20.0),
                         child: ElevatedButton(
                             onPressed: () => _changePassword(context),
-                            child: Text("Changer mon mot de passe")),
+                            child: Text(S.of(context).settings_change_password_button)),
                       ),
                     ],
                   ),
@@ -199,7 +196,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                 borderRadius: BorderRadius.circular(10),
                 child: Container(
                   child: ListTile(
-                    title: Text("Importer depuis la photothèque"),
+                    title: Text(S.of(context).picture_import_gallery),
                     onTap: () async {
                       await _profilePictureController.getImage(
                         _messageController.currentUser,
@@ -218,7 +215,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                 ),
               ),
               ListTile(
-                title: Text("Prendre une nouvelle photo"),
+                title: Text(S.of(context).picture_new),
                 onTap: () async {
                   await _profilePictureController.takePicture(
                     _messageController.currentUser,

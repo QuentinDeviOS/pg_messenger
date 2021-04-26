@@ -28,9 +28,17 @@
     "message_report": " reporter le message",
     "message_delete": " effacer le message",
     "message_under_moderation": "Message en cours de modération",
+    "picture_import_gallery": "Importer depuis la photothèque",
+    "picture_new": "Prendre une nouvelle photo",
     "channel": "Salons",
     "channel_new_title": "Créer un nouveau salon",
     "channel_new_input_hint": "Nom du salon",
     "channel_new_checkbox": "Accès public",
-    "channel_new_button": "     Création"
+    "channel_new_button": "     Création",
+    "settings_title": "Préférences",
+    "settings_change_picture": "Changer ma photo de profil",
+    "settings_change_password_title": "Changer mon mot de passe :",
+    "settings_actual_password": "Mot de passe actuel",
+    "settings_new_password": "Nouveau mot de passe",
+    "settings_change_password_button": "Changer mon mot de passe"
 }

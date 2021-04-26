@@ -28,9 +28,17 @@
     "message_report": " report abuse",
     "message_delete": " delete message",
     "message_under_moderation": "Message under moderation",
+    "picture_import_gallery":"Import from gallery",
+    "picture_new": "Take new picture",
     "channel": "Channels",
     "channel_new_title": "Create new channel",
     "channel_new_input_hint": "Channel name",
     "channel_new_checkbox": "Public access",
-    "channel_new_button": "     Create"
+    "channel_new_button": "     Create",
+    "settings_title": "Settings",
+    "settings_change_picture": "Change profil picture",
+    "settings_change_password_title": "Change password:",
+    "settings_actual_password": "Actual password",
+    "settings_new_password": "New password",
+    "settings_change_password_button": "Change password"
 }
