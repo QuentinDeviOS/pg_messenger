@@ -25,15 +25,15 @@ class ProfilePicture {
     }
   }
 
-  Future<Image?> getImagePicture({required String token, String? picture, int? randomInt, required String username}) async {
-    bool canGetPictureBool = await canGetPicture(token, picture);
+  Future<Image?> getImagePicture({required User user, String? picture, required String username}) async {
+    bool canGetPictureBool = await canGetPicture(user.token, picture);
     Map<String, String> headers = Map();
-    headers["Authorization"] = "Bearer $token";
+    headers["Authorization"] = "Bearer ${user.token}";
     if (canGetPictureBool) {
       if (picture != null) {
         return Image(
           image: CachedNetworkImageProvider(
-            Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?picture=$picture&refresh=" + randomInt.toString(),
+            Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?picture=$picture&refresh=${user.picture}",
             headers: headers,
           ),
           fit: BoxFit.cover,
@@ -41,7 +41,7 @@ class ProfilePicture {
       } else {
         return Image(
             image: CachedNetworkImageProvider(
-              Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=" + randomInt.toString(),
+              Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=${user.picture}",
               headers: headers,
             ),
             fit: BoxFit.cover);

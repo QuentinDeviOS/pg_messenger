@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:pg_messenger/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pg_messenger/Constants/constant.dart';
@@ -18,8 +17,7 @@ class UserSettingsView extends StatefulWidget {
   const UserSettingsView(this.messageController, this.callback);
 
   @override
-  _UserSettingsViewState createState() =>
-      _UserSettingsViewState(this.messageController);
+  _UserSettingsViewState createState() => _UserSettingsViewState(this.messageController);
 }
 
 class _UserSettingsViewState extends State<UserSettingsView> {
@@ -29,7 +27,6 @@ class _UserSettingsViewState extends State<UserSettingsView> {
   final _newPasswordVerificationController = TextEditingController();
   var _profilePictureController = ProfilePicture();
   var _randomInt = 1;
-  bool _showChangePassword = false;
 
   _UserSettingsViewState(this._messageController) {
     _profilePictureController = ProfilePicture();
@@ -42,8 +39,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
     super.initState();
   }
 
-  final TextEditingController _actualPasswordController =
-      TextEditingController();
+  final TextEditingController _actualPasswordController = TextEditingController();
   final FocusNode _focusFirstNewPassword = FocusNode();
   final TextEditingController _firstNewPassword = TextEditingController();
   final FocusNode _focusSecondNewPassword = FocusNode();
@@ -52,7 +48,19 @@ class _UserSettingsViewState extends State<UserSettingsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Modifier mes préférences")),
+      appBar: AppBar(
+        title: Text("Préférences"),
+        actions: [
+          IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () {
+                _messageController.logOut();
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => ConnectionView()), (_) {
+                  return false;
+                });
+              }),
+        ],
+      ),
       body: SafeArea(
         bottom: true,
         child: SingleChildScrollView(
@@ -71,115 +79,78 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                   onPressed: () => onTapAddingPicture(context),
                 ),
               ),
-              //if(_showChangePassword)
-              Container(
-                child: Form(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
-                    child: Column(
-                      children: [
-                        Text(
-                          "Changer mon mot de passe :",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w600),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                            controller: _actualPasswordController,
-                            autofillHints: [AutofillHints.password],
-                            obscureText: true,
-                            autocorrect: false,
-                            decoration: InputDecoration(
-                                hintText: "Mot de passe actuelle"),
-                            onFieldSubmitted: (value) {
-                              if (_actualPasswordController.text == "") {
-                                FocusScope.of(context).unfocus();
-                              } else {
-                                _focusFirstNewPassword.requestFocus();
-                              }
-                            },
-                          ),
-                        ),
-                        Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 0)),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                            controller: _firstNewPassword,
-                            focusNode: _focusFirstNewPassword,
-                            autofillHints: [AutofillHints.newPassword],
-                            obscureText: true,
-                            autocorrect: false,
-                            decoration: InputDecoration(
-                                hintText: "Nouveau mot de passe"),
-                            onFieldSubmitted: (value) {
-                              if (_actualPasswordController.text == "") {
-                                FocusScope.of(context).unfocus();
-                              } else {
-                                _focusSecondNewPassword.requestFocus();
-                              }
-                            },
-                          ),
-                        ),
-                        Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 0)),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                            controller: _secondNewPassword,
-                            focusNode: _focusSecondNewPassword,
-                            autofillHints: [AutofillHints.newPassword],
-                            obscureText: true,
-                            autocorrect: false,
-                            decoration: InputDecoration(
-                                hintText: "Nouveau mot de passe"),
-                            onFieldSubmitted: (value) {
-                              if (_actualPasswordController.text == "") {
-                                FocusScope.of(context).unfocus();
-                              }
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: ElevatedButton(
-                              onPressed: () => _changePassword(context),
-                              child: Text("Changer mon mot de passe")),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              TextButton(
+              Form(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 15, 15),
-                  child: Row(
+                  padding: const EdgeInsets.fromLTRB(20, 50, 20, 0),
+                  child: Column(
                     children: [
-                      Spacer(),
-                      Icon(
-                        Icons.logout,
-                        color: Theme.of(context).colorScheme.textDarkModeTitle,
-                      ),
-                      Padding(padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
                       Text(
-                        S.of(context).logout_title,
-                        style: TextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .textDarkModeTitle),
-                      )
+                        "Changer mon mot de passe :",
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          controller: _actualPasswordController,
+                          autofillHints: [AutofillHints.password],
+                          obscureText: true,
+                          autocorrect: false,
+                          decoration: InputDecoration(hintText: "Mot de passe actuel"),
+                          onFieldSubmitted: (value) {
+                            if (_actualPasswordController.text == "") {
+                              FocusScope.of(context).unfocus();
+                            } else {
+                              _focusFirstNewPassword.requestFocus();
+                            }
+                          },
+                        ),
+                      ),
+                      Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 0)),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          controller: _firstNewPassword,
+                          focusNode: _focusFirstNewPassword,
+                          autofillHints: [AutofillHints.password],
+                          obscureText: true,
+                          autocorrect: false,
+                          decoration: InputDecoration(hintText: "Nouveau mot de passe"),
+                          onFieldSubmitted: (value) {
+                            if (_actualPasswordController.text == "") {
+                              FocusScope.of(context).unfocus();
+                            } else {
+                              _focusFirstNewPassword.requestFocus();
+                            }
+                          },
+                        ),
+                      ),
+                      Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 0)),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          controller: _secondNewPassword,
+                          focusNode: _focusSecondNewPassword,
+                          autofillHints: [AutofillHints.password],
+                          obscureText: true,
+                          autocorrect: false,
+                          decoration: InputDecoration(hintText: "Nouveau mot de passe"),
+                          onFieldSubmitted: (value) {
+                            if (_actualPasswordController.text == "") {
+                              FocusScope.of(context).unfocus();
+                            } else {
+                              _focusFirstNewPassword.requestFocus();
+                            }
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: ElevatedButton(onPressed: () => _changePassword(context), child: Text("Changer mon mot de passe")),
+                      ),
                     ],
                   ),
                 ),
-                onPressed: () {
-                  _messageController.logOut();
-                  Navigator.pushAndRemoveUntil(context,
-                      MaterialPageRoute(builder: (context) => ConnectionView()),
-                      (_) {
-                    return false;
-                  });
-                },
-              ),
+              )
             ],
           ),
         ),
@@ -197,10 +168,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
             child: _messageController.currentUser.profilePict,
           ));
     }
-    return _profilePictureController.defaultImagePicture(
-        _messageController.currentUser.username,
-        height: 150,
-        width: 150);
+    return _profilePictureController.defaultImagePicture(_messageController.currentUser.username, height: 150, width: 150);
   }
 
   onTapAddingPicture(context) async {
@@ -222,8 +190,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                       await _profilePictureController.getImage(
                         _messageController.currentUser,
                         () async {
-                          await _messageController.currentUser
-                              .getImagePicture();
+                          await _messageController.currentUser.getImagePicture();
                           setState(() {
                             widget.callback();
                           });
