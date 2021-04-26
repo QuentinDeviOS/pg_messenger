@@ -12,3 +12,5 @@ pg_messenger/ios/GoogleService-Info.plist
 
 /pg_messenger/PGMESSENGER_PROFILE_&_Cert/
 /pg_messenger/lib/Constants/constant.dart
+/.DS_Store
+/pg_messenger/lib/Constants/constant.dart
