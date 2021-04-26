@@ -53,12 +53,12 @@ class User {
     if (_intToRefresh == 0) {
       _intToRefresh = 1;
       await DefaultCacheManager().removeFile(Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=0");
-      profilePict = await _profilePictureController.getImagePicture(token: this.token, username: this.username, randomInt: _intToRefresh);
+      profilePict = await _profilePictureController.getImagePicture(user: this, username: this.username);
       return;
     } else {
       _intToRefresh = 0;
       await DefaultCacheManager().removeFile(Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=1");
-      profilePict = await _profilePictureController.getImagePicture(token: this.token, username: this.username, randomInt: _intToRefresh);
+      profilePict = await _profilePictureController.getImagePicture(user: this, username: this.username);
       return;
     }
   }

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:pg_messenger/Constants/constant.dart';
@@ -86,7 +87,7 @@ class MessageController {
         _messageListBuilder.add(message);
         if (message.ownerPicture != null) {
           if (_literalPricutreDictionary[message.owner] != message.ownerPicture) {
-            Image? image = await profilePictureController.getImagePicture(token: user.token, username: message.owner, picture: message.ownerPicture);
+            Image? image = await profilePictureController.getImagePicture(user: user, username: message.owner, picture: message.ownerPicture);
             Widget defaultImage = profilePictureController.defaultImagePicture(message.username, height: 40, width: 40);
             if (image == null) {
               if (_profilePictureByOwner[message.owner] != defaultImage) {
@@ -175,6 +176,8 @@ class MessageController {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(Constant.JSONKEY_TOKEN, "");
     FirebaseMessaging.instance.deleteToken();
+    await DefaultCacheManager().removeFile(Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=0");
+    await DefaultCacheManager().removeFile(Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=1");
   }
 
   prepareNotification() async {
