@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:pg_messenger/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pg_messenger/Constants/constant.dart';
@@ -28,7 +27,6 @@ class _UserSettingsViewState extends State<UserSettingsView> {
   final _newPasswordVerificationController = TextEditingController();
   var _profilePictureController = ProfilePicture();
   var _randomInt = 1;
-  bool _showChangePassword = false;
 
   _UserSettingsViewState(this._messageController) {
     _profilePictureController = ProfilePicture();
@@ -50,7 +48,19 @@ class _UserSettingsViewState extends State<UserSettingsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Modifier mes préférences")),
+      appBar: AppBar(
+        title: Text("Préférences"),
+        actions: [
+          IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () {
+                _messageController.logOut();
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => ConnectionView()), (_) {
+                  return false;
+                });
+              }),
+        ],
+      ),
       body: SafeArea(
         bottom: true,
         child: SingleChildScrollView(
@@ -71,7 +81,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
               ),
               Form(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(20, 50, 20, 0),
                   child: Column(
                     children: [
                       Text(
@@ -85,7 +95,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                           autofillHints: [AutofillHints.password],
                           obscureText: true,
                           autocorrect: false,
-                          decoration: InputDecoration(hintText: "Mot de passe actuelle"),
+                          decoration: InputDecoration(hintText: "Mot de passe actuel"),
                           onFieldSubmitted: (value) {
                             if (_actualPasswordController.text == "") {
                               FocusScope.of(context).unfocus();
@@ -136,31 +146,6 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                       Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: ElevatedButton(onPressed: () => _changePassword(context), child: Text("Changer mon mot de passe")),
-                      ),
-                      TextButton(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 15, 15),
-                          child: Row(
-                            children: [
-                              Spacer(),
-                              Icon(
-                                Icons.logout,
-                                color: Theme.of(context).colorScheme.textDarkModeTitle,
-                              ),
-                              Padding(padding: EdgeInsets.fromLTRB(8, 0, 0, 0)),
-                              Text(
-                                S.of(context).logout_title,
-                                style: TextStyle(color: Theme.of(context).colorScheme.textDarkModeTitle),
-                              )
-                            ],
-                          ),
-                        ),
-                        onPressed: () {
-                          _messageController.logOut();
-                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => ConnectionView()), (_) {
-                            return false;
-                          });
-                        },
                       ),
                     ],
                   ),
