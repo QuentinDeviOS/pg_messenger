@@ -17,8 +17,7 @@ class UserSettingsView extends StatefulWidget {
   const UserSettingsView(this.messageController, this.callback);
 
   @override
-  _UserSettingsViewState createState() =>
-      _UserSettingsViewState(this.messageController);
+  _UserSettingsViewState createState() => _UserSettingsViewState(this.messageController);
 }
 
 class _UserSettingsViewState extends State<UserSettingsView> {
@@ -37,8 +36,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
     super.initState();
   }
 
-  final TextEditingController _actualPasswordController =
-      TextEditingController();
+  final TextEditingController _actualPasswordController = TextEditingController();
   final FocusNode _focusFirstNewPassword = FocusNode();
   final TextEditingController _firstNewPassword = TextEditingController();
   final FocusNode _focusSecondNewPassword = FocusNode();
@@ -54,9 +52,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
               icon: const Icon(Icons.logout),
               onPressed: () {
                 _messageController.logOut();
-                Navigator.pushAndRemoveUntil(context,
-                    MaterialPageRoute(builder: (context) => ConnectionView()),
-                    (_) {
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => ConnectionView()), (_) {
                   return false;
                 });
               }),
@@ -87,8 +83,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                     children: [
                       Text(
                         S.of(context).settings_change_password_title,
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.w600),
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -98,8 +93,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                           obscureText: true,
                           autocorrect: false,
                           textInputAction: TextInputAction.next,
-                          decoration: InputDecoration(
-                              hintText: S.of(context).settings_actual_password),
+                          decoration: InputDecoration(hintText: S.of(context).settings_actual_password),
                           onFieldSubmitted: (value) {
                             if (_actualPasswordController.text == "") {
                               FocusScope.of(context).unfocus();
@@ -119,8 +113,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                           obscureText: true,
                           autocorrect: false,
                           textInputAction: TextInputAction.next,
-                          decoration: InputDecoration(
-                              hintText: S.of(context).settings_new_password),
+                          decoration: InputDecoration(hintText: S.of(context).settings_new_password),
                           onFieldSubmitted: (value) {
                             if (_actualPasswordController.text == "") {
                               FocusScope.of(context).unfocus();
@@ -140,8 +133,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                           obscureText: true,
                           autocorrect: false,
                           textInputAction: TextInputAction.done,
-                          decoration: InputDecoration(
-                              hintText: S.of(context).settings_new_password),
+                          decoration: InputDecoration(hintText: S.of(context).settings_new_password),
                           onFieldSubmitted: (value) {
                             if (_actualPasswordController.text == "") {
                               FocusScope.of(context).unfocus();
@@ -151,10 +143,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(20.0),
-                        child: ElevatedButton(
-                            onPressed: () => _changePassword(context),
-                            child: Text(
-                                S.of(context).settings_change_password_button)),
+                        child: ElevatedButton(onPressed: () => _changePassword(context), child: Text(S.of(context).settings_change_password_button)),
                       ),
                     ],
                   ),
@@ -177,10 +166,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
             child: _messageController.currentUser.profilePict,
           ));
     }
-    return _profilePictureController.defaultImagePicture(
-        _messageController.currentUser.username,
-        height: 150,
-        width: 150);
+    return _profilePictureController.defaultImagePicture(_messageController.currentUser.username, height: 150, width: 150);
   }
 
   onTapAddingPicture(context) async {
@@ -202,8 +188,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                       await _profilePictureController.getImage(
                         _messageController.currentUser,
                         () async {
-                          await _messageController.currentUser
-                              .getImagePicture();
+                          await _messageController.currentUser.getImagePicture();
                           setState(() {
                             widget.callback();
                           });
@@ -237,17 +222,12 @@ class _UserSettingsViewState extends State<UserSettingsView> {
         });
   }
 
-  Future<Response> _updatePassword(
-      User user, String currentPassword, String newPassword) async {
+  Future<Response> _updatePassword(User user, String currentPassword, String newPassword) async {
     Map<String, String> headers = Map();
     headers["Authorization"] = "Bearer ${user.token}";
     headers["Content-Type"] = "application/json; charset=utf-8";
-    var body = JsonEncoder().convert(
-        {"currentPassword": currentPassword, "newPassword": newPassword});
-    var response = await http.post(
-        Uri.parse(Constant.URL_WEB_SERVER_BASE + '/users/update-password'),
-        headers: headers,
-        body: body);
+    var body = JsonEncoder().convert({"currentPassword": currentPassword, "newPassword": newPassword});
+    var response = await http.post(Uri.parse(Constant.URL_WEB_SERVER_BASE + '/users/update-password'), headers: headers, body: body);
     return response;
   }
 
@@ -260,16 +240,13 @@ class _UserSettingsViewState extends State<UserSettingsView> {
       _wrongInput(context, S.of(context).register_error_password);
       return null;
     } else if (newPassword.isNotEmpty) {
-      final response = await _updatePassword(
-          _messageController.currentUser, password, newPassword);
-      if (response.statusCode == 401) {
-        _wrongUpdatePassword(
-            context, S.of(context).settings_wrong_actual_password);
-      } else if (response.statusCode == 200) {
-        await Navigator.push(
-            context, MaterialPageRoute(builder: (context) => LoadingView()));
+      final response = await _updatePassword(_messageController.currentUser, password, newPassword);
+      if (response.statusCode == 200) {
+        await Navigator.push(context, MaterialPageRoute(builder: (context) => LoadingView()));
+      } else if (response.statusCode == 401) {
+        _wrongUpdatePassword(context, S.of(context).settings_wrong_actual_password, response.statusCode);
       } else {
-        _wrongUpdatePassword(context, jsonDecode(response.body)["reason"]);
+        _wrongUpdatePassword(context, jsonDecode(response.body)["reason"], response.statusCode);
       }
       return null;
     }
@@ -293,7 +270,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
     );
   }
 
-  _wrongUpdatePassword(BuildContext context, String error) {
+  _wrongUpdatePassword(BuildContext context, String? error, int statusCode) {
     Widget okButton = TextButton(
       child: Text(S.of(context).register_alert_OK_button),
       onPressed: () => Navigator.of(context).pop(),
@@ -301,7 +278,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
 
     AlertDialog alert = AlertDialog(
       title: Text(S.of(context).register_alert_title),
-      content: Text(error),
+      content: Text(error ?? S.of(context).settings_default_message_error_new_password + "$statusCode"),
       actions: [okButton],
     );
 

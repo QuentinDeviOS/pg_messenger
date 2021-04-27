@@ -476,6 +476,16 @@ class S {
       args: [],
     );
   }
+
+  /// `An error has occurred, error code: `
+  String get settings_default_message_error_new_password {
+    return Intl.message(
+      'An error has occurred, error code: ',
+      name: 'settings_default_message_error_new_password',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
