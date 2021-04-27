@@ -417,20 +417,20 @@ class S {
     );
   }
 
-  /// `Change profil picture`
+  /// `Change my profile picture`
   String get settings_change_picture {
     return Intl.message(
-      'Change profil picture',
+      'Change my profile picture',
       name: 'settings_change_picture',
       desc: '',
       args: [],
     );
   }
 
-  /// `Change password:`
+  /// `Change my password`
   String get settings_change_password_title {
     return Intl.message(
-      'Change password:',
+      'Change my password',
       name: 'settings_change_password_title',
       desc: '',
       args: [],
