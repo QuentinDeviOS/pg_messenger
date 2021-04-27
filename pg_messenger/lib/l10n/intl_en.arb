@@ -40,5 +40,6 @@
     "settings_change_password_title": "Change password:",
     "settings_actual_password": "Actual password",
     "settings_new_password": "New password",
-    "settings_change_password_button": "Change password"
+    "settings_change_password_button": "Change password",
+    "settings_wrong_actual_password": "Please check your actual password"
 }

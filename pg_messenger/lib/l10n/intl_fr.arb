@@ -40,5 +40,6 @@
     "settings_change_password_title": "Changer mon mot de passe :",
     "settings_actual_password": "Mot de passe actuel",
     "settings_new_password": "Nouveau mot de passe",
-    "settings_change_password_button": "Changer mon mot de passe"
+    "settings_change_password_button": "Changer mon mot de passe",
+    "settings_wrong_actual_password": "Veuillez vérifier votre mot de passe actuel"
 }

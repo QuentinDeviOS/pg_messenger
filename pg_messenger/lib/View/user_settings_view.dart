@@ -98,8 +98,8 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                           obscureText: true,
                           autocorrect: false,
                           textInputAction: TextInputAction.next,
-                          decoration:
-                              InputDecoration(hintText: S.of(context).settings_actual_password),
+                          decoration: InputDecoration(
+                              hintText: S.of(context).settings_actual_password),
                           onFieldSubmitted: (value) {
                             if (_actualPasswordController.text == "") {
                               FocusScope.of(context).unfocus();
@@ -119,8 +119,8 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                           obscureText: true,
                           autocorrect: false,
                           textInputAction: TextInputAction.next,
-                          decoration:
-                              InputDecoration(hintText: S.of(context).settings_new_password),
+                          decoration: InputDecoration(
+                              hintText: S.of(context).settings_new_password),
                           onFieldSubmitted: (value) {
                             if (_actualPasswordController.text == "") {
                               FocusScope.of(context).unfocus();
@@ -140,8 +140,8 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                           obscureText: true,
                           autocorrect: false,
                           textInputAction: TextInputAction.done,
-                          decoration:
-                              InputDecoration(hintText: S.of(context).settings_new_password),
+                          decoration: InputDecoration(
+                              hintText: S.of(context).settings_new_password),
                           onFieldSubmitted: (value) {
                             if (_actualPasswordController.text == "") {
                               FocusScope.of(context).unfocus();
@@ -153,7 +153,8 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                         padding: const EdgeInsets.all(20.0),
                         child: ElevatedButton(
                             onPressed: () => _changePassword(context),
-                            child: Text(S.of(context).settings_change_password_button)),
+                            child: Text(
+                                S.of(context).settings_change_password_button)),
                       ),
                     ],
                   ),
@@ -261,7 +262,10 @@ class _UserSettingsViewState extends State<UserSettingsView> {
     } else if (newPassword.isNotEmpty) {
       final response = await _updatePassword(
           _messageController.currentUser, password, newPassword);
-      if (response.statusCode == 200) {
+      if (response.statusCode == 401) {
+        _wrongUpdatePassword(
+            context, S.of(context).settings_wrong_actual_password);
+      } else if (response.statusCode == 200) {
         await Navigator.push(
             context, MaterialPageRoute(builder: (context) => LoadingView()));
       } else {

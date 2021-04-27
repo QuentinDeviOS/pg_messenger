@@ -64,6 +64,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "settings_change_password_title" : MessageLookupByLibrary.simpleMessage("Changer mon mot de passe :"),
     "settings_change_picture" : MessageLookupByLibrary.simpleMessage("Changer ma photo de profil"),
     "settings_new_password" : MessageLookupByLibrary.simpleMessage("Nouveau mot de passe"),
-    "settings_title" : MessageLookupByLibrary.simpleMessage("Préférences")
+    "settings_title" : MessageLookupByLibrary.simpleMessage("Préférences"),
+    "settings_wrong_actual_password" : MessageLookupByLibrary.simpleMessage("Veuillez vérifier votre mot de passe actuel")
   };
 }

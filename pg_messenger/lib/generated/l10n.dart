@@ -466,6 +466,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Please check your actual password`
+  String get settings_wrong_actual_password {
+    return Intl.message(
+      'Please check your actual password',
+      name: 'settings_wrong_actual_password',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
