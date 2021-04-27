@@ -42,5 +42,5 @@
     "settings_new_password": "Nouveau mot de passe",
     "settings_change_password_button": "Changer mon mot de passe",
     "settings_wrong_actual_password": "Veuillez vérifier votre mot de passe actuel",
-    "settings_default_message_error_new_password": "Une erreur est surevenue, code erreur: "
+    "settings_default_message_error_new_password": "Une erreur est survenue, code erreur : "
 }

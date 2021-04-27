@@ -28,7 +28,7 @@
     "message_report": " report abuse",
     "message_delete": " delete message",
     "message_under_moderation": "Message under moderation",
-    "picture_import_gallery":"Import from gallery",
+    "picture_import_gallery": "Import from gallery",
     "picture_new": "Take new picture",
     "channel": "Channels",
     "channel_new_title": "Create new channel",
@@ -42,5 +42,5 @@
     "settings_new_password": "New password",
     "settings_change_password_button": "Change password",
     "settings_wrong_actual_password": "Please check your actual password",
-    "settings_default_message_error_new_password": "An error has occurred, error code: "
+    "settings_default_message_error_new_password": "An error has occurred, code: "
 }

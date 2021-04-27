@@ -477,10 +477,10 @@ class S {
     );
   }
 
-  /// `An error has occurred, error code: `
+  /// `An error has occurred, code: `
   String get settings_default_message_error_new_password {
     return Intl.message(
-      'An error has occurred, error code: ',
+      'An error has occurred, code: ',
       name: 'settings_default_message_error_new_password',
       desc: '',
       args: [],

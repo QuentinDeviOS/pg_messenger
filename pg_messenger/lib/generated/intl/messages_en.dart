@@ -63,7 +63,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "settings_change_password_button" : MessageLookupByLibrary.simpleMessage("Change password"),
     "settings_change_password_title" : MessageLookupByLibrary.simpleMessage("Change password:"),
     "settings_change_picture" : MessageLookupByLibrary.simpleMessage("Change profil picture"),
-    "settings_default_message_error_new_password" : MessageLookupByLibrary.simpleMessage("An error has occurred, error code: "),
+    "settings_default_message_error_new_password" : MessageLookupByLibrary.simpleMessage("An error has occurred, code: "),
     "settings_new_password" : MessageLookupByLibrary.simpleMessage("New password"),
     "settings_title" : MessageLookupByLibrary.simpleMessage("Settings"),
     "settings_wrong_actual_password" : MessageLookupByLibrary.simpleMessage("Please check your actual password")

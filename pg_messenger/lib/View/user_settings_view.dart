@@ -240,11 +240,14 @@ class _UserSettingsViewState extends State<UserSettingsView> {
       _wrongInput(context, S.of(context).register_error_password);
       return null;
     } else if (newPassword.isNotEmpty) {
-      final response = await _updatePassword(_messageController.currentUser, password, newPassword);
-      if (response.statusCode == 200) {
-        await Navigator.push(context, MaterialPageRoute(builder: (context) => LoadingView()));
-      } else if (response.statusCode == 401) {
-        _wrongUpdatePassword(context, S.of(context).settings_wrong_actual_password, response.statusCode);
+      final response = await _updatePassword(
+          _messageController.currentUser, password, newPassword);
+      if (response.statusCode == 401) {
+        _wrongUpdatePassword(
+            context, S.of(context).settings_wrong_actual_password, response.statusCode);
+      } else if (response.statusCode == 200) {
+        await Navigator.push(
+            context, MaterialPageRoute(builder: (context) => LoadingView()));
       } else {
         _wrongUpdatePassword(context, jsonDecode(response.body)["reason"], response.statusCode);
       }
