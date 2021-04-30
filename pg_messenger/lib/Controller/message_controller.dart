@@ -259,6 +259,7 @@ class MessageController {
       _sendMessage(message);
     }
     _textController.text = "";
+    _oldPositionScrollMax = _scrollController.position.pixels;
   }
 
   jumpToEndAfterImageLoaded() {
