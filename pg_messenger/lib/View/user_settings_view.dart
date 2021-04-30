@@ -68,7 +68,10 @@ class _UserSettingsViewState extends State<UserSettingsView> {
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: Text(_messageController.currentUser.username, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),),
+                  child: Text(
+                    _messageController.currentUser.username,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                  ),
                 ),
               ),
               ChangePassword(_messageController),
@@ -108,10 +111,10 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                   child: ListTile(
                     title: Text(S.of(context).picture_import_gallery),
                     onTap: () async {
-                      await _profilePictureController.getImage(
+                      await _profilePictureController.getImageFromGalleryAndUpload(
                         _messageController.currentUser,
-                        () async {
-                          await _messageController.currentUser.getImagePicture();
+                        (imageName) async {
+                          await _messageController.currentUser.getImagePicture(imageName);
                           setState(() {
                             widget.callback();
                           });
@@ -126,10 +129,10 @@ class _UserSettingsViewState extends State<UserSettingsView> {
               ListTile(
                 title: Text(S.of(context).picture_new),
                 onTap: () async {
-                  await _profilePictureController.takePicture(
+                  await _profilePictureController.takePictureAndUpload(
                     _messageController.currentUser,
-                    onComplete: () async {
-                      await _messageController.currentUser.getImagePicture();
+                    onComplete: (imageName) async {
+                      await _messageController.currentUser.getImagePicture(imageName);
                       setState(() {
                         widget.callback();
                       });

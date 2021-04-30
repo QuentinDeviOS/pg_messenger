@@ -51,7 +51,7 @@ class ProfilePicture {
     }
   }
 
-  Future uploadProfilePict(PickedFile? image, User currentUser, Function onUploadComplete) async {
+  Future uploadProfilePict(PickedFile? image, User currentUser, Function(String imageName) onUploadComplete) async {
     if (image != null) {
       http.MultipartFile _image = await http.MultipartFile.fromPath('file', image.path);
 
@@ -64,7 +64,7 @@ class ProfilePicture {
       request.files.add(_image);
       var response = await request.send();
       if (response.statusCode == 200) {
-        onUploadComplete();
+        onUploadComplete(image.path);
       }
     }
   }
@@ -85,15 +85,15 @@ class ProfilePicture {
     );
   }
 
-  Future takePicture(User currentUser, {required Function() onComplete}) async {
+  Future takePictureAndUpload(User currentUser, {required Function(String imageName) onComplete}) async {
     final imagePicker = ImagePicker();
-    final image = await imagePicker.getImage(source: ImageSource.camera);
-    return await uploadProfilePict(image, currentUser, () => onComplete());
+    final image = await imagePicker.getImage(source: ImageSource.camera, imageQuality: 25);
+    return await uploadProfilePict(image, currentUser, (imageName) => onComplete(imageName));
   }
 
-  Future getImage(User currentUser, Function() onComplete) async {
+  Future getImageFromGalleryAndUpload(User currentUser, Function(String imageName) onComplete) async {
     final imagePicker = ImagePicker();
-    final image = await imagePicker.getImage(source: ImageSource.gallery);
-    await uploadProfilePict(image, currentUser, () => onComplete());
+    final image = await imagePicker.getImage(source: ImageSource.gallery, imageQuality: 25);
+    await uploadProfilePict(image, currentUser, (imageName) => onComplete(imageName));
   }
 }

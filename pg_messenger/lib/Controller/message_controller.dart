@@ -50,7 +50,7 @@ class MessageController {
 
   MessageController(this._currentUser, this._channelList) {
     prepareNotification();
-    _currentUser.getImagePicture();
+    _currentUser.getImagePicture(_currentUser.picture);
     connectToWs(_currentUser, _currentChannel);
   }
 
