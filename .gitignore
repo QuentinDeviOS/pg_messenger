@@ -4,3 +4,7 @@ pg_messenger/ios/Flutter/Debug.xcconfig
 pg_messenger/ios/Flutter/Release.xcconfig
 /.DS_Store
 pg_messenger/ios/Runner.xcodeproj/project.pbxproj
+*.xcbuild
+pg_messenger/ios/build/XCBuildData/build.db
+pg_messenger/ios/build/XCBuildData/BuildDescriptionCacheIndex-94d14a191cdafb470140bd78292f2ba5
+pg_messenger/ios/GoogleService-Info.plist
