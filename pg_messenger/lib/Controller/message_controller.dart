@@ -176,8 +176,7 @@ class MessageController {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(Constant.JSONKEY_TOKEN, "");
     FirebaseMessaging.instance.deleteToken();
-    await DefaultCacheManager().removeFile(Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=0");
-    await DefaultCacheManager().removeFile(Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=1");
+    await DefaultCacheManager().removeFile(Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=${_currentUser.picture}");
   }
 
   prepareNotification() async {
