@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Controller/channel_controller.dart';
@@ -31,7 +32,7 @@ class LoadingView extends StatelessWidget {
       final channelList = await channelController.getChannels(token);
       if (channelList != null && user != null) {
         final MessageController _messageController = MessageController(user, channelList);
-        await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MessageView(_messageController)));
+        await Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => MessageView(_messageController)));
         return;
       }
     }

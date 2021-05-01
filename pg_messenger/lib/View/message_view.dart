@@ -76,11 +76,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
           IconButton(
               icon: const Icon(Icons.settings),
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            UserSettingsView(_messageController, () {})));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => UserSettingsView(_messageController, () {})));
               }),
         ],
       ),
@@ -93,10 +89,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                  controller: _messageController.scrollController,
-                  itemBuilder: _singleMessage,
-                  itemCount: _messageController.messageList.length),
+              child: ListView.builder(controller: _messageController.scrollController, itemBuilder: _singleMessage, itemCount: _messageController.messageList.length),
             ),
             Form(
               child: Row(
@@ -167,8 +160,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       _messageController.goToEndList();
     });
-    if (_messageController.messageList[num].channel ==
-        _messageController.currentChannel) {
+    if (_messageController.messageList[num].channel == _messageController.currentChannel) {
       return Card(
         child: Container(
           padding: EdgeInsets.fromLTRB(10, 20, 0, 20),
@@ -186,58 +178,38 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                           child: Container(
                             height: 40,
                             width: 40,
-                            child: _messageController.ownerImageMap[
-                                _messageController.messageList[num].owner],
+                            child: _messageController.ownerImageMap[_messageController.messageList[num].owner],
                           ),
                         )),
                     Text(
                       _messageController.messageList[num].username,
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color:
-                              Theme.of(context).colorScheme.textDarkModeTitle),
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.textDarkModeTitle),
                     ),
                     Spacer(),
-                    Text(_messageController.formatedTimestamp(
-                        _messageController.messageList[num].timestamp,
-                        context)),
+                    Text(_messageController.formatedTimestamp(_messageController.messageList[num].timestamp, context)),
                     if (_messageController.messageList[num].flag != true)
                       PopupMenuButton(
                         icon: Icon(Icons.more_vert),
                         onSelected: (value) {
                           if (value == "report") {
-                            _messageController.reportMessage(
-                                _messageController.messageList[num],
-                                _messageController.currentUser);
+                            _messageController.reportMessage(_messageController.messageList[num], _messageController.currentUser);
                           }
                           if (value == "delete") {
-                            _messageController.deleteMessage(
-                                _messageController.messageList[num],
-                                _messageController.currentUser);
+                            _messageController.deleteMessage(_messageController.messageList[num], _messageController.currentUser);
                           }
                         },
-                        itemBuilder: (context) => messagePopUpItem(
-                            _messageController.messageList[num]),
+                        itemBuilder: (context) => messagePopUpItem(_messageController.messageList[num]),
                       )
                   ],
                 ),
               ),
-              if (_messageController.messageList[num].isPicture == null ||
-                  (_messageController.messageList[num].flag != true &&
-                      !_messageController.messageList[num].isPicture!))
+              if (_messageController.messageList[num].isPicture == null || (_messageController.messageList[num].flag != true && !_messageController.messageList[num].isPicture!))
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                   child: Text(_messageController.messageList[num].message),
                 ),
-              if (_messageController.messageList[num].isPicture != null &&
-                  _messageController.messageList[num].flag != true &&
-                  _messageController.messageList[num].isPicture!)
-                imageMessage(
-                    message: _messageController.messageList[num],
-                    messageController: _messageController),
-              if (_messageController.messageList[num].flag == true)
-                Text(S.of(context).message_under_moderation)
+              if (_messageController.messageList[num].isPicture != null && _messageController.messageList[num].flag != true && _messageController.messageList[num].isPicture!) imageMessage(message: _messageController.messageList[num], messageController: _messageController, context: context),
+              if (_messageController.messageList[num].flag == true) Text(S.of(context).message_under_moderation)
             ],
           ),
         ),
@@ -266,8 +238,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
             ],
           ),
         ),
-      if (_messageController.currentUser.isModerator == true ||
-          message.owner == _messageController.currentUser.id)
+      if (_messageController.currentUser.isModerator == true || message.owner == _messageController.currentUser.id)
         PopupMenuItem(
           value: "delete",
           child: Row(

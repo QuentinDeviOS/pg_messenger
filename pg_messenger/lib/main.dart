@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
 
 extension CustomColors on ColorScheme {
   Color get textDarkModeTitle => brightness == Brightness.light ? Colors.grey.shade700 : Colors.grey.shade400;
+  Color get bakgroundImageCard => brightness == Brightness.light ? Colors.grey.shade300 : Colors.grey.shade900;
 }
 
 MaterialColor purpleGiraffe = MaterialColor(0xFF9C386C, pgColour);

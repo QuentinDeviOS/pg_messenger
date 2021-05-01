@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pg_messenger/Controller/channel_controller.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
@@ -84,7 +85,7 @@ class _CreateChannelViewState extends State<CreateChannelView> {
       var responseCode = await _channelController.createNewChannel(widget._messageController.currentUser, name: _controller.text, isPublic: isPublic);
       if (responseCode == 200) {
         final channelList = await channelController.getChannels(widget._messageController.currentUser.token);
-        await Navigator.pushReplacement(context, MaterialPageRoute(
+        await Navigator.pushReplacement(context, CupertinoPageRoute(
           builder: (context) {
             if (channelList != null) {
               final messageController = MessageController(widget._messageController.currentUser, channelList);
