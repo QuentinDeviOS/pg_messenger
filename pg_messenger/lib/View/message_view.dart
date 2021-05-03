@@ -190,6 +190,23 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     if (_messageController.messageList[num].channel ==
         _messageController.currentChannel) {
       return Column(children: [
+        if ((num > 0 &&
+                _messageController.messageList[num - 1].timestamp!.day !=
+                    _messageController.messageList[num].timestamp!.day) ||
+            num == 0)
+          Row(
+            children: [
+              Expanded(child: Container()),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  _messageController.messageList[num].timestamp?.day ?? "",
+                  style: TextStyle(fontSize: 14.0),
+                ),
+              ),
+              Expanded(child: Container()),
+            ],
+          ),
         if (!isOwn)
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -206,17 +223,6 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                 ),
               ),
               Spacer(),
-              if ((num > 0 &&
-                      _messageController.messageList[num - 1].timestamp!.day !=
-                          _messageController.messageList[num].timestamp!.day) ||
-                  num == 0)
-                Padding(
-                  padding: const EdgeInsets.only(right: 5.0),
-                  child: Text(
-                    _messageController.messageList[num].timestamp?.day ?? "",
-                    style: TextStyle(fontSize: 14.0),
-                  ),
-                ),
             ],
           ),
         Row(
