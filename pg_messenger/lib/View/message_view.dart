@@ -176,6 +176,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
 
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       _messageController.goToEndList();
+      setState(() {});
     });
     if (_messageController.messageList[num].channel == _messageController.currentChannel) {
       return GestureDetector(
@@ -183,16 +184,19 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
           print(details.delta.dx);
           print(details.localPosition.dx);
           if (details.delta.dx < 0) {
-            showTimestampMessage = true;
-            setState(() {});
+            setState(() {
+              showTimestampMessage = true;
+            });
           } else {
-            showTimestampMessage = false;
-            setState(() {});
+            setState(() {
+              showTimestampMessage = false;
+            });
           }
         },
         onHorizontalDragEnd: (details) {
-          showTimestampMessage = false;
-          setState(() {});
+          setState(() {
+            showTimestampMessage = false;
+          });
         },
         child: Column(children: [
           if ((num > 0 && _messageController.messageList[num - 1].timestamp!.day != _messageController.messageList[num].timestamp!.day) || num == 0)
