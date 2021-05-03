@@ -4,6 +4,7 @@ import 'package:focused_menu/modals.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/View/Widgets/message_bubble.dart';
 import 'package:pg_messenger/View/Widgets/message_content.dart';
+import 'package:pg_messenger/generated/l10n.dart';
 
 class SingleMessage extends StatelessWidget {
   final MessageController messageController;
@@ -45,7 +46,7 @@ class SingleMessage extends StatelessWidget {
             messageController.currentUser.id)
           FocusedMenuItem(
               title: Text(
-                "Report this message",
+                S.of(context).message_report,
                 style: TextStyle(color: Colors.orange),
               ),
               trailingIcon: Icon(
@@ -63,7 +64,7 @@ class SingleMessage extends StatelessWidget {
                 messageController.currentUser.id)
           FocusedMenuItem(
               title: Text(
-                "Delete this message",
+                S.of(context).message_delete,
                 style: TextStyle(color: Colors.red),
               ),
               trailingIcon: Icon(
@@ -80,7 +81,7 @@ class SingleMessage extends StatelessWidget {
             messageController.messageList[num].flag == true)
           FocusedMenuItem(
               title: Text(
-                "Unflag this message",
+                S.of(context).message_unflag,
                 style: TextStyle(color: Colors.green),
               ),
               trailingIcon: Icon(

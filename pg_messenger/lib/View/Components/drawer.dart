@@ -3,7 +3,6 @@ import 'package:pg_messenger/Controller/message_controller.dart';
 import 'package:pg_messenger/Controller/profile_picture_controller.dart';
 import 'package:pg_messenger/generated/l10n.dart';
 import 'package:pg_messenger/main.dart';
-
 import '../create_channel_view.dart';
 import '../user_settings_view.dart';
 
