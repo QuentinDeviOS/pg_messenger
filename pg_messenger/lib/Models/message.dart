@@ -1,12 +1,12 @@
 import 'package:pg_messenger/Constants/constant.dart';
-import 'package:pg_messenger/Models/timestamp.dart';
+import 'timestamp.dart';
 
 class Message {
   final String _username;
   final String _message;
   final String _ownerID;
   final String _messageID;
-  DateTime? _timestamp;
+  double? _timestamp;
   bool? _flag;
   bool? _isPicture;
   final String? _channel;
@@ -21,17 +21,15 @@ class Message {
   String? get channel => _channel;
   String? get ownerPicture => _ownerPicture;
   Timestamp? get timestamp {
-    return (_timestamp != null) ? Timestamp.fromDateTime(_timestamp!) : null;
+    final dateTime = DateTime.fromMillisecondsSinceEpoch((_timestamp! * 1000).truncate());
+    return Timestamp.fromDateTime(dateTime);
   }
 
-  Message(this._messageID, this._message, this._ownerID, this._timestamp,
-      this._username, this._isPicture, this._channel);
+  Message(this._messageID, this._message, this._ownerID, this._timestamp, this._username, this._isPicture, this._channel);
 
   Map<String, dynamic> toJsonForSending() => {
         Constant.JSONKEY_MESSAGE_MESSAGE: message,
-        Constant.JSONKEY_MESSAGE_OWNER: {
-          Constant.JSONKEY_MESSAGE_OWNER_ID: _ownerID
-        },
+        Constant.JSONKEY_MESSAGE_OWNER: {Constant.JSONKEY_MESSAGE_OWNER_ID: _ownerID},
         Constant.JSONKEY_MESSAGE_IS_PICTURE: _isPicture,
         Constant.JSONKEY_MESSAGE_CHANNEL: _channel
       };
@@ -52,8 +50,7 @@ class Message {
       : _message = json[Constant.JSONKEY_MESSAGE_MESSAGE],
         _ownerID = json[Constant.JSONKEY_MESSAGE_USERID],
         _username = json[Constant.JSONKEY_MESSAGE_USERNAME],
-        _timestamp = DateTime.fromMillisecondsSinceEpoch(
-            json[Constant.JSONKEY_MESSAGE_TIMESTAMP] * 1000),
+        _timestamp = json[Constant.JSONKEY_MESSAGE_TIMESTAMP],
         _messageID = json[Constant.JSONKEY_MESSAGE_ID],
         _flag = json[Constant.JSONKEY_MESSAGE_FLAG],
         _isPicture = json[Constant.JSONKEY_MESSAGE_IS_PICTURE],
