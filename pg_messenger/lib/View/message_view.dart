@@ -87,10 +87,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                  controller: _messageController.scrollController,
-                  itemBuilder: _singleMessageBuilder,
-                  itemCount: _messageController.messageList.length),
+              child: ListView.builder(controller: _messageController.scrollController, itemBuilder: _singleMessageBuilder, itemCount: _messageController.messageList.length),
             ),
             SizedBox(
               height: 5,
@@ -167,21 +164,18 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     Color textColour = Theme.of(context).colorScheme.bubbleMessageDarkModeTexte;
     EdgeInsets messagePadding = EdgeInsets.only(left: 15.0, right: 40.0);
 
-    if (_messageController.messageList[num].owner ==
-        _messageController.currentUser.id) {
+    if (_messageController.messageList[num].owner == _messageController.currentUser.id) {
       isOwn = true;
       axisMessage = MainAxisAlignment.end;
       messageColour = Theme.of(context).colorScheme.bubbleMessageDarkModeAdmin;
-      textColour =
-          Theme.of(context).colorScheme.bubbleMessageDarkModeAdminTexte;
+      textColour = Theme.of(context).colorScheme.bubbleMessageDarkModeAdminTexte;
       messagePadding = EdgeInsets.only(right: 25.0);
     }
 
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       _messageController.goToEndList();
     });
-    if (_messageController.messageList[num].channel ==
-        _messageController.currentChannel) {
+    if (_messageController.messageList[num].channel == _messageController.currentChannel) {
       return Column(children: [
         if (!isOwn)
           Row(
@@ -191,10 +185,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                 padding: EdgeInsets.only(left: 60.0),
                 child: Text(
                   _messageController.messageList[num].username,
-                  style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary),
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary),
                   textAlign: TextAlign.left,
                 ),
               ),
@@ -202,8 +193,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
               Padding(
                 padding: const EdgeInsets.only(right: 5.0),
                 child: Text(
-                  _messageController.formatedTimestamp(
-                      _messageController.messageList[num].timestamp, context),
+                  _messageController.formatedTimestamp(_messageController.messageList[num].timestamp, context),
                   style: TextStyle(fontSize: 10.0),
                 ),
               ),
@@ -220,16 +210,13 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
                   child: Container(
                     height: 30,
                     width: 30,
-                    child: _messageController.ownerImageMap[
-                        _messageController.messageList[num].owner],
+                    child: _messageController.ownerImageMap[_messageController.messageList[num].owner],
                   ),
                 ),
               ),
             if (isOwn) Spacer(),
             Container(
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.80,
-              ),
+              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
               child: SingleMessage(
                 messageController: _messageController,
                 num: num,

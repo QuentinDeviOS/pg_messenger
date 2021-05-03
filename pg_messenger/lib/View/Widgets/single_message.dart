@@ -28,7 +28,7 @@ class SingleMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FocusedMenuHolder(
-      menuWidth: MediaQuery.of(context).size.width * 0.60,
+      menuWidth: MediaQuery.of(context).size.width * 0.70,
       blurSize: 5.0,
       menuItemExtent: 45,
       menuBoxDecoration: BoxDecoration(
@@ -42,8 +42,7 @@ class SingleMessage extends StatelessWidget {
       menuOffset: 10.0,
       bottomOffsetHeight: 80.0,
       menuItems: <FocusedMenuItem>[
-        if (messageController.messageList[num].owner !=
-            messageController.currentUser.id)
+        if (messageController.messageList[num].owner != messageController.currentUser.id)
           FocusedMenuItem(
               title: Text(
                 S.of(context).message_report,
@@ -54,14 +53,10 @@ class SingleMessage extends StatelessWidget {
                 color: Colors.orange,
               ),
               onPressed: () {
-                messageController.reportMessage(
-                    messageController.messageList[num],
-                    messageController.currentUser);
+                messageController.reportMessage(messageController.messageList[num], messageController.currentUser);
                 // Navigator.of(context).pop();
               }),
-        if (messageController.currentUser.isModerator == true ||
-            messageController.messageList[num].owner ==
-                messageController.currentUser.id)
+        if (messageController.currentUser.isModerator == true || messageController.messageList[num].owner == messageController.currentUser.id)
           FocusedMenuItem(
               title: Text(
                 S.of(context).message_delete,
@@ -72,13 +67,10 @@ class SingleMessage extends StatelessWidget {
                 color: Colors.red,
               ),
               onPressed: () {
-                messageController.deleteMessage(
-                    messageController.messageList[num],
-                    messageController.currentUser);
+                messageController.deleteMessage(messageController.messageList[num], messageController.currentUser);
                 // Navigator.of(context).pop();
               }),
-        if (messageController.currentUser.isModerator == true &&
-            messageController.messageList[num].flag == true)
+        if (messageController.currentUser.isModerator == true && messageController.messageList[num].flag == true)
           FocusedMenuItem(
               title: Text(
                 S.of(context).message_unflag,
@@ -89,9 +81,7 @@ class SingleMessage extends StatelessWidget {
                 color: Colors.green,
               ),
               onPressed: () {
-                messageController.unflagMessage(
-                    messageController.messageList[num],
-                    messageController.currentUser);
+                messageController.unflagMessage(messageController.messageList[num], messageController.currentUser);
                 // Navigator.of(context).pop();
               }),
       ],
@@ -101,7 +91,8 @@ class SingleMessage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: axisMessage,
           children: <Widget>[
-            Expanded(
+            Flexible(
+              fit: FlexFit.loose,
               child: CustomPaint(
                 painter: MessageBubble(
                   isOwn: isOwn,
@@ -110,8 +101,7 @@ class SingleMessage extends StatelessWidget {
                 ),
                 child: Container(
                   padding: EdgeInsets.all(8),
-                  child: MessageContent(
-                      messageController: messageController, num: num),
+                  child: MessageContent(messageController: messageController, num: num),
                 ),
               ),
             ),
