@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
-import 'package:pg_messenger/View/Widgets/new_single_message.dart';
 import 'package:pg_messenger/View/Widgets/single_message.dart';
 import 'package:pg_messenger/View/user_settings_view.dart';
 import 'package:pg_messenger/main.dart';
@@ -231,7 +230,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
               constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * 0.80,
               ),
-              child: NewSingleMessage(
+              child: SingleMessage(
                 messageController: _messageController,
                 num: num,
                 messagePadding: messagePadding,
