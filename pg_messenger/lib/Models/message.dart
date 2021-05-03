@@ -1,11 +1,12 @@
 import 'package:pg_messenger/Constants/constant.dart';
+import 'package:pg_messenger/Models/timestamp.dart';
 
 class Message {
   final String _username;
   final String _message;
   final String _ownerID;
   final String _messageID;
-  double? _timestamp;
+  DateTime? _timestamp;
   bool? _flag;
   bool? _isPicture;
   final String? _channel;
@@ -19,8 +20,8 @@ class Message {
   bool? get isPicture => _isPicture;
   String? get channel => _channel;
   String? get ownerPicture => _ownerPicture;
-  DateTime? get timestamp {
-    return DateTime.fromMillisecondsSinceEpoch((_timestamp! * 1000).truncate());
+  Timestamp? get timestamp {
+    return (_timestamp != null) ? Timestamp.fromDateTime(_timestamp!) : null;
   }
 
   Message(this._messageID, this._message, this._ownerID, this._timestamp,
@@ -51,7 +52,8 @@ class Message {
       : _message = json[Constant.JSONKEY_MESSAGE_MESSAGE],
         _ownerID = json[Constant.JSONKEY_MESSAGE_USERID],
         _username = json[Constant.JSONKEY_MESSAGE_USERNAME],
-        _timestamp = json[Constant.JSONKEY_MESSAGE_TIMESTAMP],
+        _timestamp = DateTime.fromMillisecondsSinceEpoch(
+            json[Constant.JSONKEY_MESSAGE_TIMESTAMP] * 1000),
         _messageID = json[Constant.JSONKEY_MESSAGE_ID],
         _flag = json[Constant.JSONKEY_MESSAGE_FLAG],
         _isPicture = json[Constant.JSONKEY_MESSAGE_IS_PICTURE],

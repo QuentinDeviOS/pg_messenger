@@ -4,16 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:pg_messenger/Constants/constant.dart';
 import 'package:pg_messenger/Controller/channel_controller.dart';
 import 'package:pg_messenger/Controller/profile_picture_controller.dart';
+import 'package:pg_messenger/Controller/timestamp_controller.dart';
 import 'package:pg_messenger/Models/channel.dart';
 import 'package:pg_messenger/Models/message.dart';
 import 'package:pg_messenger/Controller/web_socket_controller.dart';
 import 'package:pg_messenger/Models/user.dart';
 import 'package:http/http.dart' as http;
-import 'package:pg_messenger/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MessageController {
@@ -30,6 +29,7 @@ class MessageController {
   final ImagePicker imagePicker = ImagePicker();
   final channelController = ChannelController();
   final profilePictureController = ProfilePicture();
+  final TimestampController timestampController = TimestampController();
 
   final User _currentUser;
   final _textController = TextEditingController();
@@ -268,7 +268,8 @@ class MessageController {
     _isCurrentView = true;
     _oldPositionScrollMax = 0;
     _scrollController.addListener(() {
-      if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
         inputFieldNode.unfocus();
       }
     });
@@ -277,7 +278,8 @@ class MessageController {
   onChangeMetrics(double value) {
     if (value > 0) {
       if (_scrollController.position.pixels == _oldPositionScrollMax) {
-        _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
+        _scrollController.position
+            .jumpTo(_scrollController.position.maxScrollExtent);
       }
     }
   }
@@ -305,7 +307,8 @@ class MessageController {
           _scrollController.position.maxScrollExtent);
     } else if (_oldPositionScrollMax == 0) {
       _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-      _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);
+      _scrollController.position
+          .jumpTo(_scrollController.position.maxScrollExtent);
     }
     _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
     return;
@@ -313,7 +316,8 @@ class MessageController {
 
   void sendMessage() {
     if (_textController.text.isNotEmpty) {
-      final message = createNewMessageFromString(_textController.text, _currentUser, _currentChannel);
+      final message = createNewMessageFromString(
+          _textController.text, _currentUser, _currentChannel);
       _sendMessage(message);
     }
     _textController.text = "";
@@ -326,31 +330,13 @@ class MessageController {
     }
   }
 
-  onTapDrawerListTile(int num, BuildContext context, Function onChannelVerify) async {
+  onTapDrawerListTile(
+      int num, BuildContext context, Function onChannelVerify) async {
     if (_currentChannel != _channelList[num].id) {
       _title = _channelList[num].name;
       _currentChannel = _channelList[num].id;
       launchStream(onNewMessage: () => onChannelVerify());
     }
     Navigator.pop(context);
-  }
-
-  String formatedTimestamp(DateTime? timestamp, BuildContext context) {
-    if (timestamp != null) {
-      final now = DateTime.now();
-      final today = DateTime(now.year, now.month, now.day);
-      final difference = today.compareTo(timestamp);
-      if (difference == 1) {
-        return DateFormat("d MMM").format(timestamp).toString();
-      } else if (difference == 0) {
-        return S.of(context).message_just_now;
-      } else if (difference == -1) {
-        return DateFormat("Hm").format(timestamp).toString();
-      } else {
-        return "";
-      }
-    } else {
-      return "";
-    }
   }
 }
