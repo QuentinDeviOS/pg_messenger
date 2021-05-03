@@ -21,6 +21,7 @@ class MessageView extends StatefulWidget {
 
 class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   final MessageController _messageController;
+  var showTimestampMessage = false;
 
   _MessageViewState(this._messageController);
 
@@ -75,11 +76,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
           IconButton(
               icon: const Icon(Icons.settings),
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            UserSettingsView(_messageController, () {})));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => UserSettingsView(_messageController, () {})));
               }),
         ],
       ),
@@ -92,10 +89,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                  controller: _messageController.scrollController,
-                  itemBuilder: _singleMessageBuilder,
-                  itemCount: _messageController.messageList.length),
+              child: ListView.builder(controller: _messageController.scrollController, itemBuilder: _singleMessageBuilder, itemCount: _messageController.messageList.length),
             ),
             SizedBox(
               height: 5,
@@ -171,96 +165,110 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     Color messageColour = Theme.of(context).colorScheme.bubbleMessageDarkMode;
     Color textColour = Theme.of(context).colorScheme.bubbleMessageDarkModeTexte;
     EdgeInsets messagePadding = EdgeInsets.only(left: 15.0, right: 40.0);
-    String date = "";
-    bool day = true;
 
-    if (_messageController.messageList[num].owner ==
-        _messageController.currentUser.id) {
+    if (_messageController.messageList[num].owner == _messageController.currentUser.id) {
       isOwn = true;
       axisMessage = MainAxisAlignment.end;
       messageColour = Theme.of(context).colorScheme.bubbleMessageDarkModeAdmin;
-      textColour =
-          Theme.of(context).colorScheme.bubbleMessageDarkModeAdminTexte;
+      textColour = Theme.of(context).colorScheme.bubbleMessageDarkModeAdminTexte;
       messagePadding = EdgeInsets.only(right: 25.0);
     }
 
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       _messageController.goToEndList();
     });
-    if (_messageController.messageList[num].channel ==
-        _messageController.currentChannel) {
-      return Column(children: [
-        if ((num > 0 &&
-                _messageController.messageList[num - 1].timestamp!.day !=
-                    _messageController.messageList[num].timestamp!.day) ||
-            num == 0)
-          Row(
-            children: [
-              Expanded(child: Container()),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Text(
-                  _messageController.messageList[num].timestamp?.day ?? "",
-                  style: TextStyle(fontSize: 14.0),
-                ),
-              ),
-              Expanded(child: Container()),
-            ],
-          ),
-        if (!isOwn)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                padding: EdgeInsets.only(left: 60.0),
-                child: Text(
-                  _messageController.messageList[num].username,
-                  style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              Spacer(),
-            ],
-          ),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            if (!isOwn)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(60),
-                  child: Container(
-                    height: 30,
-                    width: 30,
-                    child: _messageController.ownerImageMap[
-                        _messageController.messageList[num].owner],
+    if (_messageController.messageList[num].channel == _messageController.currentChannel) {
+      return GestureDetector(
+        onHorizontalDragUpdate: (details) {
+          print(details.delta.dx);
+          print(details.localPosition.dx);
+          if (details.delta.dx < 0) {
+            showTimestampMessage = true;
+            setState(() {});
+          } else {
+            showTimestampMessage = false;
+            setState(() {});
+          }
+        },
+        onHorizontalDragEnd: (details) {
+          showTimestampMessage = false;
+          setState(() {});
+        },
+        child: Column(children: [
+          if ((num > 0 && _messageController.messageList[num - 1].timestamp!.day != _messageController.messageList[num].timestamp!.day) || num == 0)
+            Row(
+              children: [
+                Expanded(child: Container()),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
+                  child: Text(
+                    _messageController.messageList[num].timestamp?.day ?? "",
+                    style: TextStyle(fontSize: 14.0),
                   ),
                 ),
-              ),
-            if (isOwn) Spacer(),
-            Container(
-              constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width * 0.75),
-              child: SingleMessage(
-                messageController: _messageController,
-                num: num,
-                messagePadding: messagePadding,
-                axisMessage: axisMessage,
-                isOwn: isOwn,
-                messageColour: messageColour,
-                textColour: textColour,
-              ),
+                Expanded(child: Container()),
+              ],
             ),
-          ],
-        ),
-        SizedBox(
-          height: 20,
-        ),
-      ]);
+          if (!isOwn)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  padding: EdgeInsets.only(left: 60.0),
+                  child: Text(
+                    _messageController.messageList[num].username,
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Spacer(),
+              ],
+            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              if (!isOwn)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(60),
+                    child: Container(
+                      height: 30,
+                      width: 30,
+                      child: _messageController.ownerImageMap[_messageController.messageList[num].owner],
+                    ),
+                  ),
+                ),
+              if (isOwn) Spacer(),
+              Container(
+                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+                child: SingleMessage(
+                  messageController: _messageController,
+                  num: num,
+                  messagePadding: messagePadding,
+                  axisMessage: axisMessage,
+                  isOwn: isOwn,
+                  messageColour: messageColour,
+                  textColour: textColour,
+                ),
+              ),
+              if (showTimestampMessage && _messageController.messageList[num].owner != _messageController.currentUser.id) Spacer(),
+              if (showTimestampMessage)
+                Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: Text(
+                    _messageController.messageList[num].timestamp?.time ?? "",
+                    textAlign: TextAlign.right,
+                  ),
+                )
+            ],
+          ),
+          SizedBox(
+            height: 20,
+          ),
+        ]),
+      );
     } else {
       return Container();
     }
