@@ -40,7 +40,7 @@ class MessageController {
   List<Message> _messageList = [];
   List<Message> _messageListBuilder = [];
   Map<String, Widget> _profilePictureByOwner = Map();
-  Map<String, String?> _literalPricutreDictionary = Map();
+  Map<String, String?> _literalPictureDictionary = Map();
   WebSocketController _webSocketController = WebSocketController();
   bool _isCurrentView = false;
   double? _oldPositionScrollMax;
@@ -58,15 +58,21 @@ class MessageController {
     _webSocketController.connect(user.token, channel);
   }
 
-  Message createNewMessageFromString(String messageString, User user, String? channel) {
+  Message createNewMessageFromString(
+      String messageString, User user, String? channel) {
     return Message("", messageString, user.id, null, "", false, channel);
   }
 
-  Message createNewMessageWithPicture(String picturePath, User user, String? channel) {
+  Message createNewMessageWithPicture(
+      String picturePath, User user, String? channel) {
     return Message("", picturePath, user.id, null, "", true, channel);
   }
 
-  void messageStream({required Function(List<Message> messageList, Map<String, Widget> imageFutureList) onMessageListLoaded, required User user}) async {
+  void messageStream(
+      {required Function(
+              List<Message> messageList, Map<String, Widget> imageFutureList)
+          onMessageListLoaded,
+      required User user}) async {
     _webSocketController.onReceive(onReceiveData: (data) async {
       var haveData = await hasMessages(data, user);
       if (haveData) {
@@ -86,23 +92,31 @@ class MessageController {
         }
         _messageListBuilder.add(message);
         if (message.ownerPicture != null) {
-          if (_literalPricutreDictionary[message.owner] != message.ownerPicture) {
-            Image? image = await profilePictureController.getImagePicture(user: user, username: message.owner, picture: message.ownerPicture);
-            Widget defaultImage = profilePictureController.defaultImagePicture(message.username, height: 40, width: 40);
+          if (_literalPictureDictionary[message.owner] !=
+              message.ownerPicture) {
+            Image? image = await profilePictureController.getImagePicture(
+                user: user,
+                username: message.owner,
+                picture: message.ownerPicture);
+            Widget defaultImage = profilePictureController
+                .defaultImagePicture(message.username, height: 40, width: 40);
             if (image == null) {
               if (_profilePictureByOwner[message.owner] != defaultImage) {
                 _profilePictureByOwner[message.owner] = defaultImage;
-                _literalPricutreDictionary[message.owner] = message.ownerPicture!;
+                _literalPictureDictionary[message.owner] =
+                    message.ownerPicture!;
               }
             } else {
               if (_profilePictureByOwner[message.owner] != image) {
                 _profilePictureByOwner[message.owner] = image;
-                _literalPricutreDictionary[message.owner] = message.ownerPicture!;
+                _literalPictureDictionary[message.owner] =
+                    message.ownerPicture!;
               }
             }
           }
         } else {
-          Widget defaultImage = profilePictureController.defaultImagePicture(message.username, height: 40, width: 40);
+          Widget defaultImage = profilePictureController
+              .defaultImagePicture(message.username, height: 40, width: 40);
           _profilePictureByOwner[message.owner] = defaultImage;
         }
       }
@@ -119,7 +133,22 @@ class MessageController {
     Map<String, String> headers = Map();
     headers["Authorization"] = "Bearer ${user.token}";
     headers["Content-Type"] = "application/json; charset=utf-8";
-    await http.post(Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/report-message"), headers: headers, body: JsonEncoder().convert(message.toJsonForReport()));
+    await http.post(
+        Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/report-message"),
+        headers: headers,
+        body: JsonEncoder().convert(message.toJsonForReport()));
+  }
+
+  unflagMessage(Message message, User user) async {
+    if (user.isModerator == true) {
+      Map<String, String> headers = Map();
+      headers["Authorization"] = "Bearer ${user.token}";
+      headers["Content-Type"] = "application/json; charset=utf-8";
+      await http.post(
+          Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/unflag-message"),
+          headers: headers,
+          body: JsonEncoder().convert(message.toJsonForUnflag()));
+    }
   }
 
   Future takePicture() async {
@@ -134,15 +163,20 @@ class MessageController {
     uploadImage(image, currentUser, _currentChannel);
   }
 
-  Future uploadImage(PickedFile? image, User currentUser, String? channel) async {
+  Future uploadImage(
+      PickedFile? image, User currentUser, String? channel) async {
     if (image != null) {
-      http.MultipartFile _image = await http.MultipartFile.fromPath('file', image.path);
+      http.MultipartFile _image =
+          await http.MultipartFile.fromPath('file', image.path);
 
       Map<String, String> headers = Map();
       headers["Content-Type"] = "multipart/form-data";
       headers["Authorization"] = "Bearer ${currentUser.token}";
 
-      var request = http.MultipartRequest("POST", Uri.parse(Constant.URL_WEB_SERVER_BASE + "/photos/upload-picture?channelID=$channel"));
+      var request = http.MultipartRequest(
+          "POST",
+          Uri.parse(Constant.URL_WEB_SERVER_BASE +
+              "/photos/upload-picture?channelID=$channel"));
       request.headers.addAll(headers);
       request.files.add(_image);
       await request.send();
@@ -154,7 +188,10 @@ class MessageController {
       Map<String, String> headers = Map();
       headers["Authorization"] = "Bearer ${user.token}";
       headers["Content-Type"] = "application/json; charset=utf-8";
-      await http.post(Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/delete-message"), headers: headers, body: JsonEncoder().convert(message.toJsonForDeletion()));
+      await http.post(
+          Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/delete-message"),
+          headers: headers,
+          body: JsonEncoder().convert(message.toJsonForDeletion()));
     }
   }
 
@@ -166,9 +203,16 @@ class MessageController {
     Map<String, String> headers = Map();
     headers["Authorization"] = "Bearer ${_currentUser.token}";
     if (_currentChannel == null) {
-      http.get(Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/refresh-messages"), headers: headers);
+      http.get(
+          Uri.parse(
+              Constant.URL_WEB_SERVER_BASE + "/messages/refresh-messages"),
+          headers: headers);
     } else {
-      http.get(Uri.parse(Constant.URL_WEB_SERVER_BASE + "/messages/refresh-messages?channel=" + _currentChannel!), headers: headers);
+      http.get(
+          Uri.parse(Constant.URL_WEB_SERVER_BASE +
+              "/messages/refresh-messages?channel=" +
+              _currentChannel!),
+          headers: headers);
     }
   }
 
@@ -176,12 +220,22 @@ class MessageController {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(Constant.JSONKEY_TOKEN, "");
     FirebaseMessaging.instance.deleteToken();
-    await DefaultCacheManager().removeFile(Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=${_currentUser.picture}");
+    await DefaultCacheManager().removeFile(
+        Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=0");
+    await DefaultCacheManager().removeFile(
+        Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=1");
   }
 
   prepareNotification() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
-    await messaging.requestPermission(alert: true, announcement: true, badge: true, carPlay: false, criticalAlert: false, provisional: false, sound: true);
+    await messaging.requestPermission(
+        alert: true,
+        announcement: true,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true);
     if (_currentUser.isModerator == true) {
       messaging.subscribeToTopic("moderator");
       messaging.subscribeToTopic("general");
@@ -239,11 +293,16 @@ class MessageController {
   }
 
   goToEndList() async {
-    if (_scrollController.position.pixels == _oldPositionScrollMax && _oldPositionScrollMax != _scrollController.position.maxScrollExtent && _oldPositionScrollMax != 0) {
+    if (_scrollController.position.pixels == _oldPositionScrollMax &&
+        _oldPositionScrollMax != _scrollController.position.maxScrollExtent &&
+        _oldPositionScrollMax != 0) {
       do {
         _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
-        await _scrollController.position.moveTo(_scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 500));
-      } while (_scrollController.position.pixels != _scrollController.position.maxScrollExtent);
+        await _scrollController.position.moveTo(
+            _scrollController.position.maxScrollExtent,
+            duration: Duration(milliseconds: 500));
+      } while (_scrollController.position.pixels !=
+          _scrollController.position.maxScrollExtent);
     } else if (_oldPositionScrollMax == 0) {
       _oldPositionScrollMax = _scrollController.position.maxScrollExtent;
       _scrollController.position.jumpTo(_scrollController.position.maxScrollExtent);

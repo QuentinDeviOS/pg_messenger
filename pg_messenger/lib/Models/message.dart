@@ -23,16 +23,23 @@ class Message {
     return DateTime.fromMillisecondsSinceEpoch((_timestamp! * 1000).truncate());
   }
 
-  Message(this._messageID, this._message, this._ownerID, this._timestamp, this._username, this._isPicture, this._channel);
+  Message(this._messageID, this._message, this._ownerID, this._timestamp,
+      this._username, this._isPicture, this._channel);
 
   Map<String, dynamic> toJsonForSending() => {
         Constant.JSONKEY_MESSAGE_MESSAGE: message,
-        Constant.JSONKEY_MESSAGE_OWNER: {Constant.JSONKEY_MESSAGE_OWNER_ID: _ownerID},
+        Constant.JSONKEY_MESSAGE_OWNER: {
+          Constant.JSONKEY_MESSAGE_OWNER_ID: _ownerID
+        },
         Constant.JSONKEY_MESSAGE_IS_PICTURE: _isPicture,
         Constant.JSONKEY_MESSAGE_CHANNEL: _channel
       };
 
   Map<String, dynamic> toJsonForReport() {
+    return {Constant.JSONKEY_MESSAGE_ID: _messageID};
+  }
+
+  Map<String, dynamic> toJsonForUnflag() {
     return {Constant.JSONKEY_MESSAGE_ID: _messageID};
   }
 
