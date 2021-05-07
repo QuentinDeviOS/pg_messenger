@@ -19,5 +19,24 @@ class Channel {
         this._usersId = json['channelUser'],
         this._id = json['id'];
 
-  toJsonForCreate({required String name, required bool isPublic, required User user}) {}
+  toJsonForCreate(
+      {required String name, required bool isPublic, required User user}) {}
+}
+
+class PublicChannel extends Channel {
+  PublicChannel(String name, List? usersId, String? id)
+      : super(name, true, usersId, id);
+  PublicChannel.fromJson(Map<String, dynamic> json) : super.fromJson(json);
+}
+
+class AdminChannel extends Channel {
+  AdminChannel(String name, List? usersId, String? id)
+      : super(name, false, usersId, id);
+  AdminChannel.fromJson(Map<String, dynamic> json) : super.fromJson(json);
+}
+
+class AllChannels {
+  final List<PublicChannel> publicChannel;
+  final List<AdminChannel> adminChannel;
+  AllChannels(this.publicChannel, this.adminChannel);
 }

@@ -35,7 +35,7 @@ class MessageController {
   final _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-  List<Channel> _channelList;
+ List<Channel> _channelList;
   String? _currentChannel;
   List<Message> _messageList = [];
   List<Message> _messageListBuilder = [];
