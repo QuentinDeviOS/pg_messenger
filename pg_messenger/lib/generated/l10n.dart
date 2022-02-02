@@ -310,21 +310,31 @@ class S {
     );
   }
 
-  /// ` report abuse`
+  /// `Report this message`
   String get message_report {
     return Intl.message(
-      ' report abuse',
+      'Report this message',
       name: 'message_report',
       desc: '',
       args: [],
     );
   }
 
-  /// ` delete message`
+  /// `Delete this message`
   String get message_delete {
     return Intl.message(
-      ' delete message',
+      'Delete this message',
       name: 'message_delete',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unflag this message`
+  String get message_unflag {
+    return Intl.message(
+      'Unflag this message',
+      name: 'message_unflag',
       desc: '',
       args: [],
     );

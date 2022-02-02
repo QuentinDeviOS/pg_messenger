@@ -31,6 +31,11 @@ class MyApp extends StatelessWidget {
 
 extension CustomColors on ColorScheme {
   Color get textDarkModeTitle => brightness == Brightness.light ? Colors.grey.shade700 : Colors.grey.shade400;
+  Color get bubbleMessageDarkMode => brightness == Brightness.light ? Color.fromRGBO(212, 172, 193, 1) : Color.fromRGBO(113, 53, 84, 1);
+  Color get bubbleMessageDarkModeTexte => brightness == Brightness.light ? Colors.black : Colors.white;
+  Color get bubbleMessageDarkModeAdmin => brightness == Brightness.light ? Colors.green.shade300 : Colors.green.shade600;
+  Color get bubbleMessageDarkModeAdminTexte => brightness == Brightness.light ? Colors.black : Colors.white;
+  Color get bubbleMessageImageBackground => brightness == Brightness.light ? Color.fromRGBO(212, 172, 193, 0.7) : Color.fromRGBO(113, 53, 84, 0.4);
 }
 
 MaterialColor purpleGiraffe = MaterialColor(0xFF9C386C, pgColour);

@@ -1,4 +1,5 @@
 import 'package:pg_messenger/Constants/constant.dart';
+import 'timestamp.dart';
 
 class Message {
   final String _username;
@@ -19,8 +20,9 @@ class Message {
   bool? get isPicture => _isPicture;
   String? get channel => _channel;
   String? get ownerPicture => _ownerPicture;
-  DateTime? get timestamp {
-    return DateTime.fromMillisecondsSinceEpoch((_timestamp! * 1000).truncate());
+  Timestamp? get timestamp {
+    final dateTime = DateTime.fromMillisecondsSinceEpoch((_timestamp! * 1000).truncate());
+    return Timestamp.fromDateTime(dateTime);
   }
 
   Message(this._messageID, this._message, this._ownerID, this._timestamp, this._username, this._isPicture, this._channel);
@@ -33,6 +35,10 @@ class Message {
       };
 
   Map<String, dynamic> toJsonForReport() {
+    return {Constant.JSONKEY_MESSAGE_ID: _messageID};
+  }
+
+  Map<String, dynamic> toJsonForUnflag() {
     return {Constant.JSONKEY_MESSAGE_ID: _messageID};
   }
 

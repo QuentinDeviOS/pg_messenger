@@ -1,17 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
-import 'package:pg_messenger/View/Components/image_message.dart';
+import 'package:pg_messenger/View/Widgets/single_message.dart';
 import 'package:pg_messenger/View/user_settings_view.dart';
 import 'package:pg_messenger/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pg_messenger/Controller/message_controller.dart';
-import 'package:pg_messenger/Models/message.dart';
-import 'package:pg_messenger/generated/l10n.dart';
 import 'Components/drawer.dart';
 
 class MessageView extends StatefulWidget {
   final MessageController _messageController;
+
   MessageView(
     this._messageController, {
     Key? key,
@@ -20,9 +19,15 @@ class MessageView extends StatefulWidget {
   _MessageViewState createState() => _MessageViewState(_messageController);
 }
 
-class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
+class _MessageViewState extends State<MessageView> with WidgetsBindingObserver, TickerProviderStateMixin {
   final MessageController _messageController;
+  late final AnimationController _timestampController = AnimationController(
+    duration: const Duration(milliseconds: 200),
+    reverseDuration: const Duration(milliseconds: 200),
+    vsync: this,
+  );
 
+  var showTimestamp = false;
   _MessageViewState(this._messageController);
 
   @override
@@ -57,8 +62,9 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance?.removeObserver(this);
-    _messageController.onDispose();
     super.dispose();
+    _messageController.onDispose();
+    _timestampController.dispose();
   }
 
   @override
@@ -76,11 +82,7 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
           IconButton(
               icon: const Icon(Icons.settings),
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            UserSettingsView(_messageController, () {})));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => UserSettingsView(_messageController, () {})));
               }),
         ],
       ),
@@ -93,10 +95,32 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                  controller: _messageController.scrollController,
-                  itemBuilder: _singleMessage,
-                  itemCount: _messageController.messageList.length),
+              child: GestureDetector(
+                onHorizontalDragUpdate: (details) {
+                  if (details.delta.dx < 0 && !showTimestamp) {
+                    print(showTimestamp);
+                    showTimestamp = true;
+                    setState(() {
+                      _timestampController.forward();
+                    });
+                  } else if (details.delta.dx > 0) {
+                    setState(() {
+                      _timestampController.reverse();
+                    });
+                    showTimestamp = false;
+                  }
+                },
+                onHorizontalDragEnd: (details) {
+                  setState(() {
+                    _timestampController.reverse();
+                  });
+                  showTimestamp = false;
+                },
+                child: ListView.builder(controller: _messageController.scrollController, itemBuilder: _singleMessageBuilder, itemCount: _messageController.messageList.length),
+              ),
+            ),
+            SizedBox(
+              height: 5,
             ),
             Form(
               child: Row(
@@ -163,127 +187,113 @@ class _MessageViewState extends State<MessageView> with WidgetsBindingObserver {
     );
   }
 
-  Widget _singleMessage(BuildContext context, int num) {
+  Widget _singleMessageBuilder(BuildContext context, int num) {
+    bool isOwn = false;
+    MainAxisAlignment axisMessage = MainAxisAlignment.start;
+    Color messageColour = Theme.of(context).colorScheme.bubbleMessageDarkMode;
+    Color textColour = Theme.of(context).colorScheme.bubbleMessageDarkModeTexte;
+    EdgeInsets messagePadding = EdgeInsets.only(left: 15.0, right: 40.0);
+
+    if (_messageController.messageList[num].owner == _messageController.currentUser.id) {
+      isOwn = true;
+      axisMessage = MainAxisAlignment.end;
+      messageColour = Theme.of(context).colorScheme.bubbleMessageDarkModeAdmin;
+      textColour = Theme.of(context).colorScheme.bubbleMessageDarkModeAdminTexte;
+      messagePadding = EdgeInsets.only(right: 25.0);
+    }
+
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       _messageController.goToEndList();
     });
-    if (_messageController.messageList[num].channel ==
-        _messageController.currentChannel) {
-      return Card(
-        child: Container(
-          padding: EdgeInsets.fromLTRB(10, 20, 0, 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    if (_messageController.messageList[num].channel == _messageController.currentChannel) {
+      return Column(
+        children: [
+          if (num == 0 || (num > 0 && _messageController.messageList[num - 1].timestamp!.day != _messageController.messageList[num].timestamp!.day))
+            Row(
+              children: [
+                Expanded(child: Container()),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
+                    _messageController.messageList[num].timestamp?.day ?? "",
+                    style: TextStyle(fontSize: 14.0),
+                  ),
+                ),
+                Expanded(child: Container()),
+              ],
+            ),
+          if (!isOwn)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  padding: EdgeInsets.only(left: 60.0),
+                  child: Text(
+                    _messageController.messageList[num].username,
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                Spacer(),
+              ],
+            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.max,
             children: [
+              (!isOwn)
+                  ? Padding(
+                      padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(60),
+                        child: Container(
+                          height: 30,
+                          width: 30,
+                          child: _messageController.ownerImageMap[_messageController.messageList[num].owner],
+                        ),
+                      ),
+                    )
+                  : Spacer(),
               Container(
-                padding: EdgeInsets.only(bottom: 20.0),
-                child: Row(
-                  children: [
-                    Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 0, 12, 0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: Container(
-                            height: 40,
-                            width: 40,
-                            child: _messageController.ownerImageMap[
-                                _messageController.messageList[num].owner],
-                          ),
-                        )),
-                    Text(
-                      _messageController.messageList[num].username,
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color:
-                              Theme.of(context).colorScheme.textDarkModeTitle),
-                    ),
-                    Spacer(),
-                    Text(_messageController.formatedTimestamp(
-                        _messageController.messageList[num].timestamp,
-                        context)),
-                    if (_messageController.messageList[num].flag != true)
-                      PopupMenuButton(
-                        icon: Icon(Icons.more_vert),
-                        onSelected: (value) {
-                          if (value == "report") {
-                            _messageController.reportMessage(
-                                _messageController.messageList[num],
-                                _messageController.currentUser);
-                          }
-                          if (value == "delete") {
-                            _messageController.deleteMessage(
-                                _messageController.messageList[num],
-                                _messageController.currentUser);
-                          }
-                        },
-                        itemBuilder: (context) => messagePopUpItem(
-                            _messageController.messageList[num]),
-                      )
-                  ],
+                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+                child: SingleMessage(
+                  messageController: _messageController,
+                  num: num,
+                  messagePadding: messagePadding,
+                  axisMessage: axisMessage,
+                  isOwn: isOwn,
+                  messageColour: messageColour,
+                  textColour: textColour,
                 ),
               ),
-              if (_messageController.messageList[num].isPicture == null ||
-                  (_messageController.messageList[num].flag != true &&
-                      !_messageController.messageList[num].isPicture!))
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                  child: Text(_messageController.messageList[num].message),
+              if (_messageController.messageList[num].owner != _messageController.currentUser.id) Spacer(),
+              SizeTransition(
+                sizeFactor: CurvedAnimation(
+                  parent: _timestampController,
+                  curve: Curves.decelerate,
+                  reverseCurve: Curves.decelerate,
                 ),
-              if (_messageController.messageList[num].isPicture != null &&
-                  _messageController.messageList[num].flag != true &&
-                  _messageController.messageList[num].isPicture!)
-                imageMessage(
-                    message: _messageController.messageList[num],
-                    messageController: _messageController),
-              if (_messageController.messageList[num].flag == true)
-                Text(S.of(context).message_under_moderation)
+                axis: Axis.horizontal,
+                axisAlignment: -1,
+                // child: Padding(
+                //   padding: EdgeInsets.only(right: 10),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Text(
+                    _messageController.messageList[num].timestamp?.time ?? "",
+                    textAlign: TextAlign.right,
+                  ),
+                ),
+              ),
             ],
           ),
-        ),
+          SizedBox(
+            height: 20,
+          ),
+        ],
       );
     } else {
-      return Padding(padding: EdgeInsets.all(0));
+      return Container();
     }
-  }
-
-  List<PopupMenuEntry<String>> messagePopUpItem(Message message) {
-    return [
-      if (message.owner != _messageController.currentUser.id)
-        PopupMenuItem(
-          value: "report",
-          child: Row(
-            children: [
-              Icon(
-                Icons.pan_tool,
-                size: 12,
-                color: Colors.red.shade300,
-              ),
-              Text(
-                S.of(context).message_report,
-                style: TextStyle(fontSize: 12, color: Colors.red),
-              )
-            ],
-          ),
-        ),
-      if (_messageController.currentUser.isModerator == true ||
-          message.owner == _messageController.currentUser.id)
-        PopupMenuItem(
-          value: "delete",
-          child: Row(
-            children: [
-              Icon(
-                Icons.delete_forever,
-                size: 16,
-                color: Colors.red.shade300,
-              ),
-              Text(
-                S.of(context).message_delete,
-                style: TextStyle(fontSize: 12, color: Colors.red),
-              )
-            ],
-          ),
-        )
-    ];
   }
 }

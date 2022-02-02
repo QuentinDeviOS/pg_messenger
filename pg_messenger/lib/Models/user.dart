@@ -14,7 +14,6 @@ class User {
   String? _picture;
 
   Image? profilePict;
-  int _intToRefresh = 0;
 
   String get username => _username;
   String get id => _id;
@@ -49,15 +48,10 @@ class User {
         Constant.JSONKEY_USER_ID: _id,
       };
 
-  getImagePicture() async {
-    if (_intToRefresh == 0) {
-      _intToRefresh = 1;
-      await DefaultCacheManager().removeFile(Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=0");
-      profilePict = await _profilePictureController.getImagePicture(user: this, username: this.username);
-      return;
-    } else {
-      _intToRefresh = 0;
-      await DefaultCacheManager().removeFile(Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=1");
+  getImagePicture(String? newNameImagePicture) async {
+    if (newNameImagePicture != null) {
+      await DefaultCacheManager().removeFile(Constant.URL_WEB_SERVER_BASE + "/users/profile-picture?refresh=${this._picture}");
+      this._picture = newNameImagePicture;
       profilePict = await _profilePictureController.getImagePicture(user: this, username: this.username);
       return;
     }
